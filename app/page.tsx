@@ -25,7 +25,7 @@ export default function Home() {
           Nandha Institute <span className="text-blue-600">Residence</span>
         </h1>
         <p className="text-xl text-slate-600 max-w-2xl">
-          A unified portal for students, admins, and wardens to manage mess, complaints, fees, and outpasses seamlessly.
+          A unified portal for students, admins, and wardens to manage mess, complaints, fees, and outpasses seamlessly. (Update Test)
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
