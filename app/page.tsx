@@ -22,7 +22,7 @@ export default function Home() {
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-4xl mx-auto space-y-8">
         <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight">
-          Nandha Institute <span className="text-blue-600">Residence</span>
+          Nandha Institute <span className="text-blue-600">Residence [V-17662244]</span>
         </h1>
         <p className="text-xl text-slate-600 max-w-2xl">
           A unified portal for students, admins, and wardens to manage mess, complaints, fees, and outpasses seamlessly.
