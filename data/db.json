@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "admin",
+      "password": "admin",
+      "name": "Hostel Admin",
+      "role": "admin",
+      "hostelName": "Main Block"
+    },
+    {
+      "id": "warden",
+      "password": "warden",
+      "name": "Chief Warden",
+      "role": "authority",
+      "hostelName": "Main Block"
+    }
+  ],
+  "complaints": [],
+  "outpasses": []
+}
