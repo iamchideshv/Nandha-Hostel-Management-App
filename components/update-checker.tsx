@@ -11,7 +11,7 @@ export function UpdateChecker() {
     useEffect(() => {
         const checkVersion = async () => {
             try {
-                const res = await fetch('/api/version');
+                const res = await fetch('/api/app-version');
                 const data = await res.json();
                 if (data.buildId && data.buildId !== BUILD_ID) {
                     setShowUpdate(true);
