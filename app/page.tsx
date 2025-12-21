@@ -11,18 +11,18 @@ export default function Home() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-slate-900 dark:to-slate-950 flex flex-col transition-colors duration-500">
-      <header className="p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
-        <div className="flex items-center space-x-2">
-          <img src="/logo.jpg" alt="Logo" className="h-10 w-10 object-contain rounded-md" />
-          <span className="font-bold text-xl text-slate-900 dark:text-white">Nandha Institute Hostel Manager</span>
+      <header className="p-4 md:p-6 flex justify-between items-center max-w-7xl mx-auto w-full gap-2">
+        <div className="flex items-center space-x-2 min-w-0 flex-shrink">
+          <img src="/logo.jpg" alt="Logo" className="h-8 w-8 md:h-10 md:w-10 object-contain rounded-md flex-shrink-0" />
+          <span className="font-bold text-sm md:text-xl text-slate-900 dark:text-white truncate">Nandha Institute Hostel Manager</span>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-1 md:gap-4 flex-shrink-0">
           <ThemeToggle />
           <Link href="/login">
-            <Button variant="ghost" className="dark:text-slate-300 dark:hover:text-white">Login</Button>
+            <Button variant="ghost" size="sm" className="dark:text-slate-300 dark:hover:text-white text-xs md:text-sm px-2 md:px-4">Login</Button>
           </Link>
           <Link href="/register">
-            <Button>Get Started <ArrowRight className="ml-2 h-4 w-4" /></Button>
+            <Button size="sm" className="text-xs md:text-sm px-2 md:px-4">Get Started <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4" /></Button>
           </Link>
         </div>
       </header>

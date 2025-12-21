@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -121,7 +121,15 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 transition-colors duration-300">
+            {/* Back to Home Button */}
+            <Link href="/" className="absolute top-4 left-4 md:top-6 md:left-6">
+                <Button variant="ghost" size="sm" className="gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">Back to Home</span>
+                </Button>
+            </Link>
+
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center mb-4">
