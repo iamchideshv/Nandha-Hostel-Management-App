@@ -173,12 +173,25 @@ export default function LoginPage() {
             login(devopsUser);
             router.push('/devops');
         } catch (err: any) {
+            console.error('Google sign-in error details:', {
+                code: err.code,
+                message: err.message,
+                fullError: err
+            });
+
             if (err.code === 'auth/popup-closed-by-user') {
                 setError('Sign-in cancelled');
+            } else if (err.code === 'auth/unauthorized-domain') {
+                setError('Domain not authorized. Please contact DevOps to add this domain to Firebase.');
+            } else if (err.code === 'auth/popup-blocked') {
+                setError('Popup blocked by browser. Please allow popups for this site.');
+            } else if (err.code === 'auth/cancelled-popup-request') {
+                setError('Another popup is already open. Please close it and try again.');
             } else {
-                setError('Sign-in failed. Please try again.');
+                // Show detailed error for debugging
+                const errorMsg = err.message || 'Unknown error';
+                setError(`Sign-in failed: ${err.code || 'unknown-error'}. ${errorMsg}`);
             }
-            console.error('Google sign-in error:', err);
         } finally {
             setSigningInWithGoogle(false);
         }
