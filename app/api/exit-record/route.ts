@@ -1,67 +1,60 @@
 import { NextResponse } from 'next/server';
-import ExcelJS from 'exceljs';
-import path from 'path';
-import fs from 'fs';
+import { google } from 'googleapis';
 
-export async function GET(req: Request) {
-    try {
-        const filePath = path.join(process.cwd(), 'data', 'exit_records.xlsx');
+// Initialize Google Sheets API
+const getGoogleSheetsClient = () => {
+    const auth = new google.auth.GoogleAuth({
+        credentials: {
+            client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+            private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        },
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
 
-        if (!fs.existsSync(filePath)) {
-            return NextResponse.json({ error: 'No records found' }, { status: 404 });
-        }
+    return google.sheets({ version: 'v4', auth });
+};
 
-        const fileBuffer = fs.readFileSync(filePath);
-
-        return new NextResponse(fileBuffer, {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition': 'attachment; filename=exit_records.xlsx'
-            }
-        });
-
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 });
-    }
-}
+const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
         const { collegeName, hostelName, roomNumber, fromDate, toDate, reason, studentName, outpassId, scanType } = body;
 
-        const dirPath = path.join(process.cwd(), 'data');
-        const filePath = path.join(dirPath, 'exit_records.xlsx');
-
-        // Ensure data directory exists
-        if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
+        if (!SPREADSHEET_ID) {
+            return NextResponse.json({ error: 'Spreadsheet ID not configured' }, { status: 500 });
         }
 
-        const workbook = new ExcelJS.Workbook();
-        let worksheet: ExcelJS.Worksheet;
-
-        if (fs.existsSync(filePath)) {
-            await workbook.xlsx.readFile(filePath);
-            worksheet = workbook.getWorksheet(1) || workbook.addWorksheet('Exit Records');
-        } else {
-            worksheet = workbook.addWorksheet('Exit Records');
-            // Add headers with some basic bold formatting for the first time
-            const headerRow = worksheet.addRow([
-                'S.No', 'Outpass ID', 'Student Name', 'Hostel Name',
-                'College Name', 'Room No', 'From Date', 'To Date',
-                'Reason', 'Out Time', 'In Time'
-            ]);
-            headerRow.font = { bold: true };
-            headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
-        }
+        const sheets = getGoogleSheetsClient();
 
         if (scanType === 'EXIT') {
-            // Find next S.No by counting rows (excluding header)
-            const sno = worksheet.actualRowCount;
+            // Get current row count to determine S.No
+            const response = await sheets.spreadsheets.values.get({
+                spreadsheetId: SPREADSHEET_ID,
+                range: 'Sheet1!A:A', // Get all rows in column A to count
+            });
 
-            const newRowValues = [
+            const rowCount = response.data.values?.length || 0;
+            const sno = rowCount; // This will be the next S.No (header is row 1, so rowCount is correct)
+
+            // If this is the first data row, add headers
+            if (rowCount === 0) {
+                await sheets.spreadsheets.values.append({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'Sheet1!A1',
+                    valueInputOption: 'RAW',
+                    requestBody: {
+                        values: [[
+                            'S.No', 'Outpass ID', 'Student Name', 'Hostel Name',
+                            'College Name', 'Room No', 'From Date', 'To Date',
+                            'Reason', 'Out Time', 'In Time'
+                        ]]
+                    }
+                });
+            }
+
+            // Append new EXIT record
+            const newRow = [
                 sno,
                 outpassId,
                 studentName,
@@ -71,65 +64,76 @@ export async function POST(req: Request) {
                 fromDate,
                 toDate,
                 reason,
-                new Date().toLocaleString(),
-                '' // In Time
+                new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                '' // In Time (empty for now)
             ];
 
-            worksheet.addRow(newRowValues);
+            await sheets.spreadsheets.values.append({
+                spreadsheetId: SPREADSHEET_ID,
+                range: 'Sheet1!A:K',
+                valueInputOption: 'RAW',
+                requestBody: {
+                    values: [newRow]
+                }
+            });
+
+            return NextResponse.json({ success: true, message: 'EXIT record logged to Google Sheets' });
+
         } else if (scanType === 'ENTRY') {
-            let found = false;
+            // Get all rows to find matching Outpass ID
+            const response = await sheets.spreadsheets.values.get({
+                spreadsheetId: SPREADSHEET_ID,
+                range: 'Sheet1!A:K',
+            });
+
+            const rows = response.data.values || [];
+            let foundRowIndex = -1;
 
             // Search from bottom up for the latest matching Outpass ID with no In Time
-            const rowCount = worksheet.rowCount;
-            for (let i = rowCount; i > 1; i--) {
-                const row = worksheet.getRow(i);
-                // Column 2 is Outpass ID, Column 11 is In Time
-                if (row.getCell(2).value?.toString() === outpassId && !row.getCell(11).value) {
-                    row.getCell(11).value = new Date().toLocaleString();
-                    row.commit();
-                    found = true;
+            for (let i = rows.length - 1; i > 0; i--) { // Start from 1 to skip header
+                const row = rows[i];
+                // Column B (index 1) is Outpass ID, Column K (index 10) is In Time
+                if (row[1] === outpassId && !row[10]) {
+                    foundRowIndex = i;
                     break;
                 }
             }
 
-            if (!found) {
+            if (foundRowIndex === -1) {
                 return NextResponse.json({
                     error: 'No matching "Exit" record found for this scan. Did they scan out?'
                 }, { status: 400 });
             }
-        }
 
-        // Atomic Write Pattern using ExcelJS
-        const tempFilePath = filePath + '.tmp';
-        try {
-            await workbook.xlsx.writeFile(tempFilePath);
-
-            try {
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
+            // Update the In Time column (K) for the found row
+            const updateRange = `Sheet1!K${foundRowIndex + 1}`; // +1 because sheets are 1-indexed
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: SPREADSHEET_ID,
+                range: updateRange,
+                valueInputOption: 'RAW',
+                requestBody: {
+                    values: [[new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })]]
                 }
-                fs.renameSync(tempFilePath, filePath);
-            } catch (renameErr) {
-                // If main file is locked, create a backup
-                const backupPath = path.join(dirPath, `exit_records_${Date.now()}.xlsx`);
-                fs.renameSync(tempFilePath, backupPath);
-                return NextResponse.json({
-                    success: true,
-                    message: `Original file locked. Data saved to ${path.basename(backupPath)}`,
-                    warning: true
-                });
-            }
+            });
 
-            return NextResponse.json({ success: true, message: `Record (${scanType}) logged to Excel` });
-
-        } catch (writeErr: any) {
-            console.error("ExcelJS Write Error:", writeErr);
-            return NextResponse.json({ error: `Save failed: ${writeErr.message}` }, { status: 500 });
+            return NextResponse.json({ success: true, message: 'ENTRY time updated in Google Sheets' });
         }
+
+        return NextResponse.json({ error: 'Invalid scan type' }, { status: 400 });
 
     } catch (e: any) {
-        console.error("API POST Error:", e);
-        return NextResponse.json({ error: e.message }, { status: 500 });
+        console.error("Google Sheets API Error:", e);
+        return NextResponse.json({
+            error: e.message || 'Failed to update Google Sheets',
+            details: e.response?.data || e.toString()
+        }, { status: 500 });
     }
 }
 
+// Optional: Keep GET endpoint for backward compatibility or remove if not needed
+export async function GET(req: Request) {
+    return NextResponse.json({
+        message: 'Data is now stored in Google Sheets. Please access the sheet directly.',
+        spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit`
+    });
+}
