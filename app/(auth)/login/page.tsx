@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { auth } from '@/lib/firebase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -18,7 +20,7 @@ export default function LoginPage() {
     const [forgotPasswordId, setForgotPasswordId] = useState('');
     const [submittingReset, setSubmittingReset] = useState(false);
     const [showDevOpsLogin, setShowDevOpsLogin] = useState(false);
-    const [devOpsData, setDevOpsData] = useState({ email: '', password: '' });
+    const [signingInWithGoogle, setSigningInWithGoogle] = useState(false);
     const { login } = useAuth();
 
     const [formData, setFormData] = useState({
@@ -117,6 +119,67 @@ export default function LoginPage() {
         if (longPressTimer) {
             clearTimeout(longPressTimer);
             setLongPressTimer(null);
+        }
+    };
+
+    // DevOps Google Sign-In handler
+    const handleDevOpsGoogleSignIn = async () => {
+        setSigningInWithGoogle(true);
+        setError('');
+
+        try {
+            const provider = new GoogleAuthProvider();
+            // Explicitly request email and profile scopes
+            provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+            provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+
+            const result = await signInWithPopup(auth, provider);
+
+            // Try to get email from multiple sources
+            let email = result.user.email;
+            if (!email && result.user.providerData.length > 0) {
+                email = result.user.providerData[0].email;
+            }
+
+            console.log('Google Sign-In Result:', {
+                email: email,
+                userEmail: result.user.email,
+                providerEmail: result.user.providerData[0]?.email,
+                displayName: result.user.displayName,
+                uid: result.user.uid,
+                providerData: result.user.providerData
+            });
+
+            // Only allow chideshtanya11@gmail.com (case-insensitive)
+            const allowedEmail = 'chideshtanya11@gmail.com';
+            if (!email || email.toLowerCase() !== allowedEmail.toLowerCase()) {
+                console.error('Access denied for email:', email);
+                setError(`Access denied. Email received: ${email || 'none'}. Only ${allowedEmail} is authorized.`);
+                await auth.signOut(); // Sign out unauthorized user
+                return;
+            }
+
+            console.log('Access granted for DevOps');
+
+            // Create DevOps user session
+            const devopsUser = {
+                id: 'devops',
+                email: email,
+                role: 'devops',
+                name: result.user.displayName || 'DevOps Admin'
+            };
+
+            login(devopsUser);
+            router.push('/devops');
+        } catch (err: any) {
+            if (err.code === 'auth/popup-closed-by-user') {
+                setError('Sign-in cancelled');
+            } else {
+                setError('Sign-in failed. Please try again.');
+            }
+            console.error('Google sign-in error:', err);
+        } finally {
+            setSigningInWithGoogle(false);
         }
     };
 
@@ -244,40 +307,32 @@ export default function LoginPage() {
             {/* DevOps Login Modal */}
             {showDevOpsLogin && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <Card className="w-full max-w-md">
+                    <Card className="w-full max-w-md dark:bg-slate-900">
                         <CardHeader>
-                            <CardTitle>DevOps Access</CardTitle>
-                            <CardDescription>Enter DevOps ID to access password reset management</CardDescription>
+                            <CardTitle className="dark:text-white">DevOps Access</CardTitle>
+                            <CardDescription className="dark:text-slate-400">
+                                Sign in with your authorized Google account
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="devopsEmail">DevOps Email</Label>
-                                <Input
-                                    id="devopsEmail"
-                                    type="email"
-                                    placeholder="Enter DevOps Email"
-                                    value={devOpsData.email}
-                                    onChange={(e) => setDevOpsData({ ...devOpsData, email: e.target.value })}
-                                />
+                            <div className="flex flex-col items-center gap-4 py-4">
+                                <svg className="w-12 h-12" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                </svg>
+                                <p className="text-sm text-slate-600 dark:text-slate-400 text-center">
+                                    Only authorized DevOps accounts<br />(chideshtanya11@gmail.com)
+                                </p>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="devopsPassword">Password</Label>
-                                <Input
-                                    id="devopsPassword"
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    value={devOpsData.password}
-                                    onChange={(e) => setDevOpsData({ ...devOpsData, password: e.target.value })}
-                                />
-                            </div>
-                            {error && <p className="text-sm text-red-500">{error}</p>}
+                            {error && <p className="text-sm text-red-500 font-medium text-center">{error}</p>}
                         </CardContent>
                         <CardFooter className="flex gap-2">
                             <Button
                                 variant="outline"
                                 onClick={() => {
                                     setShowDevOpsLogin(false);
-                                    setDevOpsData({ email: '', password: '' });
                                     setError('');
                                 }}
                                 className="flex-1"
@@ -285,39 +340,26 @@ export default function LoginPage() {
                                 Cancel
                             </Button>
                             <Button
-                                onClick={async () => {
-                                    setIsLoading(true);
-                                    setError('');
-                                    try {
-                                        const res = await fetch('/api/auth/login', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({
-                                                id: devOpsData.email,
-                                                password: devOpsData.password,
-                                                isDevOps: true
-                                            })
-                                        });
-
-                                        const data = await res.json();
-
-                                        if (!res.ok) {
-                                            throw new Error(data.error || 'Login failed');
-                                        }
-
-                                        login(data);
-                                        router.push('/devops');
-                                    } catch (err: any) {
-                                        setError(err.message);
-                                    } finally {
-                                        setIsLoading(false);
-                                    }
-                                }}
-                                disabled={isLoading}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                                onClick={handleDevOpsGoogleSignIn}
+                                disabled={signingInWithGoogle}
+                                className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                             >
-                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                                Access
+                                {signingInWithGoogle ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                            <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                        </svg>
+                                        Sign in with Google
+                                    </>
+                                )}
                             </Button>
                         </CardFooter>
                     </Card>
