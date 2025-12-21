@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -162,9 +163,9 @@ export default function LoginPage() {
             console.log('Access granted for DevOps');
 
             // Create DevOps user session
-            const devopsUser = {
+            const devopsUser: User = {
                 id: 'devops',
-                email: email,
+                email: email || undefined,
                 role: 'devops',
                 name: result.user.displayName || 'DevOps Admin'
             };
