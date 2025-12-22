@@ -330,8 +330,8 @@ export default function AdminDashboard() {
             {!loading && activeTab === 'outpass' && (
                 <div className="grid gap-4">
                     <div className="flex justify-end mb-2">
-                        <Button onClick={() => window.open('/api/exit-record', '_blank')} variant="outline" className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100">
-                            <FileText className="w-4 h-4 mr-2" /> Download Exit Report
+                        <Button onClick={() => window.open('https://docs.google.com/spreadsheets/d/1AkuIj3I7BXB7k7gdp01aVjSET1M___j2cKesFo-7am4/edit?usp=sharing', '_blank')} variant="outline" className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100">
+                            <FileText className="w-4 h-4 mr-2" /> View Report
                         </Button>
                     </div>
                     {outpasses.length === 0 ? <p className="text-center text-slate-500">No outpass requests found.</p> :
@@ -346,11 +346,11 @@ export default function AdminDashboard() {
                                             </CardDescription>
                                         </div>
                                         <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${o.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                o.status === 'exited' ? 'bg-orange-100 text-orange-700' :
-                                                    o.status === 'entered' ? 'bg-blue-100 text-blue-700' :
-                                                        o.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                            o.status === 'expired' ? 'bg-slate-100 text-slate-700' :
-                                                                'bg-yellow-100 text-yellow-700'
+                                            o.status === 'exited' ? 'bg-orange-100 text-orange-700' :
+                                                o.status === 'entered' ? 'bg-blue-100 text-blue-700' :
+                                                    o.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                        o.status === 'expired' ? 'bg-slate-100 text-slate-700' :
+                                                            'bg-yellow-100 text-yellow-700'
                                             }`}>
                                             {o.status}
                                         </div>

@@ -16,6 +16,60 @@ const getGoogleSheetsClient = () => {
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
 
+const getSheetName = () => {
+    const date = new Date();
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    return `${month}-${year}`;
+};
+
+async function ensureSheetExists(sheets: any, spreadsheetId: string, sheetTitle: string) {
+    try {
+        const { data } = await sheets.spreadsheets.get({ spreadsheetId });
+        const existingSheets = data.sheets || [];
+
+        const targetSheet = existingSheets.find((s: any) => s.properties.title === sheetTitle);
+        if (targetSheet) return; // Sheet already exists
+
+        const sheet1 = existingSheets.find((s: any) => s.properties.title === 'Sheet1');
+
+        if (sheet1) {
+            // Rename Sheet1 to current month
+            await sheets.spreadsheets.batchUpdate({
+                spreadsheetId,
+                requestBody: {
+                    requests: [{
+                        updateSheetProperties: {
+                            properties: {
+                                sheetId: sheet1.properties.sheetId,
+                                title: sheetTitle
+                            },
+                            fields: 'title'
+                        }
+                    }]
+                }
+            });
+        } else {
+            // Create new sheet
+            await sheets.spreadsheets.batchUpdate({
+                spreadsheetId,
+                requestBody: {
+                    requests: [{
+                        addSheet: {
+                            properties: {
+                                title: sheetTitle
+                            }
+                        }
+                    }]
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error ensuring sheet exists:', error);
+        throw error;
+    }
+}
+
 export async function POST(req: Request) {
     try {
         const body = await req.json();
@@ -26,12 +80,16 @@ export async function POST(req: Request) {
         }
 
         const sheets = getGoogleSheetsClient();
+        const currentSheetName = getSheetName();
+
+        // Ensure the correct sheet exists before writing
+        await ensureSheetExists(sheets, SPREADSHEET_ID, currentSheetName);
 
         if (scanType === 'EXIT') {
             // Get current row count to determine S.No
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
-                range: 'Sheet1!A:A', // Get all rows in column A to count
+                range: `${currentSheetName}!A:A`, // Get all rows in column A to count
             });
 
             const rowCount = response.data.values?.length || 0;
@@ -41,7 +99,7 @@ export async function POST(req: Request) {
             if (rowCount === 0) {
                 await sheets.spreadsheets.values.append({
                     spreadsheetId: SPREADSHEET_ID,
-                    range: 'Sheet1!A1',
+                    range: `${currentSheetName}!A1`,
                     valueInputOption: 'RAW',
                     requestBody: {
                         values: [[
@@ -70,7 +128,7 @@ export async function POST(req: Request) {
 
             await sheets.spreadsheets.values.append({
                 spreadsheetId: SPREADSHEET_ID,
-                range: 'Sheet1!A:K',
+                range: `${currentSheetName}!A:K`,
                 valueInputOption: 'RAW',
                 requestBody: {
                     values: [newRow]
@@ -80,10 +138,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, message: 'EXIT record logged to Google Sheets' });
 
         } else if (scanType === 'ENTRY') {
-            // Get all rows to find matching Outpass ID
+            // Get all rows from current sheet to find matching Outpass ID
+            // NOTE: This assumes entry happens in the same month as exit. 
+            // If entry spans across months, we might need to search previous sheets, but for now current month is safest default.
+
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
-                range: 'Sheet1!A:K',
+                range: `${currentSheetName}!A:K`,
             });
 
             const rows = response.data.values || [];
@@ -106,7 +167,7 @@ export async function POST(req: Request) {
             }
 
             // Update the In Time column (K) for the found row
-            const updateRange = `Sheet1!K${foundRowIndex + 1}`; // +1 because sheets are 1-indexed
+            const updateRange = `${currentSheetName}!K${foundRowIndex + 1}`; // +1 because sheets are 1-indexed
             await sheets.spreadsheets.values.update({
                 spreadsheetId: SPREADSHEET_ID,
                 range: updateRange,
