@@ -138,18 +138,23 @@ export default function AdminDashboard() {
         setLoading(true);
         try {
             const hostelQuery = user?.hostelName ? `?hostelName=${user.hostelName}` : '';
-            const [compRes, outRes, feeRes] = await Promise.all([
+            const [compRes, outRes, feeRes, messRes] = await Promise.all([
                 fetch(`/api/complaints${hostelQuery}`),
                 fetch(`/api/outpass${hostelQuery}`),
-                fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`) // Fee API handles params slightly differently
+                fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`), // Fee API handles params slightly differently
+                fetch('/api/mess-menu')
             ]);
             const cData = await compRes.json();
             const oData = await outRes.json();
             const fData = await feeRes.json();
+            const mData = await messRes.json();
 
             setComplaints(cData);
             setOutpasses(oData);
             setFees(fData);
+            if (mData && !mData.error) {
+                setMessMenu(mData);
+            }
         } catch (e) {
             toast.error('Failed to load dashboard data');
         } finally {
