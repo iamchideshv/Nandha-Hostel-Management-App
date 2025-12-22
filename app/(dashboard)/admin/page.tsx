@@ -44,6 +44,7 @@ export default function AdminDashboard() {
     // Vending Machine Status State
     const [vendingStatus, setVendingStatus] = useState('refilled');
     const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [menuUploadSuccess, setMenuUploadSuccess] = useState(false);
 
     // Messages State
     const [newMessage, setNewMessage] = useState('');
@@ -68,6 +69,8 @@ export default function AdminDashboard() {
 
             if (res.ok) {
                 toast.success('Mess menu uploaded successfully!');
+                setMenuUploadSuccess(true);
+                setTimeout(() => setMenuUploadSuccess(false), 3000);
             } else {
                 toast.error('Failed to upload menu');
             }
@@ -546,9 +549,18 @@ export default function AdminDashboard() {
                                     </table>
                                 </div>
                                 <div className="flex justify-end">
-                                    <Button onClick={uploadMenu} className="bg-green-600 hover:bg-green-700">
-                                        <Upload className="w-4 h-4 mr-2" />
-                                        Upload Schedule
+                                    <Button onClick={uploadMenu} className={`${menuUploadSuccess ? 'bg-green-700' : 'bg-green-600'} hover:bg-green-700`}>
+                                        {menuUploadSuccess ? (
+                                            <>
+                                                <Check className="w-4 h-4 mr-2" />
+                                                Updated
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Upload className="w-4 h-4 mr-2" />
+                                                Upload Schedule
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </div>
