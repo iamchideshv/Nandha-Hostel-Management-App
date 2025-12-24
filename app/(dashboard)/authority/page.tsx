@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Check, X } from 'lucide-react';
+import { Loader } from '@/components/loader';
 
 interface OutpassData {
     id: string;
@@ -21,14 +22,18 @@ interface OutpassData {
 export default function AuthorityDashboard() {
     const { user } = useAuth();
     const [outpasses, setOutpasses] = useState<OutpassData[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const fetchOutpasses = async () => {
+        setLoading(true);
         try {
             const res = await fetch('/api/outpass');
             const data = await res.json();
             setOutpasses(data);
         } catch {
             toast.error('Failed to fetch outpasses');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -61,7 +66,13 @@ export default function AuthorityDashboard() {
             </div>
 
             <div className="grid gap-4">
-                {outpasses.length === 0 ? <p className="text-slate-500">No requests found.</p> :
+                {loading ? (
+                    <div className="py-20 flex justify-center">
+                        <Loader />
+                    </div>
+                ) : outpasses.length === 0 ? (
+                    <p className="text-slate-500">No requests found.</p>
+                ) : (
                     outpasses.map(o => (
                         <Card key={o.id} className={o.status !== 'pending' ? 'opacity-70' : ''}>
                             <CardHeader className="pb-2">
@@ -102,7 +113,7 @@ export default function AuthorityDashboard() {
                             </CardContent>
                         </Card>
                     ))
-                }
+                )}
             </div>
         </div>
     );

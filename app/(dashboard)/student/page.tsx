@@ -13,6 +13,7 @@ import { Complaint, Outpass, Message } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
+import { Loader } from '@/components/loader';
 
 interface ComplaintData {
     id: string;
@@ -109,6 +110,14 @@ export default function StudentDashboard() {
             setLoadingData(false);
         }
     };
+
+    if (loadingData) {
+        return (
+            <div className="flex h-[60vh] items-center justify-center">
+                <Loader />
+            </div>
+        );
+    }
 
     useEffect(() => {
         fetchData();

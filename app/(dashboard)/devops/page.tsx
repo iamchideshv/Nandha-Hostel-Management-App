@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Key, RefreshCw, Trash2, UserCog, Loader2, Search, MoreVertical } from 'lucide-react';
+import { Loader } from '@/components/loader';
 
 export default function DevOpsDashboard() {
     const { user } = useAuth();
@@ -206,7 +207,7 @@ export default function DevOpsDashboard() {
                 </CardHeader>
                 <CardContent>
                     {loading ? (
-                        <div className="text-center py-8 text-slate-500">Loading...</div>
+                        <div className="py-8"><Loader /></div>
                     ) : requests.length === 0 ? (
                         <div className="text-center py-8 text-slate-500">
                             No pending password reset requests
@@ -342,7 +343,7 @@ export default function DevOpsDashboard() {
                     </div>
 
                     {usersLoading ? (
-                        <div className="text-center py-8 text-slate-500">Loading master user list...</div>
+                        <div className="py-8"><Loader /></div>
                     ) : users.length === 0 ? (
                         <div className="text-center py-8 text-slate-500">
                             No users found in the database

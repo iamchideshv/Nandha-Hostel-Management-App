@@ -10,6 +10,7 @@ import { Complaint, Outpass, User, FeeStatus, Message } from '@/lib/types';
 import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
+import { Loader } from '@/components/loader';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
@@ -145,6 +146,14 @@ export default function AdminDashboard() {
             setLoading(false);
         }
     };
+
+    if (loading) {
+        return (
+            <div className="flex h-[60vh] items-center justify-center">
+                <Loader />
+            </div>
+        );
+    }
 
     const uploadTimings = async () => {
         try {
