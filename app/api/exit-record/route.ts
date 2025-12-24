@@ -121,7 +121,7 @@ export async function POST(req: Request) {
                 outpassId,
                 studentName,
                 hostelName || 'N/A',
-                collegeName || 'Nandha College of Technology',
+                collegeName || 'NEI SMART HOSTEL',
                 yearAndDept || 'N/A',
                 roomNumber || 'N/A',
                 fromDate,

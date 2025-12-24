@@ -940,14 +940,14 @@ export default function StudentDashboard() {
                                                                 studentName: user?.name || '',
                                                                 hostelName: o.hostelName || user?.hostelName || '',
                                                                 roomNumber: user?.roomNumber || '',
-                                                                collegeName: o.collegeName || 'NANDHA INSTITUTE'
+                                                                collegeName: o.collegeName || 'NEI SMART HOSTEL'
                                                             })}
                                                         >
                                                             <QRCode
                                                                 value={JSON.stringify({
                                                                     id: o.id,
                                                                     student: user?.name,
-                                                                    collegeName: o.collegeName || 'NANDHA INSTITUTE',
+                                                                    collegeName: o.collegeName || 'NEI SMART HOSTEL',
                                                                     hostelName: o.hostelName || user?.hostelName,
                                                                     roomNumber: user?.roomNumber,
                                                                     yearAndDept: o.yearAndDept,
@@ -1306,7 +1306,7 @@ export default function StudentDashboard() {
                                 <div id="outpass-to-download" className="bg-white p-6 flex flex-col items-center w-[400px] h-[564px] mx-auto shadow-sm">
                                     {/* Header - More Compact */}
                                     <div className="w-full text-center border-b-2 border-indigo-600 pb-2 mb-4">
-                                        <h2 className="text-lg font-bold text-indigo-950 tracking-tight uppercase">NANDHA INSTITUTE</h2>
+                                        <h2 className="text-lg font-bold text-indigo-950 tracking-tight uppercase">NEI Smart Hostel</h2>
                                         <p className="text-[9px] text-indigo-600 font-bold tracking-widest uppercase">Authorized Digital Outpass</p>
                                     </div>
 
