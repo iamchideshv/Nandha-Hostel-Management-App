@@ -572,9 +572,20 @@ export default function StudentDashboard() {
                                             .map((m) => (
                                                 <div key={m.id} className={`p-3 rounded-lg border ${m.senderRole === 'admin' ? 'bg-blue-50 border-blue-100 dark:bg-blue-900/20' : 'bg-white border-slate-200 dark:bg-slate-800'}`}>
                                                     <div className="flex justify-between items-start mb-1">
-                                                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${m.senderRole === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
-                                                            {m.senderRole === 'admin' ? 'Admin Notice' : 'You'}
-                                                        </span>
+                                                        <div className="flex gap-2 items-center flex-wrap">
+                                                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${m.senderRole === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                                                                {m.senderRole === 'admin' ? 'Admin Notice' : 'You'}
+                                                            </span>
+                                                            {m.senderRole === 'admin' && m.type && (
+                                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${m.type === 'urgent' ? 'bg-red-100 text-red-700' :
+                                                                        m.type === 'important' ? 'bg-orange-100 text-orange-700' :
+                                                                            m.type === 'Mess' ? 'bg-green-100 text-green-700' :
+                                                                                'bg-slate-100 text-slate-700'
+                                                                    }`}>
+                                                                    {m.type}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         <span className="text-[10px] text-slate-400">
                                                             {new Date(m.timestamp).toLocaleString()}
                                                         </span>
