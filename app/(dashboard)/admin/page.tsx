@@ -615,6 +615,32 @@ export default function AdminDashboard() {
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Sent History */}
+                                <div className="space-y-4 border-t pt-6">
+                                    <h3 className="text-lg font-medium">Sent History</h3>
+                                    {messages.filter(m => m.senderRole === 'admin').length === 0 ? (
+                                        <div className="text-center py-4 text-slate-500 text-sm">
+                                            No messages sent yet
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {messages.filter(m => m.senderRole === 'admin').map((msg) => (
+                                                <div key={msg.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50 dark:bg-slate-800/50 dark:border-slate-800">
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                                            To: {msg.targetHostels && msg.targetHostels.length > 0 ? msg.targetHostels.join(', ') : 'All Students'}
+                                                        </span>
+                                                        <span className="text-[10px] text-slate-400">
+                                                            {new Date(msg.timestamp).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-slate-700 dark:text-slate-300">{msg.message}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
