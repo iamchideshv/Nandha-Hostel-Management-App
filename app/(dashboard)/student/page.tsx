@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass, Message } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
@@ -299,6 +299,16 @@ export default function StudentDashboard() {
                                 <span>Messages</span>
                             </button>
                         </nav>
+                        <div className="p-4 border-t dark:border-slate-800 space-y-2">
+                            <button onClick={() => { if (confirm('Go to home page?')) window.location.href = '/'; setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
+                                <Home className="w-5 h-5" />
+                                <span>Go to Home</span>
+                            </button>
+                            <button onClick={() => { if (confirm('Sign out?')) { window.location.href = '/'; } setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950">
+                                <LogOut className="w-5 h-5" />
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
