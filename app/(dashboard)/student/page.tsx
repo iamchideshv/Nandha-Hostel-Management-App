@@ -1097,7 +1097,7 @@ export default function StudentDashboard() {
                                         <div className="space-y-2">
                                             <Label>Time and Date</Label>
                                             <Input
-                                                placeholder="e.g. 10:30 AM, 24 Dec"
+                                                type="datetime-local"
                                                 value={lostFoundForm.timeAndDate}
                                                 onChange={(e) => setLostFoundForm({ ...lostFoundForm, timeAndDate: e.target.value })}
                                                 required
@@ -1172,8 +1172,8 @@ export default function StudentDashboard() {
                                                         <div>
                                                             <p className="font-bold text-base text-slate-900 dark:text-slate-100">{item.productName}</p>
                                                             <p className={`text-xs font-bold capitalize mt-0.5 ${item.status === 'not-found' ? 'text-red-500' :
-                                                                    (item.status === 'found' || item.status === 'returned') ? 'text-green-500' :
-                                                                        'text-slate-500'
+                                                                (item.status === 'found' || item.status === 'returned') ? 'text-green-500' :
+                                                                    'text-slate-500'
                                                                 }`}>
                                                                 {item.status === 'not-found' ? 'Not Found' : item.status}
                                                             </p>
