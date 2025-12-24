@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass, Message } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
@@ -593,9 +593,9 @@ export default function StudentDashboard() {
                                                                 </span>
                                                                 {m.type && (
                                                                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${m.type === 'urgent' ? 'bg-red-100 text-red-700' :
-                                                                            m.type === 'important' ? 'bg-orange-100 text-orange-700' :
-                                                                                m.type === 'Mess' ? 'bg-green-100 text-green-700' :
-                                                                                    'bg-slate-100 text-slate-700'
+                                                                        m.type === 'important' ? 'bg-orange-100 text-orange-700' :
+                                                                            m.type === 'Mess' ? 'bg-green-100 text-green-700' :
+                                                                                'bg-slate-100 text-slate-700'
                                                                         }`}>
                                                                         {m.type}
                                                                     </span>
