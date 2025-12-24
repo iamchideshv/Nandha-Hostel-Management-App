@@ -88,10 +88,11 @@ export interface PasswordResetRequest {
     status: 'pending' | 'completed';
 }
 
+
 export interface Message {
     id: string;
     message: string;
-    type: 'info' | 'urgent' | 'success';
+    type: 'info' | 'urgent' | 'Mess' | 'important';
     senderId: string;
     senderName: string;
     senderRole: UserRole;

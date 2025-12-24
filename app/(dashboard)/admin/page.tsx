@@ -242,6 +242,7 @@ export default function AdminDashboard() {
     };
 
     const [newMessage, setNewMessage] = useState('');
+    const [messageType, setMessageType] = useState<'info' | 'urgent' | 'Mess' | 'important'>('info');
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const handleClearInbox = async () => {
@@ -277,7 +278,7 @@ export default function AdminDashboard() {
             const messageData: any = {
                 id: tempId,
                 message: newMessage,
-                type: 'info',
+                type: messageType,
                 senderId: user?.id || 'admin',
                 senderName: user?.name || 'Admin',
                 senderRole: 'admin',
@@ -598,6 +599,16 @@ export default function AdminDashboard() {
                                 <div className="space-y-4 border-b pb-6">
                                     <h3 className="text-lg font-medium">Broadcast Message</h3>
                                     <div className="flex gap-2">
+                                        <select
+                                            className="flex h-10 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            value={messageType}
+                                            onChange={(e) => setMessageType(e.target.value as any)}
+                                        >
+                                            <option value="info">Info</option>
+                                            <option value="urgent">Urgent</option>
+                                            <option value="Mess">Mess</option>
+                                            <option value="important">Important</option>
+                                        </select>
                                         <Input
                                             placeholder="Type your message here..."
                                             value={newMessage}
