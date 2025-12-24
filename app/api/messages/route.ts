@@ -4,7 +4,9 @@ import { db } from '@/lib/db';
 // GET: Fetch all messages
 export async function GET(req: NextRequest) {
     try {
-        const messages = await db.getMessages();
+        const { searchParams } = new URL(req.url);
+        const hostelName = searchParams.get('hostelName');
+        const messages = await db.getMessages(hostelName || undefined);
         return NextResponse.json(messages || []);
     } catch (error) {
         console.error('Error fetching messages:', error);

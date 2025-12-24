@@ -127,30 +127,30 @@ export default function AdminDashboard() {
         setLoading(true);
         try {
             const hostelQuery = user?.hostelName ? `?hostelName=${user.hostelName}` : '';
-            const [compRes, outRes, feeRes, messRes, timingsRes] = await Promise.all([
+            const [compRes, outRes, feeRes, messRes, timingsRes, lostRes, msgRes] = await Promise.all([
                 fetch(`/api/complaints${hostelQuery}`, { cache: 'no-store' }),
                 fetch(`/api/outpass${hostelQuery}`, { cache: 'no-store' }),
                 fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`, { cache: 'no-store' }),
                 fetch(`/api/mess-menu?type=${messHostelType}`, { cache: 'no-store' }),
-                fetch(`/api/mess-timings?type=${messHostelType}`, { cache: 'no-store' })
+                fetch(`/api/mess-timings?type=${messHostelType}`, { cache: 'no-store' }),
+                fetch(`/api/lost-found${hostelQuery}`, { cache: 'no-store' }),
+                fetch(`/api/messages${hostelQuery}`, { cache: 'no-store' })
             ]);
             const cData = await compRes.json();
             const oData = await outRes.json();
             const fData = await feeRes.json();
             const mData = await messRes.json();
             const tData = await timingsRes.json();
+            const lData = await lostRes.json();
+            const msgData = await msgRes.json();
 
             setComplaints(cData.complaints || cData);
             setOutpasses(oData);
             setFees(fData);
             if (mData && !mData.error) setMessMenu(mData);
             if (tData && !tData.error) setMessTimings(tData);
-
-            try {
-                const res = await fetch(`/api/lost-found`);
-                const data = await res.json();
-                setLostItems(data);
-            } catch (e) { console.error('LostFound error', e); }
+            setLostItems(lData);
+            setMessages(msgData);
         } catch (e) {
             toast.error('Failed to load dashboard data');
         } finally {
@@ -727,7 +727,7 @@ export default function AdminDashboard() {
                                             <h3 className="text-lg font-medium">Inbox</h3>
                                             <div className="flex gap-2">
                                                 <Button variant="ghost" size="sm" onClick={() => {
-                                                    fetch(`/api/messages`).then(res => res.json()).then(data => setMessages(data));
+                                                    fetchData();
                                                     toast.info('Inbox Refreshed');
                                                 }}>
                                                     <Clock className="w-3 h-3 mr-1" /> Refresh

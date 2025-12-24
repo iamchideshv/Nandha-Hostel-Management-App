@@ -1171,7 +1171,7 @@ export default function StudentDashboard() {
                                                         )}
                                                         <div>
                                                             <p className="font-medium text-sm">{item.productName}</p>
-                                                            <p className="text-[10px] text-slate-500 capitalize">{item.status}</p>
+                                                            <p className="text-[10px] text-slate-500 capitalize">{item.status === 'not-found' ? 'Not Found' : item.status}</p>
                                                         </div>
                                                     </div>
                                                     <div className="text-right">
@@ -1222,7 +1222,7 @@ export default function StudentDashboard() {
                                     )}
                                     <div>
                                         <p className="text-slate-500 text-[10px] uppercase font-bold">Status</p>
-                                        <p className="font-medium capitalize">{selectedItemDetail.status}</p>
+                                        <p className="font-medium capitalize">{selectedItemDetail.status === 'not-found' ? 'Not Found' : selectedItemDetail.status}</p>
                                     </div>
                                     <div>
                                         <p className="text-slate-500 text-[10px] uppercase font-bold">Location</p>

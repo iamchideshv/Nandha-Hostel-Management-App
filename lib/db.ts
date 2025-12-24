@@ -249,8 +249,16 @@ export const db = {
   },
 
   // --- MESSAGES ---
-  getMessages: async (): Promise<any[]> => {
-    const snapshot = await getDocs(collection(firestore, 'messages'));
+  getMessages: async (hostelName?: string): Promise<any[]> => {
+    let q = query(collection(firestore, 'messages'));
+    const constraints: QueryConstraint[] = [];
+    if (hostelName) constraints.push(where("hostelName", "==", hostelName));
+
+    if (constraints.length > 0) {
+      q = query(collection(firestore, 'messages'), ...constraints);
+    }
+
+    const snapshot = await getDocs(q);
     return snapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
       .sort((a: any, b: any) => {
