@@ -335,26 +335,26 @@ export default function StudentDashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Utensils className="h-6 w-6 text-blue-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800">Mess Details</h3>
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
                     </button>
                     <button onClick={() => setActiveTab('complaints')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'complaints' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <AlertCircle className="h-6 w-6 text-orange-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800">Complaints</h3>
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Complaints</h3>
                     </button>
                     <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <FileText className="h-6 w-6 text-green-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800">Outpass</h3>
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Outpass</h3>
                     </button>
                     <button onClick={() => setActiveTab('messages')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'messages' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Send className="h-6 w-6 text-purple-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800">Messages</h3>
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Messages</h3>
                     </button>
                     <div
                         onClick={() => setActiveTab('fees')}
                         className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                     >
                         <BadgeCheck className={`h-6 w-6 mb-2 ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-400'}`} />
-                        <h3 className="font-semibold text-slate-800">Fees Status</h3>
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Fees Status</h3>
                         <p className={`text-xs font-bold mt-1 uppercase ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-500'}`}>
                             {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                         </p>
@@ -432,13 +432,13 @@ export default function StudentDashboard() {
                                                         <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-300 leading-snug">
                                                             {uploadedMenu?.breakfast?.[dayIndex] || 'Idli, Vada, Sambar'}
                                                         </td>
-                                                        <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-300 leading-snug">
+                                                        <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-200 leading-snug">
                                                             {uploadedMenu?.lunch?.[dayIndex] || 'Rice, Dal, Curd'}
                                                         </td>
-                                                        <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-300 leading-snug">
+                                                        <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-200 leading-snug">
                                                             {uploadedMenu?.snacks?.[dayIndex] || 'Tea, Biscuits'}
                                                         </td>
-                                                        <td className="px-3 py-3 text-slate-600 dark:text-slate-300 leading-snug">
+                                                        <td className="px-3 py-3 text-slate-600 dark:text-slate-200 leading-snug">
                                                             {uploadedMenu?.dinner?.[dayIndex] || 'Chapati, Veg Curry'}
                                                         </td>
                                                     </tr>
@@ -448,21 +448,21 @@ export default function StudentDashboard() {
                                     </div>
                                 ) : messSubTab === 'timings' ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="p-4 bg-white border rounded-lg">
-                                            <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Breakfast</h4>
-                                            <p className="text-xl font-bold text-slate-900">{messTimings.breakfast}</p>
+                                        <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-sm">
+                                            <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Breakfast</h4>
+                                            <p className="text-xl font-bold text-slate-900 dark:text-white">{messTimings.breakfast}</p>
                                         </div>
-                                        <div className="p-4 bg-white border rounded-lg">
-                                            <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Lunch</h4>
-                                            <p className="text-xl font-bold text-slate-900">{messTimings.lunch}</p>
+                                        <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-sm">
+                                            <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Lunch</h4>
+                                            <p className="text-xl font-bold text-slate-900 dark:text-white">{messTimings.lunch}</p>
                                         </div>
-                                        <div className="p-4 bg-white border rounded-lg">
-                                            <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Snacks</h4>
-                                            <p className="text-xl font-bold text-slate-900">{messTimings.snacks}</p>
+                                        <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-sm">
+                                            <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Snacks</h4>
+                                            <p className="text-xl font-bold text-slate-900 dark:text-white">{messTimings.snacks}</p>
                                         </div>
-                                        <div className="p-4 bg-white border rounded-lg">
-                                            <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Dinner</h4>
-                                            <p className="text-xl font-bold text-slate-900">{messTimings.dinner}</p>
+                                        <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-sm">
+                                            <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Dinner</h4>
+                                            <p className="text-xl font-bold text-slate-900 dark:text-white">{messTimings.dinner}</p>
                                         </div>
                                     </div>
                                 ) : messSubTab === 'vending' ? (

@@ -384,35 +384,35 @@ export default function AdminDashboard() {
                 <div className="flex space-x-2 border-b border-slate-200 pb-4 mb-6 overflow-x-auto">
                     <button
                         onClick={() => setActiveTab('complaints')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'complaints' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'complaints' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                     >
                         <AlertCircle className="w-4 h-4 mr-2" />
                         Complaints Registered
                     </button>
                     <button
                         onClick={() => setActiveTab('outpass')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                     >
                         <FileText className="w-4 h-4 mr-2" />
                         Outpass Verification
                     </button>
                     <button
                         onClick={() => setActiveTab('fees')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'fees' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'fees' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                     >
                         <IndianRupee className="w-4 h-4 mr-2" />
                         Fee Pending
                     </button>
                     <button
                         onClick={() => setActiveTab('mess')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'mess' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'mess' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                     >
                         <Utensils className="w-4 h-4 mr-2" />
                         Mess Details
                     </button>
                     <button
                         onClick={() => setActiveTab('messages')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                     >
                         <Send className="w-4 h-4 mr-2" />
                         Messages
@@ -466,7 +466,7 @@ export default function AdminDashboard() {
                                             </div>
                                         </CardHeader>
                                         <CardContent>
-                                            <p className="text-sm text-slate-700 mb-4">{c.description}</p>
+                                            <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">{c.description}</p>
                                             {c.status !== 'resolved' && (
                                                 <div className="flex space-x-2">
                                                     {c.status === 'pending' && <Button size="sm" variant="outline" onClick={() => updateComplaintStatus(c.id, 'in-progress')}>Mark In Progress</Button>}
@@ -533,12 +533,12 @@ export default function AdminDashboard() {
                                     <CardContent>
                                         <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                                             <div>
-                                                <p className="text-slate-500">Reason</p>
-                                                <p className="font-medium">{o.reason}</p>
+                                                <p className="text-slate-500 dark:text-slate-400">Reason</p>
+                                                <p className="font-medium dark:text-slate-100">{o.reason}</p>
                                             </div>
                                             <div>
-                                                <p className="text-slate-500">Duration</p>
-                                                <p className="font-medium">{o.fromDate} to {o.toDate}</p>
+                                                <p className="text-slate-500 dark:text-slate-400">Duration</p>
+                                                <p className="font-medium dark:text-slate-100">{o.fromDate} to {o.toDate}</p>
                                             </div>
                                         </div>
 
@@ -825,9 +825,9 @@ export default function AdminDashboard() {
                                             <table className="w-full text-xs sm:text-sm text-left border-collapse">
                                                 <thead className="text-[10px] sm:text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-800/50 border-b">
                                                     <tr>
-                                                        <th className="px-3 py-2 font-bold bg-slate-100 dark:bg-slate-800 whitespace-nowrap sticky left-0 z-20 border-r text-slate-700 dark:text-slate-300">Day / Meal</th>
+                                                        <th className="px-3 py-2 font-bold bg-slate-100 dark:bg-slate-800 whitespace-nowrap sticky left-0 z-20 border-r text-slate-700 dark:text-slate-100">Day / Meal</th>
                                                         {meals.map(meal => (
-                                                            <th key={meal} className="px-3 py-2 font-bold min-w-[120px] border-r last:border-0 text-slate-700 dark:text-slate-300 capitalize">{meal}</th>
+                                                            <th key={meal} className="px-3 py-2 font-bold min-w-[120px] border-r last:border-0 text-slate-700 dark:text-slate-100 capitalize">{meal}</th>
                                                         ))}
                                                     </tr>
                                                 </thead>
@@ -842,7 +842,7 @@ export default function AdminDashboard() {
                                                                     <Input
                                                                         value={messMenu[meal as keyof typeof messMenu][dayIndex]}
                                                                         onChange={(e) => handleMenuChange(meal, dayIndex, e.target.value)}
-                                                                        className="h-8 text-xs bg-transparent border-transparent hover:border-slate-200 focus:bg-white focus:ring-1 focus:ring-green-500 transition-all px-2"
+                                                                        className="h-8 text-xs bg-transparent border-transparent hover:border-slate-200 focus:bg-white dark:focus:bg-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-green-500 transition-all px-2"
                                                                     />
                                                                 </td>
                                                             ))}
@@ -870,36 +870,36 @@ export default function AdminDashboard() {
                                 ) : messSubTab === 'timings' ? (
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="p-4 bg-white border rounded-lg">
-                                                <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Breakfast</h4>
+                                            <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg">
+                                                <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Breakfast</h4>
                                                 <Input
                                                     value={messTimings.breakfast}
                                                     onChange={(e) => setMessTimings({ ...messTimings, breakfast: e.target.value })}
-                                                    className="text-lg font-bold text-slate-900 border-transparent hover:border-slate-200 focus:bg-white focus:ring-1 focus:ring-green-500 transition-all"
+                                                    className="text-lg font-bold text-slate-900 dark:text-white border-transparent hover:border-slate-200 focus:bg-white dark:focus:bg-slate-700 focus:ring-1 focus:ring-green-500 transition-all"
                                                 />
                                             </div>
-                                            <div className="p-4 bg-white border rounded-lg">
-                                                <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Lunch</h4>
+                                            <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg">
+                                                <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Lunch</h4>
                                                 <Input
                                                     value={messTimings.lunch}
                                                     onChange={(e) => setMessTimings({ ...messTimings, lunch: e.target.value })}
-                                                    className="text-lg font-bold text-slate-900 border-transparent hover:border-slate-200 focus:bg-white focus:ring-1 focus:ring-green-500 transition-all"
+                                                    className="text-lg font-bold text-slate-900 dark:text-white border-transparent hover:border-slate-200 focus:bg-white dark:focus:bg-slate-700 focus:ring-1 focus:ring-green-500 transition-all"
                                                 />
                                             </div>
-                                            <div className="p-4 bg-white border rounded-lg">
-                                                <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Snacks</h4>
+                                            <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg">
+                                                <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Snacks</h4>
                                                 <Input
                                                     value={messTimings.snacks}
                                                     onChange={(e) => setMessTimings({ ...messTimings, snacks: e.target.value })}
-                                                    className="text-lg font-bold text-slate-900 border-transparent hover:border-slate-200 focus:bg-white focus:ring-1 focus:ring-green-500 transition-all"
+                                                    className="text-lg font-bold text-slate-900 dark:text-white border-transparent hover:border-slate-200 focus:bg-white dark:focus:bg-slate-700 focus:ring-1 focus:ring-green-500 transition-all"
                                                 />
                                             </div>
-                                            <div className="p-4 bg-white border rounded-lg">
-                                                <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Dinner</h4>
+                                            <div className="p-4 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg">
+                                                <h4 className="font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Dinner</h4>
                                                 <Input
                                                     value={messTimings.dinner}
                                                     onChange={(e) => setMessTimings({ ...messTimings, dinner: e.target.value })}
-                                                    className="text-lg font-bold text-slate-900 border-transparent hover:border-slate-200 focus:bg-white focus:ring-1 focus:ring-green-500 transition-all"
+                                                    className="text-lg font-bold text-slate-900 dark:text-white border-transparent hover:border-slate-200 focus:bg-white dark:focus:bg-slate-700 focus:ring-1 focus:ring-green-500 transition-all"
                                                 />
                                             </div>
                                         </div>
@@ -924,7 +924,7 @@ export default function AdminDashboard() {
                                         <div className="p-6 bg-white rounded-lg border">
                                             <h4 className="font-bold text-slate-900 text-lg mb-4">Update Vending Machine Status</h4>
                                             <div className="space-y-3">
-                                                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                                                <label className="flex items-center p-3 border dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                                                     <input
                                                         type="radio"
                                                         name="vendingStatus"
@@ -934,12 +934,12 @@ export default function AdminDashboard() {
                                                         className="w-4 h-4 text-green-600"
                                                     />
                                                     <span className="ml-3 flex-1">
-                                                        <span className="font-semibold text-slate-900">Refilled</span>
-                                                        <span className="block text-sm text-slate-500">All vending machines are fully stocked</span>
+                                                        <span className="font-semibold text-slate-900 dark:text-slate-100">Refilled</span>
+                                                        <span className="block text-sm text-slate-500 dark:text-slate-400">All vending machines are fully stocked</span>
                                                     </span>
-                                                    <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">OPERATIONAL</span>
+                                                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-bold rounded-full">OPERATIONAL</span>
                                                 </label>
-                                                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                                                <label className="flex items-center p-3 border dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                                                     <input
                                                         type="radio"
                                                         name="vendingStatus"
@@ -949,12 +949,12 @@ export default function AdminDashboard() {
                                                         className="w-4 h-4 text-yellow-600"
                                                     />
                                                     <span className="ml-3 flex-1">
-                                                        <span className="font-semibold text-slate-900">Not Filled</span>
-                                                        <span className="block text-sm text-slate-500">Stock is running low, needs refilling soon</span>
+                                                        <span className="font-semibold text-slate-900 dark:text-slate-100">Not Filled</span>
+                                                        <span className="block text-sm text-slate-500 dark:text-slate-400">Stock is running low, needs refilling soon</span>
                                                     </span>
-                                                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full">LOW STOCK</span>
+                                                    <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 text-xs font-bold rounded-full">LOW STOCK</span>
                                                 </label>
-                                                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                                                <label className="flex items-center p-3 border dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                                                     <input
                                                         type="radio"
                                                         name="vendingStatus"
@@ -964,12 +964,12 @@ export default function AdminDashboard() {
                                                         className="w-4 h-4 text-red-600"
                                                     />
                                                     <span className="ml-3 flex-1">
-                                                        <span className="font-semibold text-slate-900">Empty</span>
-                                                        <span className="block text-sm text-slate-500">Vending machines are out of stock</span>
+                                                        <span className="font-semibold text-slate-900 dark:text-slate-100">Empty</span>
+                                                        <span className="block text-sm text-slate-500 dark:text-slate-400">Vending machines are out of stock</span>
                                                     </span>
-                                                    <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">OUT OF STOCK</span>
+                                                    <span className="px-3 py-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs font-bold rounded-full">OUT OF STOCK</span>
                                                 </label>
-                                                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition">
+                                                <label className="flex items-center p-3 border dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                                                     <input
                                                         type="radio"
                                                         name="vendingStatus"
@@ -979,10 +979,10 @@ export default function AdminDashboard() {
                                                         className="w-4 h-4 text-gray-600"
                                                     />
                                                     <span className="ml-3 flex-1">
-                                                        <span className="font-semibold text-slate-900">Server Error</span>
-                                                        <span className="block text-sm text-slate-500">Vending machines are experiencing technical issues</span>
+                                                        <span className="font-semibold text-slate-900 dark:text-slate-100">Server Error</span>
+                                                        <span className="block text-sm text-slate-500 dark:text-slate-400">Vending machines are experiencing technical issues</span>
                                                     </span>
-                                                    <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded-full">ERROR</span>
+                                                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-900/40 text-gray-700 dark:text-gray-300 text-xs font-bold rounded-full">ERROR</span>
                                                 </label>
                                             </div>
                                             <div className="flex justify-end mt-6">

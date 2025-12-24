@@ -352,19 +352,19 @@ export default function DevOpsDashboard() {
                             <table className="w-full text-sm">
                                 <thead className="border-b">
                                     <tr className="text-left">
-                                        <th className="pb-3 font-semibold text-slate-700">Login ID / Username</th>
-                                        <th className="pb-3 font-semibold text-slate-700">Full Name</th>
-                                        <th className="pb-3 font-semibold text-slate-700">Role</th>
-                                        <th className="pb-3 font-semibold text-slate-700">Hostel</th>
-                                        <th className="pb-3 font-semibold text-slate-700 font-mono text-red-600">Password</th>
-                                        <th className="pb-3 font-semibold text-slate-700 text-right">Actions</th>
+                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Login ID / Username</th>
+                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Full Name</th>
+                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Role</th>
+                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Hostel</th>
+                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 font-mono text-red-600">Password</th>
+                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredUsers.map((u) => (
-                                        <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50">
-                                            <td className="py-3 font-medium text-slate-900">{u.id}</td>
-                                            <td className="py-3 text-slate-600">{u.name}</td>
+                                        <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td className="py-3 font-medium text-slate-900 dark:text-white">{u.id}</td>
+                                            <td className="py-3 text-slate-600 dark:text-slate-400">{u.name}</td>
                                             <td className="py-3">
                                                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
                                                     u.role === 'devops' ? 'bg-red-100 text-red-700' :
@@ -374,9 +374,9 @@ export default function DevOpsDashboard() {
                                                     {u.role}
                                                 </span>
                                             </td>
-                                            <td className="py-3 text-slate-600">{u.hostelName || 'N/A'}</td>
+                                            <td className="py-3 text-slate-600 dark:text-slate-400">{u.hostelName || 'N/A'}</td>
                                             <td className="py-3">
-                                                <code className="px-2 py-1 bg-yellow-100 text-red-700 rounded font-bold border border-yellow-200">
+                                                <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-red-700 dark:text-red-400 rounded font-bold border border-yellow-200 dark:border-yellow-700/50">
                                                     {u.password || 'SECRET'}
                                                 </code>
                                             </td>
@@ -439,7 +439,7 @@ export default function DevOpsDashboard() {
                                     onChange={(e) => setEditData({ ...editData, id: e.target.value })}
                                     placeholder="Enter new login ID"
                                 />
-                                <p className="text-[10px] text-amber-600 font-medium">Warning: Changing this will change their login username.</p>
+                                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Warning: Changing this will change their login username.</p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="editName">Full Name</Label>

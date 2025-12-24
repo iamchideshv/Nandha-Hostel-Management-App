@@ -67,11 +67,11 @@ export default function AuthorityDashboard() {
                             <CardHeader className="pb-2">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <CardTitle className="text-lg">{o.studentName} <span className="text-sm font-normal text-slate-500">({o.studentId})</span></CardTitle>
+                                        <CardTitle className="text-lg">{o.studentName} <span className="text-sm font-normal text-slate-500 dark:text-slate-400">({o.studentId})</span></CardTitle>
                                         <CardDescription>Requested on {new Date(o.createdAt).toLocaleDateString()}</CardDescription>
                                     </div>
-                                    <div className={`px-2 py-1 rounded text-xs font-bold uppercase ${o.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                        o.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                                    <div className={`px-2 py-1 rounded text-xs font-bold uppercase ${o.status === 'approved' ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' :
+                                        o.status === 'rejected' ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300' : 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300'
                                         }`}>
                                         {o.status}
                                     </div>
@@ -80,12 +80,12 @@ export default function AuthorityDashboard() {
                             <CardContent>
                                 <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-lg mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <p className="text-xs text-slate-500 uppercase font-semibold">Reason</p>
-                                        <p className="font-medium">{o.reason}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Reason</p>
+                                        <p className="font-medium dark:text-slate-100">{o.reason}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500 uppercase font-semibold">Duration</p>
-                                        <p className="font-medium">{o.fromDate} — {o.toDate}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Duration</p>
+                                        <p className="font-medium dark:text-slate-100">{o.fromDate} — {o.toDate}</p>
                                     </div>
                                 </div>
 
