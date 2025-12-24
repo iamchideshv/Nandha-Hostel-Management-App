@@ -75,7 +75,27 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { collegeName, hostelName, roomNumber, fromDate, toDate, reason, studentName, outpassId, scanType, pwsId } = body;
 
-        if (!SPREADSHEET_ID) {
+        // Configuration for different hostels
+        const BOYS_HOSTELS = ['nri-1', 'nri-2', 'nri-3', 'nri-4'];
+        const GIRLS_HOSTELS = ['akshaya', 'akshaya-1', 'akshaya-2', 'akshaya-3', 'akshaya-4', 'akshaya1', 'akshaya2', 'akshaya3', 'akshaya4'];
+
+        // Determine correct Spreadsheet ID
+        let targetSpreadsheetId = process.env.GOOGLE_SHEETS_BOYS_SPREADSHEET_ID || process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
+
+        // Basic normalization for matching (remove spaces, lowercase)
+        const normalizedHostel = hostelName?.toLowerCase().replace(/\s+/g, '') || '';
+
+        console.log(`[EXIT-RECORD] Raw Hostel: "${hostelName}", Normalized: "${normalizedHostel}"`);
+
+        // If it's a girls hostel, use the girls spreadsheet
+        if (GIRLS_HOSTELS.some(h => normalizedHostel.includes(h.replace(/\s+/g, '')))) {
+            targetSpreadsheetId = '1fZpDraz__Bb--8rX5NktVQSJ6Y9fLiDoZ27YhHr1vr0';
+            console.log(`[EXIT-RECORD] Routing to GIRLS sheet: ${targetSpreadsheetId}`);
+        } else {
+            console.log(`[EXIT-RECORD] Routing to BOYS sheet: ${targetSpreadsheetId}`);
+        }
+
+        if (!targetSpreadsheetId) {
             return NextResponse.json({ error: 'Spreadsheet ID not configured' }, { status: 500 });
         }
 
@@ -83,22 +103,22 @@ export async function POST(req: Request) {
         const currentSheetName = getSheetName();
 
         // Ensure the correct sheet exists before writing
-        await ensureSheetExists(sheets, SPREADSHEET_ID, currentSheetName);
+        await ensureSheetExists(sheets, targetSpreadsheetId, currentSheetName);
 
         if (scanType === 'EXIT') {
             // Get current row count to determine S.No
             const response = await sheets.spreadsheets.values.get({
-                spreadsheetId: SPREADSHEET_ID,
+                spreadsheetId: targetSpreadsheetId,
                 range: `${currentSheetName}!A:A`, // Get all rows in column A to count
             });
 
             const rowCount = response.data.values?.length || 0;
-            const sno = rowCount; // This will be the next S.No (header is row 1, so rowCount is correct)
+            const sno = rowCount; // This will be the next S.No
 
             // If this is the first data row, add headers
             if (rowCount === 0) {
                 await sheets.spreadsheets.values.append({
-                    spreadsheetId: SPREADSHEET_ID,
+                    spreadsheetId: targetSpreadsheetId,
                     range: `${currentSheetName}!A1`,
                     valueInputOption: 'RAW',
                     requestBody: {
@@ -128,7 +148,7 @@ export async function POST(req: Request) {
             ];
 
             await sheets.spreadsheets.values.append({
-                spreadsheetId: SPREADSHEET_ID,
+                spreadsheetId: targetSpreadsheetId,
                 range: `${currentSheetName}!A:L`,
                 valueInputOption: 'RAW',
                 requestBody: {
@@ -136,15 +156,11 @@ export async function POST(req: Request) {
                 }
             });
 
-            return NextResponse.json({ success: true, message: 'EXIT record logged to Google Sheets' });
+            return NextResponse.json({ success: true, message: `EXIT record logged to ${targetSpreadsheetId === '1fZpDraz__Bb--8rX5NktVQSJ6Y9fLiDoZ27YhHr1vr0' ? 'Girls' : 'Boys'} Spreadsheet` });
 
         } else if (scanType === 'ENTRY') {
-            // Get all rows from current sheet to find matching Outpass ID
-            // NOTE: This assumes entry happens in the same month as exit. 
-            // If entry spans across months, we might need to search previous sheets, but for now current month is safest default.
-
             const response = await sheets.spreadsheets.values.get({
-                spreadsheetId: SPREADSHEET_ID,
+                spreadsheetId: targetSpreadsheetId,
                 range: `${currentSheetName}!A:L`,
             });
 
@@ -152,9 +168,8 @@ export async function POST(req: Request) {
             let foundRowIndex = -1;
 
             // Search from bottom up for the latest matching Outpass ID with no In Time
-            for (let i = rows.length - 1; i > 0; i--) { // Start from 1 to skip header
+            for (let i = rows.length - 1; i > 0; i--) {
                 const row = rows[i];
-                // Column B (index 1) is Outpass ID, Column K (index 10) is In Time
                 if (row[1] === outpassId && !row[10]) {
                     foundRowIndex = i;
                     break;
@@ -167,10 +182,10 @@ export async function POST(req: Request) {
                 }, { status: 400 });
             }
 
-            // Update the In Time column (K) for the found row
-            const updateRange = `${currentSheetName}!K${foundRowIndex + 1}`; // +1 because sheets are 1-indexed
+            // Update the In Time column (K)
+            const updateRange = `${currentSheetName}!K${foundRowIndex + 1}`;
             await sheets.spreadsheets.values.update({
-                spreadsheetId: SPREADSHEET_ID,
+                spreadsheetId: targetSpreadsheetId,
                 range: updateRange,
                 valueInputOption: 'RAW',
                 requestBody: {
@@ -178,7 +193,7 @@ export async function POST(req: Request) {
                 }
             });
 
-            return NextResponse.json({ success: true, message: 'ENTRY time updated in Google Sheets' });
+            return NextResponse.json({ success: true, message: `ENTRY time updated in ${targetSpreadsheetId === '1fZpDraz__Bb--8rX5NktVQSJ6Y9fLiDoZ27YhHr1vr0' ? 'Girls' : 'Boys'} Spreadsheet` });
         }
 
         return NextResponse.json({ error: 'Invalid scan type' }, { status: 400 });
