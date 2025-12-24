@@ -1158,36 +1158,36 @@ export default function StudentDashboard() {
                                             <p className="text-sm text-slate-500 text-center py-4">No reports found.</p>
                                         ) : (
                                             lostItems.map((item) => (
-                                                <div key={item.id} className="p-3 rounded-lg border bg-white dark:bg-slate-800 flex justify-between items-center">
-                                                    <div className="flex items-center gap-3">
+                                                <div key={item.id} className="p-4 rounded-xl border bg-white dark:bg-slate-800 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
+                                                    <div className="flex items-center gap-4">
                                                         {item.image ? (
-                                                            <div className="w-10 h-10 rounded border overflow-hidden cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
+                                                            <div className="w-16 h-16 rounded-lg border overflow-hidden cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
                                                                 <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
                                                             </div>
                                                         ) : (
-                                                            <div className="w-10 h-10 rounded border bg-slate-100 flex items-center justify-center text-slate-400">
-                                                                <Search className="w-5 h-5" />
+                                                            <div className="w-16 h-16 rounded-lg border bg-slate-100 flex items-center justify-center text-slate-400">
+                                                                <Search className="w-6 h-6" />
                                                             </div>
                                                         )}
                                                         <div>
-                                                            <p className="font-medium text-sm">{item.productName}</p>
-                                                            <p className={`text-[10px] font-bold capitalize ${item.status === 'not-found' ? 'text-red-500' :
+                                                            <p className="font-bold text-base text-slate-900 dark:text-slate-100">{item.productName}</p>
+                                                            <p className={`text-xs font-bold capitalize mt-0.5 ${item.status === 'not-found' ? 'text-red-500' :
                                                                     (item.status === 'found' || item.status === 'returned') ? 'text-green-500' :
                                                                         'text-slate-500'
                                                                 }`}>
                                                                 {item.status === 'not-found' ? 'Not Found' : item.status}
                                                             </p>
                                                             {item.adminMessage && (
-                                                                <p className="text-[9px] text-slate-400 italic mt-0.5 line-clamp-1">
+                                                                <p className="text-[11px] text-slate-500 font-medium italic mt-1 line-clamp-2 max-w-[200px] sm:max-w-md">
                                                                     {item.adminMessage}
                                                                 </p>
                                                             )}
                                                         </div>
                                                     </div>
                                                     <div className="text-right">
-                                                        <p className="text-[10px] text-slate-400">{new Date(item.createdAt).toLocaleDateString()}</p>
-                                                        <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px]" onClick={() => setSelectedItemDetail(item)}>
-                                                            <Eye className="w-3 h-3 mr-1" /> View
+                                                        <p className="text-[11px] text-slate-400 mb-2">{new Date(item.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
+                                                        <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-semibold rounded-lg border-slate-200" onClick={() => setSelectedItemDetail(item)}>
+                                                            <Eye className="w-3.5 h-3.5 mr-1.5" /> View
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -1233,8 +1233,8 @@ export default function StudentDashboard() {
                                     <div>
                                         <p className="text-slate-500 text-[10px] uppercase font-bold">Status</p>
                                         <p className={`font-bold capitalize ${selectedItemDetail.status === 'not-found' ? 'text-red-500' :
-                                                (selectedItemDetail.status === 'found' || selectedItemDetail.status === 'returned') ? 'text-green-500' :
-                                                    ''
+                                            (selectedItemDetail.status === 'found' || selectedItemDetail.status === 'returned') ? 'text-green-500' :
+                                                ''
                                             }`}>
                                             {selectedItemDetail.status === 'not-found' ? 'Not Found' : selectedItemDetail.status}
                                         </p>
