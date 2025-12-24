@@ -100,3 +100,19 @@ export interface Message {
     hostelName?: string; // If sent by student
     timestamp: string;
 }
+
+export interface LostFound {
+    id: string;
+    studentId: string;
+    studentName: string;
+    hostelName: string;
+    roomNumber: string;
+    productName: string;
+    identification: string; // clues or identification
+    location: string; // where and when
+    timeAndDate: string;
+    image?: string; // Base64 string
+    status: 'pending' | 'found' | 'returned' | 'not-found';
+    adminMessage?: string;
+    createdAt: string;
+}

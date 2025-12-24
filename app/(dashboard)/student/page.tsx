@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye } from 'lucide-react';
 import QRCode from 'react-qr-code';
-import { Complaint, Outpass, Message } from '@/lib/types';
+import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
@@ -35,7 +35,7 @@ interface OutpassData {
 
 export default function StudentDashboard() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages'>('mess');
+    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -44,6 +44,7 @@ export default function StudentDashboard() {
     const [complaints, setComplaints] = useState<ComplaintData[]>([]);
     const [outpasses, setOutpasses] = useState<OutpassData[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [lostItems, setLostItems] = useState<LostFound[]>([]);
     const [feeStatus, setFeeStatus] = useState<any>(null);
     const [loadingData, setLoadingData] = useState(false);
 
@@ -60,10 +61,20 @@ export default function StudentDashboard() {
         yearAndDept: ''
     });
 
+    const [lostFoundForm, setLostFoundForm] = useState({
+        productName: '',
+        identification: '',
+        location: '',
+        timeAndDate: '',
+        image: ''
+    });
+
 
 
     // Zoom Modal State
     const [selectedQr, setSelectedQr] = useState<any>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [selectedItemDetail, setSelectedItemDetail] = useState<LostFound | null>(null);
     const [showAbout, setShowAbout] = useState(false);
     const [uploadedMenu, setUploadedMenu] = useState<any>(null);
 
@@ -98,6 +109,7 @@ export default function StudentDashboard() {
                 fetchAndSet(`/api/complaints?studentId=${user.id}`, setComplaints, 'Complaints fetch error'),
                 fetchAndSet(`/api/outpass?studentId=${user.id}`, setOutpasses, 'Outpasses fetch error'),
                 fetchAndSet(`/api/fees?studentId=${user.id}`, (d) => setFeeStatus(d.status === 'none' ? null : d), 'Fees fetch error'),
+                fetchAndSet(`/api/lost-found?studentId=${user.id}`, setLostItems, 'Lost & Found fetch error'),
                 fetchAndSet(`/api/mess-menu?type=${messHostelType}`, setUploadedMenu, 'Menu fetch error'),
                 fetchAndSet(`/api/vending-status`, setVendingStatus, 'Vending fetch error'),
                 fetchAndSet(`/api/mess-timings?type=${messHostelType}`, setMessTimings, 'Timings fetch error'),
@@ -270,6 +282,78 @@ export default function StudentDashboard() {
         }
     };
 
+    const handleClearLostFoundHistory = async () => {
+        if (!confirm('Are you sure you want to clear your lost & found history? This action cannot be undone.')) return;
+        setSubmitting(true);
+        try {
+            const res = await fetch(`/api/lost-found?studentId=${user?.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                toast.success('History Cleared');
+                fetchData();
+            }
+        } catch (e) { toast.error('Clear Failed'); }
+        setSubmitting(false);
+    };
+
+    const handleLostFoundSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/lost-found', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    studentId: user?.id,
+                    studentName: user?.name,
+                    hostelName: user?.hostelName,
+                    roomNumber: user?.roomNumber,
+                    ...lostFoundForm
+                })
+            });
+            if (res.ok) {
+                toast.success('Report Submitted');
+                setLostFoundForm({ productName: '', identification: '', location: '', timeAndDate: '', image: '' });
+                fetchData();
+            } else {
+                toast.error('Failed to submit report');
+            }
+        } catch (e) {
+            toast.error('Error submitting report');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    setLostFoundForm({ ...lostFoundForm, image: compressedBase64 });
+                };
+                img.src = reader.result as string;
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <>
             {/* Mobile Navigation Overlay */}
@@ -299,6 +383,10 @@ export default function StudentDashboard() {
                             <button onClick={() => { setActiveTab('messages'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <Send className="w-5 h-5" />
                                 <span>Messages</span>
+                            </button>
+                            <button onClick={() => { setActiveTab('lost-found'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'lost-found' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                                <Search className="w-5 h-5" />
+                                <span>Lost & Found</span>
                             </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
@@ -359,6 +447,10 @@ export default function StudentDashboard() {
                             {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                         </p>
                     </div>
+                    <button onClick={() => setActiveTab('lost-found')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'lost-found' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                        <Search className="h-6 w-6 text-amber-600 mb-2" />
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Lost & Found</h3>
+                    </button>
                 </div>
 
                 <div className="min-h-[400px]">
@@ -966,7 +1058,199 @@ export default function StudentDashboard() {
                             </CardContent>
                         </Card>
                     )}
+                    {activeTab === 'lost-found' && (
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Report Lost & Found</CardTitle>
+                                    <CardDescription>Report an item you've lost or found</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <form onSubmit={handleLostFoundSubmit} className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label>Product Name</Label>
+                                            <Input
+                                                placeholder="e.g. Blue Water Bottle"
+                                                value={lostFoundForm.productName}
+                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, productName: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Clues or Identification</Label>
+                                            <Input
+                                                placeholder="e.g. Has a 'Nike' sticker"
+                                                value={lostFoundForm.identification}
+                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, identification: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Where and When</Label>
+                                            <Input
+                                                placeholder="e.g. Near Mess Hall"
+                                                value={lostFoundForm.location}
+                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, location: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Time and Date</Label>
+                                            <Input
+                                                placeholder="e.g. 10:30 AM, 24 Dec"
+                                                value={lostFoundForm.timeAndDate}
+                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, timeAndDate: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Upload Image</Label>
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                className="cursor-pointer"
+                                            />
+                                            {lostFoundForm.image && (
+                                                <div className="mt-2 relative w-20 h-20 border rounded-lg overflow-hidden capitalize text-[10px] text-center flex flex-col items-center justify-center bg-slate-50">
+                                                    <img src={lostFoundForm.image} alt="Preview" className="w-full h-full object-cover" />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setLostFoundForm({ ...lostFoundForm, image: '' })}
+                                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5"
+                                                    >
+                                                        <XCircle className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <Button type="submit" disabled={submitting} className="w-full">
+                                            <Send className="w-4 h-4 mr-2" />
+                                            Submit Report
+                                        </Button>
+                                    </form>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <div className="flex justify-between items-center w-full">
+                                        <div>
+                                            <CardTitle>My Reports</CardTitle>
+                                            <CardDescription>History of your reports</CardDescription>
+                                        </div>
+                                        {lostItems.length > 0 && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8"
+                                                onClick={handleClearLostFoundHistory}
+                                            >
+                                                <XCircle className="w-4 h-4 mr-2" />
+                                                Clear
+                                            </Button>
+                                        )}
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-3">
+                                        {lostItems.length === 0 ? (
+                                            <p className="text-sm text-slate-500 text-center py-4">No reports found.</p>
+                                        ) : (
+                                            lostItems.map((item) => (
+                                                <div key={item.id} className="p-3 rounded-lg border bg-white dark:bg-slate-800 flex justify-between items-center">
+                                                    <div className="flex items-center gap-3">
+                                                        {item.image ? (
+                                                            <div className="w-10 h-10 rounded border overflow-hidden cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
+                                                                <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-10 h-10 rounded border bg-slate-100 flex items-center justify-center text-slate-400">
+                                                                <Search className="w-5 h-5" />
+                                                            </div>
+                                                        )}
+                                                        <div>
+                                                            <p className="font-medium text-sm">{item.productName}</p>
+                                                            <p className="text-[10px] text-slate-500 capitalize">{item.status}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="text-[10px] text-slate-400">{new Date(item.createdAt).toLocaleDateString()}</p>
+                                                        <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px]" onClick={() => setSelectedItemDetail(item)}>
+                                                            <Eye className="w-3 h-3 mr-1" /> View
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
                 </div>
+
+                {/* Lost Found Detail Modal */}
+                {selectedItemDetail && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSelectedItemDetail(null)}>
+                        <Card className="w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                    <CardTitle>{selectedItemDetail.productName}</CardTitle>
+                                    <Button variant="ghost" size="sm" onClick={() => setSelectedItemDetail(null)}>
+                                        <XCircle className="w-5 h-5" />
+                                    </Button>
+                                </div>
+                                <CardDescription>Report details</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {selectedItemDetail.image && (
+                                    <div className="aspect-video w-full rounded-lg border overflow-hidden bg-slate-50">
+                                        <img src={selectedItemDetail.image} alt={selectedItemDetail.productName} className="w-full h-full object-contain" />
+                                    </div>
+                                )}
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="col-span-2">
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Identification</p>
+                                        <p className="font-medium p-2 bg-slate-50 dark:bg-slate-800 rounded mt-1">{selectedItemDetail.identification}</p>
+                                    </div>
+                                    {selectedItemDetail.adminMessage && (
+                                        <div className="col-span-2">
+                                            <p className="text-blue-500 text-[10px] uppercase font-bold">Admin Message</p>
+                                            <p className="font-medium p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded mt-1 border border-blue-100 dark:border-blue-800">{selectedItemDetail.adminMessage}</p>
+                                        </div>
+                                    )}
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Status</p>
+                                        <p className="font-medium capitalize">{selectedItemDetail.status}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Location</p>
+                                        <p className="font-medium">{selectedItemDetail.location}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Room Number</p>
+                                        <p className="font-medium">{selectedItemDetail.roomNumber || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Time & Date</p>
+                                        <p className="font-medium">{selectedItemDetail.timeAndDate}</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
+                {/* Simple Image Lightbox */}
+                {selectedImage && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 p-4" onClick={() => setSelectedImage(null)}>
+                        <img src={selectedImage} alt="Full size" className="max-w-full max-h-full object-contain" />
+                        <button className="absolute top-4 right-4 text-white" onClick={() => setSelectedImage(null)}>
+                            <XCircle className="w-8 h-8" />
+                        </button>
+                    </div>
+                )}
 
                 {selectedQr && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedQr(null)}>

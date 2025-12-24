@@ -20,6 +20,7 @@ const COMPLAINTS_COL = 'complaints';
 const OUTPASS_COL = 'outpasses';
 const FEES_COL = 'fees';
 const MESS_MENU_COL = 'messMenus';
+const LOST_FOUND_COL = 'lostFound';
 
 export const db = {
   // --- USERS ---
@@ -327,6 +328,40 @@ export const db = {
       lastUpdated: new Date().toISOString()
     };
     await setDoc(doc(firestore, 'messTimings', type), data);
+  },
+
+  // --- LOST & FOUND ---
+  getLostFoundItems: async (studentId?: string, hostelName?: string): Promise<any[]> => {
+    let q = query(collection(firestore, LOST_FOUND_COL));
+    const constraints: QueryConstraint[] = [];
+    if (studentId) constraints.push(where("studentId", "==", studentId));
+    if (hostelName) constraints.push(where("hostelName", "==", hostelName));
+
+    if (constraints.length > 0) {
+      q = query(collection(firestore, LOST_FOUND_COL), ...constraints);
+    }
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  addLostFoundItem: async (item: any): Promise<void> => {
+    await setDoc(doc(firestore, LOST_FOUND_COL, item.id), item);
+  },
+
+  clearLostFoundItems: async (hostelName?: string, studentId?: string): Promise<void> => {
+    let q = query(collection(firestore, LOST_FOUND_COL));
+    const constraints = [];
+    if (hostelName) constraints.push(where("hostelName", "==", hostelName));
+    if (studentId) constraints.push(where("studentId", "==", studentId));
+
+    if (constraints.length > 0) {
+      q = query(collection(firestore, LOST_FOUND_COL), ...constraints);
+    }
+    const snap = await getDocs(q);
+    const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
+    await Promise.all(deletePromises);
   },
 
 };

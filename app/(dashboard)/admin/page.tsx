@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Complaint, Outpass, User, FeeStatus, Message } from '@/lib/types';
-import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home } from 'lucide-react';
+import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/types';
+import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages'>('complaints');
+    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found'>('complaints');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
 
@@ -22,6 +22,7 @@ export default function AdminDashboard() {
     const [outpasses, setOutpasses] = useState<Outpass[]>([]);
     const [fees, setFees] = useState<FeeStatus[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [lostItems, setLostItems] = useState<LostFound[]>([]);
     const [loading, setLoading] = useState(false);
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
@@ -33,6 +34,11 @@ export default function AdminDashboard() {
     const [selectedFee, setSelectedFee] = useState<FeeStatus | null>(null);
     const [feeForm, setFeeForm] = useState({ status: 'paid', amountDue: '', fineAmount: '', fineReason: '', dueDate: '' });
     const [showAbout, setShowAbout] = useState(false);
+    const [selectedLostItem, setSelectedLostItem] = useState<LostFound | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [showFoundModal, setShowFoundModal] = useState(false);
+    const [foundMessage, setFoundMessage] = useState('Come and collect it on office room');
+    const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
 
     // Mess Menu State
     const [messMenu, setMessMenu] = useState({
@@ -139,6 +145,12 @@ export default function AdminDashboard() {
             setFees(fData);
             if (mData && !mData.error) setMessMenu(mData);
             if (tData && !tData.error) setMessTimings(tData);
+
+            try {
+                const res = await fetch(`/api/lost-found`);
+                const data = await res.json();
+                setLostItems(data);
+            } catch (e) { console.error('LostFound error', e); }
         } catch (e) {
             toast.error('Failed to load dashboard data');
         } finally {
@@ -217,6 +229,21 @@ export default function AdminDashboard() {
             }
         } catch (e) { toast.error('Clear Failed'); }
         setLoading(false);
+    };
+
+    const handleLostFoundStatusUpdate = async (id: string, status: 'found' | 'not-found' | 'returned', message?: string) => {
+        try {
+            const res = await fetch('/api/lost-found', {
+                method: 'PATCH',
+                body: JSON.stringify({ id, status, adminMessage: message })
+            });
+            if (res.ok) {
+                toast.success(`Item marked as ${status}`);
+                setShowFoundModal(false);
+                setUpdatingItemId(null);
+                fetchData();
+            }
+        } catch (e) { toast.error('Update Failed'); }
     };
 
     const handleUpdateFee = async () => {
@@ -341,6 +368,10 @@ export default function AdminDashboard() {
                                 <Send className="w-5 h-5" />
                                 <span>Messages</span>
                             </button>
+                            <button onClick={() => { setActiveTab('lost-found'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'lost-found' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                                <Search className="w-5 h-5" />
+                                <span>Lost & Found</span>
+                            </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
                             <button onClick={() => { if (confirm('Go to home page?')) window.location.href = '/'; setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
@@ -416,6 +447,13 @@ export default function AdminDashboard() {
                     >
                         <Send className="w-4 h-4 mr-2" />
                         Messages
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('lost-found')}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'lost-found' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                    >
+                        <Search className="w-4 h-4 mr-2" />
+                        Lost & Found
                     </button>
                 </div>
 
@@ -1010,6 +1048,107 @@ export default function AdminDashboard() {
                         </Card>
                     )}
 
+                {activeTab === 'lost-found' && (
+                    <Card>
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <CardTitle>Lost & Found Reports</CardTitle>
+                                    <CardDescription>All items reported within the hostels</CardDescription>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    onClick={async () => {
+                                        if (confirm('Clear all lost & found history?')) {
+                                            try {
+                                                await fetch('/api/lost-found', { method: 'DELETE' });
+                                                toast.success('History Cleared');
+                                                fetchData();
+                                            } catch (e) { toast.error('Failed to clear'); }
+                                        }
+                                    }}
+                                >
+                                    <XCircle className="w-4 h-4 mr-2" />
+                                    Clear History
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {lostItems.length === 0 ? (
+                                    <div className="col-span-full py-12 text-center text-slate-500">
+                                        No items reported yet.
+                                    </div>
+                                ) : (
+                                    lostItems.map((item) => (
+                                        <div key={item.id} className="group relative border rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all">
+                                            {item.image ? (
+                                                <div className="aspect-video w-full overflow-hidden bg-slate-100 cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
+                                                    <img src={item.image} alt={item.productName} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                                </div>
+                                            ) : (
+                                                <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                                                    <Search className="w-10 h-10" />
+                                                </div>
+                                            )}
+                                            <div className="p-4">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div>
+                                                        <h3 className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.productName}</h3>
+                                                        <p className="text-[10px] text-slate-500 font-medium">{item.hostelName} • RM {item.roomNumber} • {item.studentName}</p>
+                                                    </div>
+                                                    <BadgeCheck className={`w-4 h-4 ${item.status === 'returned' ? 'text-green-500' : 'text-amber-500'}`} />
+                                                </div>
+                                                <div className="space-y-1 mb-4">
+                                                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+                                                        <span className="font-semibold">Clue:</span> {item.identification}
+                                                    </p>
+                                                    <p className="text-[10px] text-slate-400">
+                                                        <Clock className="w-3 h-3 inline mr-1" /> {item.timeAndDate}
+                                                    </p>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="text-xs h-8 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100"
+                                                        onClick={() => setSelectedLostItem(item)}
+                                                    >
+                                                        <Eye className="w-3 h-3 mr-1" /> View
+                                                    </Button>
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="flex-1 text-xs h-8 border-green-200 text-green-700 hover:bg-green-50"
+                                                            onClick={() => {
+                                                                setUpdatingItemId(item.id);
+                                                                setShowFoundModal(true);
+                                                            }}
+                                                        >
+                                                            Found
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="flex-1 text-xs h-8 border-red-200 text-red-700 hover:bg-red-50"
+                                                            onClick={() => handleLostFoundStatusUpdate(item.id, 'not-found')}
+                                                        >
+                                                            Not Found
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
 
                 {/* Fee Update Modal */}
                 {
@@ -1099,6 +1238,97 @@ export default function AdminDashboard() {
                 }
 
                 <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
+
+                {/* Found Message Modal */}
+                {showFoundModal && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                        <Card className="w-full max-w-sm">
+                            <CardHeader>
+                                <CardTitle>Mark as Found</CardTitle>
+                                <CardDescription>Enter a message for the student to collect the item.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Collection Message</label>
+                                    <textarea
+                                        className="w-full min-h-[100px] p-3 text-sm rounded-lg border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+                                        placeholder="e.g., Come and collect it on office room"
+                                        value={foundMessage}
+                                        onChange={(e) => setFoundMessage(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex gap-3">
+                                    <Button variant="outline" className="flex-1" onClick={() => setShowFoundModal(false)}>Cancel</Button>
+                                    <Button className="flex-1" onClick={() => updatingItemId && handleLostFoundStatusUpdate(updatingItemId, 'found', foundMessage)}>Confirm</Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
+                {/* Lost Found Detail Modal */}
+                {selectedLostItem && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSelectedLostItem(null)}>
+                        <Card className="w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <CardTitle>{selectedLostItem.productName}</CardTitle>
+                                        <CardDescription>Reported by {selectedLostItem.studentName} ({selectedLostItem.hostelName} • RM {selectedLostItem.roomNumber})</CardDescription>
+                                    </div>
+                                    <Button variant="ghost" size="sm" onClick={() => setSelectedLostItem(null)}>
+                                        <XCircle className="w-5 h-5" />
+                                    </Button>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {selectedLostItem.image && (
+                                    <div className="aspect-video w-full rounded-lg border overflow-hidden bg-slate-50 cursor-pointer" onClick={() => selectedLostItem.image && setSelectedImage(selectedLostItem.image)}>
+                                        <img src={selectedLostItem.image} alt={selectedLostItem.productName} className="w-full h-full object-contain" />
+                                    </div>
+                                )}
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div className="col-span-2">
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Identification Clue</p>
+                                        <p className="font-medium p-2 bg-slate-50 dark:bg-slate-800 rounded mt-1">{selectedLostItem.identification}</p>
+                                    </div>
+                                    {selectedLostItem.adminMessage && (
+                                        <div className="col-span-2">
+                                            <p className="text-blue-500 text-[10px] uppercase font-bold">Admin Message</p>
+                                            <p className="font-medium p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded mt-1 border border-blue-100 dark:border-blue-800">{selectedLostItem.adminMessage}</p>
+                                        </div>
+                                    )}
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Location/When</p>
+                                        <p className="font-medium">{selectedLostItem.location}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Time & Date</p>
+                                        <p className="font-medium">{selectedLostItem.timeAndDate}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Status</p>
+                                        <p className="font-medium capitalize">{selectedLostItem.status}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Student ID</p>
+                                        <p className="font-medium">{selectedLostItem.studentId}</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
+                {/* Image Lightbox */}
+                {selectedImage && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 p-4" onClick={() => setSelectedImage(null)}>
+                        <img src={selectedImage} alt="Full size" className="max-w-full max-h-full object-contain shadow-2xl" />
+                        <button className="absolute top-6 right-6 text-white hover:scale-110 transition-transform" onClick={() => setSelectedImage(null)}>
+                            <XCircle className="w-10 h-10 shadow-lg" />
+                        </button>
+                    </div>
+                )}
             </div >
         </>);
 }
