@@ -219,7 +219,7 @@ export default function LoginPage() {
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center mb-4">
                         <img
-                            src="/logo-new.png"
+                            src="/logo-main.png"
                             alt="Logo"
                             className="h-16 w-16 object-contain rounded-lg shadow-sm cursor-pointer select-none transition-transform active:scale-95"
                             onMouseDown={handleLogoPressStart}

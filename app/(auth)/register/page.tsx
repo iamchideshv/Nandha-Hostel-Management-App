@@ -63,7 +63,7 @@ export default function RegisterPage() {
             <Card className="w-full max-w-lg">
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center mb-6">
-                        <img src="/logo-new.png" alt="Logo" className="h-20 w-20 object-contain rounded-xl shadow-md border-2 border-white" />
+                        <img src="/logo-main.png" alt="Logo" className="h-20 w-20 object-contain rounded-xl shadow-md border-2 border-white" />
                     </div>
                     <div className="flex flex-wrap justify-center gap-2 mb-4">
                         <button

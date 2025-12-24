@@ -13,7 +13,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-slate-900 dark:to-slate-950 flex flex-col transition-colors duration-500">
       <header className="p-4 md:p-6 flex justify-between items-center max-w-7xl mx-auto w-full gap-2">
         <div className="flex items-center space-x-2 min-w-0 flex-shrink">
-          <img src="/logo-new.png" alt="Logo" className="h-8 w-8 md:h-10 md:w-10 object-contain rounded-md flex-shrink-0" />
+          <img src="/logo-main.png" alt="Logo" className="h-8 w-8 md:h-10 md:w-10 object-contain rounded-md flex-shrink-0" />
           <span className="font-bold text-sm md:text-xl text-slate-900 dark:text-white truncate">Nandha Institute Hostel Manager</span>
         </div>
         <div className="flex items-center gap-1 md:gap-4 flex-shrink-0">
