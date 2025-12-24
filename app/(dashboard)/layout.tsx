@@ -46,9 +46,12 @@ export default function DashboardLayout({
                 </div>
                 <div className="flex items-center gap-2">
                     <ThemeToggle />
-                    <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                        <Menu className="h-5 w-5" />
-                    </Button>
+                    {/* Hide hamburger for admin/student as they have page-specific navigation */}
+                    {user.role !== 'admin' && user.role !== 'student' && (
+                        <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                            <Menu className="h-5 w-5" />
+                        </Button>
+                    )}
                 </div>
             </div>
 
