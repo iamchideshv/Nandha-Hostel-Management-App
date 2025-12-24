@@ -27,7 +27,24 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
                     <p className="font-medium text-slate-800 mt-2">FOR NANDHA ENGINEERING COLLEGE</p>
                     <p className="text-xs text-slate-400 mt-4">© 2024 All Rights Reserved</p>
                 </div>
-                <Button className="w-full" onClick={onClose}>Close</Button>
+                <div className="space-y-3 pt-2">
+                    <Button
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 rounded-xl transition-all active:scale-95"
+                        onClick={onClose}
+                    >
+                        Close
+                    </Button>
+
+                    <a
+                        className="uiverse-fancy-button"
+                        href="mailto:chideshv@gmail.com?subject=Hostel%20App%20Feedback"
+                    >
+                        <span className="top-key"></span>
+                        <span className="text">Give Feedback</span>
+                        <span className="bottom-key-1"></span>
+                        <span className="bottom-key-2"></span>
+                    </a>
+                </div>
             </div>
         </div>
     );
