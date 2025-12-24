@@ -252,12 +252,20 @@ export const db = {
     const snapshot = await getDocs(collection(firestore, 'messages'));
     return snapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
-      .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      .sort((a: any, b: any) => {
+        const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+        const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+        return timeB - timeA;
+      });
   },
 
   addMessage: async (messageData: any): Promise<void> => {
+    // Sanitize data to remove undefined values which crash Firestore
+    const cleanData = Object.fromEntries(
+      Object.entries(messageData).filter(([_, v]) => v !== undefined)
+    );
     const data = {
-      ...messageData,
+      ...cleanData,
       timestamp: new Date().toISOString()
     };
     await addDoc(collection(firestore, 'messages'), data);

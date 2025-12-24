@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
             message,
             type: type || 'info',
             targetHostels: targetHostels || [], // Array of hostel names
-            senderId,
-            senderName,
-            senderRole,
-            hostelName // For student messages
+            senderId: senderId || 'unknown',
+            senderName: senderName || 'Unknown',
+            senderRole: senderRole || 'student',
+            hostelName: hostelName || null // Ensure null if undefined, Firestore crashes on undefined
         });
         return NextResponse.json({ success: true, message: 'Message sent successfully' });
     } catch (error) {
