@@ -41,7 +41,7 @@ export default function DashboardLayout({
             {/* Mobile Topbar */}
             <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b dark:border-slate-800 sticky top-0 z-10">
                 <div className="flex items-center space-x-2">
-                    <img src="/logo-new.png" alt="Logo" className="h-8 w-8 object-contain rounded" />
+                    <img src="/logo-main.png" alt="Logo" className="h-8 w-8 object-contain rounded" />
                     <h1 className="font-bold text-lg text-blue-900 dark:text-blue-400">Nandha Hostel App</h1>
                 </div>
                 <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ export default function DashboardLayout({
       `}>
                 <div className="p-4 border-b dark:border-slate-800 flex justify-between items-center md:block">
                     <div className="flex items-center space-x-2">
-                        <img src="/logo-new.png" alt="Logo" className="h-10 w-10 object-contain rounded-md" />
+                        <img src="/logo-main.png" alt="Logo" className="h-10 w-10 object-contain rounded-md" />
                         <div>
                             <p className="text-sm font-medium text-slate-900 dark:text-white">{user.name}</p>
                             <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{user.role}</p>
