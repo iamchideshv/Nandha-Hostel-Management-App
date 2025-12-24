@@ -366,7 +366,7 @@ export default function AdminDashboard() {
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
                                 Admin Dashboard
                                 {user?.hostelName && (
-                                    <span className="ml-3 text-lg font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full align-middle">
+                                    <span className="ml-3 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full align-middle">
                                         {user.hostelName}
                                     </span>
                                 )}
