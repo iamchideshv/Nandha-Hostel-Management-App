@@ -242,6 +242,8 @@ export default function AdminDashboard() {
     };
 
     const [newMessage, setNewMessage] = useState('');
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
         try {
@@ -266,13 +268,18 @@ export default function AdminDashboard() {
             if (res.ok) {
                 toast.success('Message Broadcasted');
                 setNewMessage('');
-                // Optimistic update to avoid "reload" flash
+                // Optimistic update
                 setMessages(prev => [messageData, ...prev]);
+
+                // Show submitted state
+                setIsSubmitted(true);
+                setTimeout(() => setIsSubmitted(false), 3000);
             } else {
                 toast.error('Failed to send message');
             }
         } catch (e) { toast.error('Error sending message'); }
     };
+
 
     const filteredComplaints = filter === 'all' ? complaints : complaints.filter(c => c.type === filter);
 
@@ -570,9 +577,9 @@ export default function AdminDashboard() {
                                             value={newMessage}
                                             onChange={(e) => setNewMessage(e.target.value)}
                                         />
-                                        <Button onClick={handleSendMessage}>
+                                        <Button onClick={handleSendMessage} disabled={isSubmitted}>
                                             <Send className="w-4 h-4 mr-2" />
-                                            Send
+                                            {isSubmitted ? 'Submitted' : 'Send'}
                                         </Button>
                                     </div>
                                 </div>

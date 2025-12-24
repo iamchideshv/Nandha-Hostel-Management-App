@@ -190,6 +190,8 @@ export default function StudentDashboard() {
     };
 
     const [messageForm, setMessageForm] = useState('');
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
@@ -210,6 +212,10 @@ export default function StudentDashboard() {
                 toast.success('Message Sent');
                 setMessageForm('');
                 fetchData();
+
+                // Show submitted feedback
+                setIsSubmitted(true);
+                setTimeout(() => setIsSubmitted(false), 3000);
             } else {
                 toast.error('Failed to send');
             }
@@ -545,7 +551,9 @@ export default function StudentDashboard() {
                                             required
                                         />
                                     </div>
-                                    <Button type="submit" disabled={submitting}> Send Message </Button>
+                                    <Button type="submit" disabled={submitting || isSubmitted}>
+                                        {isSubmitted ? 'Submitted' : 'Send Message'}
+                                    </Button>
                                 </form>
                             </CardContent>
                         </Card>
