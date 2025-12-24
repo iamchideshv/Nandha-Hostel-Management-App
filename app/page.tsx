@@ -14,7 +14,7 @@ export default function Home() {
       <header className="p-4 md:p-6 flex justify-between items-center max-w-7xl mx-auto w-full gap-2">
         <div className="flex items-center space-x-2 min-w-0 flex-shrink">
           <img src="/logo-main.png" alt="Logo" className="h-8 w-8 md:h-10 md:w-10 object-contain rounded-md flex-shrink-0" />
-          <span className="font-bold text-sm md:text-xl text-slate-900 dark:text-white truncate">Nandha Institute Hostel Manager</span>
+          <span className="font-bold text-sm md:text-xl text-slate-900 dark:text-white truncate">NEI Smart Hostel</span>
         </div>
         <div className="flex items-center gap-1 md:gap-4 flex-shrink-0">
           <ThemeToggle />
@@ -29,7 +29,7 @@ export default function Home() {
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-4xl mx-auto space-y-8">
         <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight transition-colors duration-300">
-          Nandha Institute <span className="text-blue-600 dark:text-blue-400">Residence</span>
+          NEI Smart <span className="text-blue-600 dark:text-blue-400">Hostel</span>
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl transition-colors duration-300">
           A unified portal for students, admins, and wardens to manage mess, complaints, fees, and outpasses seamlessly.
@@ -80,7 +80,7 @@ export default function Home() {
       </main>
 
       <footer className="p-6 text-center text-slate-400 text-sm">
-        © 2024 Nandha Institute Hostel Manager. All rights reserved.
+        © 2024 NEI Smart Hostel. All rights reserved.
       </footer>
     </div>
   );

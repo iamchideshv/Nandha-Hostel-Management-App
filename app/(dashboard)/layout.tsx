@@ -42,7 +42,7 @@ export default function DashboardLayout({
             <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b dark:border-slate-800 sticky top-0 z-10">
                 <div className="flex items-center space-x-2">
                     <img src="/logo-main.png" alt="Logo" className="h-8 w-8 object-contain rounded" />
-                    <h1 className="font-bold text-lg text-blue-900 dark:text-blue-400">Nandha Hostel App</h1>
+                    <h1 className="font-bold text-lg text-blue-900 dark:text-blue-400">NEI Smart Hostel</h1>
                 </div>
                 <div className="flex items-center gap-2">
                     <ThemeToggle />

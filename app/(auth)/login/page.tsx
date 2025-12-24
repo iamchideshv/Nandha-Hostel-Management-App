@@ -230,7 +230,7 @@ export default function LoginPage() {
                         />
                     </div>
                     <div className="flex items-center justify-center text-center">
-                        <CardTitle className="text-2xl text-blue-900">Nandha Residencial Login</CardTitle>
+                        <CardTitle className="text-2xl text-blue-900 font-bold uppercase tracking-tight">NEI Smart Hostel Login</CardTitle>
                     </div>
                     <CardDescription className="text-center">
                         Enter your ID and password to access your dashboard

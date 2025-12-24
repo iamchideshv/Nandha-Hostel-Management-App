@@ -8,8 +8,8 @@ import { Toaster } from 'sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Nandha Institute Hostel Manager',
-  description: 'Hostel Management System for Nandha Institute Students and Admins',
+  title: 'NEI Smart Hostel',
+  description: 'NEI Smart Hostel - Hostel Management System',
 };
 
 export default function RootLayout({
