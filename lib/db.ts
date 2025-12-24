@@ -271,6 +271,15 @@ export const db = {
     await addDoc(collection(firestore, 'messages'), data);
   },
 
+  deleteMessagesByRole: async (role: string): Promise<void> => {
+    const messagesRef = collection(firestore, 'messages');
+    const q = query(messagesRef, where('senderRole', '==', role));
+    const snapshot = await getDocs(q);
+
+    const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+  },
+
   // --- PASSWORD RESET REQUESTS ---
   getPasswordResetRequests: async (): Promise<any[]> => {
     const snapshot = await getDocs(collection(firestore, 'passwordResetRequests'));

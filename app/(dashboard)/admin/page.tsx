@@ -244,6 +244,32 @@ export default function AdminDashboard() {
     const [newMessage, setNewMessage] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    const handleClearInbox = async () => {
+        if (!confirm('Are you sure you want to clear all student messages? This action cannot be undone.')) return;
+        try {
+            const res = await fetch('/api/messages?role=student', { method: 'DELETE' });
+            if (res.ok) {
+                setMessages(prev => prev.filter(m => m.senderRole !== 'student'));
+                toast.success('Inbox Cleared');
+            } else {
+                toast.error('Failed to clear inbox');
+            }
+        } catch (e) { toast.error('Error clearing inbox'); }
+    };
+
+    const handleDeleteHistory = async () => {
+        if (!confirm('Are you sure you want to delete all sent messages? This action cannot be undone.')) return;
+        try {
+            const res = await fetch('/api/messages?role=admin', { method: 'DELETE' });
+            if (res.ok) {
+                setMessages(prev => prev.filter(m => m.senderRole !== 'admin'));
+                toast.success('History Deleted');
+            } else {
+                toast.error('Failed to delete history');
+            }
+        } catch (e) { toast.error('Error deleting history'); }
+    };
+
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
         try {
@@ -588,12 +614,19 @@ export default function AdminDashboard() {
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
                                         <h3 className="text-lg font-medium">Inbox</h3>
-                                        <Button variant="ghost" size="sm" onClick={() => {
-                                            fetch(`/api/messages`).then(res => res.json()).then(data => setMessages(data));
-                                            toast.info('Inbox Refreshed');
-                                        }}>
-                                            <Clock className="w-3 h-3 mr-1" /> Refresh
-                                        </Button>
+                                        <div className="flex gap-2">
+                                            <Button variant="ghost" size="sm" onClick={() => {
+                                                fetch(`/api/messages`).then(res => res.json()).then(data => setMessages(data));
+                                                toast.info('Inbox Refreshed');
+                                            }}>
+                                                <Clock className="w-3 h-3 mr-1" /> Refresh
+                                            </Button>
+                                            {messages.filter(m => m.senderRole === 'student').length > 0 && (
+                                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={handleClearInbox}>
+                                                    <XCircle className="w-3 h-3 mr-1" /> Clear Inbox
+                                                </Button>
+                                            )}
+                                        </div>
                                     </div>
                                     {messages.filter(m => m.senderRole === 'student').length === 0 ? (
                                         <div className="text-center py-10 text-slate-500 bg-slate-50 dark:bg-slate-900 rounded-lg">
@@ -625,7 +658,14 @@ export default function AdminDashboard() {
 
                                 {/* Sent History */}
                                 <div className="space-y-4 border-t pt-6">
-                                    <h3 className="text-lg font-medium">Sent History</h3>
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-lg font-medium">Sent History</h3>
+                                        {messages.filter(m => m.senderRole === 'admin').length > 0 && (
+                                            <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={handleDeleteHistory}>
+                                                <XCircle className="w-3 h-3 mr-1" /> Delete History
+                                            </Button>
+                                        )}
+                                    </div>
                                     {messages.filter(m => m.senderRole === 'admin').length === 0 ? (
                                         <div className="text-center py-4 text-slate-500 text-sm">
                                             No messages sent yet
