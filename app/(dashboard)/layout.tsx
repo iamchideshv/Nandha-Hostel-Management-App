@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { LogOut, Menu, UserCircle, Home } from 'lucide-react';
 import { UpdateChecker } from '@/components/update-checker';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Loader } from '@/components/loader';
 
 export default function DashboardLayout({
     children,
@@ -26,9 +25,9 @@ export default function DashboardLayout({
         }
     }, [user, isLoading, router]);
 
-    if (isLoading) {
-        return <div className="flex h-screen items-center justify-center p-4"><Loader /></div>;
-    }
+    // if (isLoading) {
+    //     return <div className="flex h-screen items-center justify-center p-4 text-slate-500">Loading...</div>;
+    // }
 
     if (!user) return null;
 

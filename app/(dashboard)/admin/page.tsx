@@ -10,7 +10,6 @@ import { Complaint, Outpass, User, FeeStatus, Message } from '@/lib/types';
 import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
-import { Loader } from '@/components/loader';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
@@ -146,14 +145,6 @@ export default function AdminDashboard() {
             setLoading(false);
         }
     };
-
-    if (loading) {
-        return (
-            <div className="flex h-[60vh] items-center justify-center">
-                <Loader />
-            </div>
-        );
-    }
 
     const uploadTimings = async () => {
         try {
@@ -428,9 +419,9 @@ export default function AdminDashboard() {
                     </button>
                 </div>
 
-                {loading && <p className="text-center py-10 text-slate-500">Loading dashboard data...</p>}
+                {/* {loading && <p className="text-center py-10 text-slate-500">Loading dashboard data...</p>} */}
 
-                {!loading && activeTab === 'complaints' && (
+                {activeTab === 'complaints' && (
                     <div className="space-y-4">
                         <div className="flex justify-end space-x-2">
                             <select
@@ -490,7 +481,7 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
-                {!loading && activeTab === 'outpass' && (
+                {activeTab === 'outpass' && (
                     <div className="grid gap-4">
                         <div className="flex justify-end mb-2 space-x-2">
                             <Button
@@ -601,7 +592,7 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
-                {!loading && activeTab === 'fees' && (
+                {activeTab === 'fees' && (
                     <div className="space-y-4">
                         <div className="flex justify-end">
                             <Button
@@ -658,7 +649,7 @@ export default function AdminDashboard() {
 
 
                 {
-                    !loading && activeTab === 'messages' && (
+                    activeTab === 'messages' && (
                         <Card>
                             <CardHeader>
                                 <CardTitle>Messages</CardTitle>
@@ -777,7 +768,7 @@ export default function AdminDashboard() {
                 }
 
                 {
-                    !loading && activeTab === 'mess' && (
+                    activeTab === 'mess' && (
                         <Card>
                             <CardHeader>
                                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">

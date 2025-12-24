@@ -19,7 +19,6 @@ const formatDate = (dateStr: string) => {
 import { ScanLine, CheckCircle, XCircle, LogOut, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { AboutModal } from '@/components/about-modal';
-import { Loader } from '@/components/loader';
 
 export default function SendOffDashboard() {
     const { user, logout } = useAuth();

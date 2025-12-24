@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Key, RefreshCw, Trash2, UserCog, Loader2, Search, MoreVertical } from 'lucide-react';
-import { Loader } from '@/components/loader';
 
 export default function DevOpsDashboard() {
     const { user } = useAuth();
@@ -29,7 +28,7 @@ export default function DevOpsDashboard() {
     const [hostelFilter, setHostelFilter] = useState('all');
 
     const fetchRequests = async () => {
-        setLoading(true);
+        // setLoading(true);
         try {
             const res = await fetch('/api/password-reset');
             const data = await res.json();
@@ -42,7 +41,7 @@ export default function DevOpsDashboard() {
     };
 
     const fetchUsers = async () => {
-        setUsersLoading(true);
+        // setUsersLoading(true);
         try {
             const res = await fetch('/api/users');
             const data = await res.json();
@@ -206,8 +205,8 @@ export default function DevOpsDashboard() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {loading ? (
-                        <div className="py-8"><Loader /></div>
+                    {false ? (
+                        <div className="text-center py-8 text-slate-500">Loading...</div>
                     ) : requests.length === 0 ? (
                         <div className="text-center py-8 text-slate-500">
                             No pending password reset requests
@@ -342,8 +341,8 @@ export default function DevOpsDashboard() {
                         </div>
                     </div>
 
-                    {usersLoading ? (
-                        <div className="py-8"><Loader /></div>
+                    {false ? (
+                        <div className="text-center py-8 text-slate-500">Loading master user list...</div>
                     ) : users.length === 0 ? (
                         <div className="text-center py-8 text-slate-500">
                             No users found in the database
