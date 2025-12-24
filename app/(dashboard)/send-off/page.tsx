@@ -310,6 +310,10 @@ export default function SendOffDashboard() {
                                         <span className="font-semibold text-xs">{scanResult.collegeName || 'N/A'}</span>
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
+                                        <span className="text-slate-500">Year & Dept</span>
+                                        <span className="font-semibold">{scanResult.yearAndDept || 'N/A'}</span>
+                                    </div>
+                                    <div className="flex justify-between border-b pb-2">
                                         <span className="text-slate-500">Room No</span>
                                         <span className="font-semibold">{scanResult.roomNumber || 'N/A'}</span>
                                     </div>
@@ -353,6 +357,7 @@ export default function SendOffDashboard() {
                                                         collegeName: scanResult.collegeName,
                                                         hostelName: scanResult.hostelName,
                                                         roomNumber: scanResult.roomNumber,
+                                                        yearAndDept: scanResult.yearAndDept,
                                                         reason: scanResult.reason,
                                                         outpassId: scanResult.id,
                                                         scanType: scanMode,

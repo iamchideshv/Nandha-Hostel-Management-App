@@ -29,6 +29,8 @@ interface OutpassData {
     toDate: string;
     collegeName?: string;
     hostelName?: string;
+    roomNumber?: string;
+    yearAndDept?: string;
 }
 
 export default function StudentDashboard() {
@@ -853,6 +855,7 @@ export default function StudentDashboard() {
                                                                     collegeName: o.collegeName || 'NANDHA INSTITUTE',
                                                                     hostelName: o.hostelName || user?.hostelName,
                                                                     roomNumber: user?.roomNumber,
+                                                                    yearAndDept: o.yearAndDept,
                                                                     reason: o.reason,
                                                                     valid: `${o.fromDate} to ${o.toDate}`,
                                                                     status: 'APPROVED'
@@ -986,6 +989,7 @@ export default function StudentDashboard() {
                                                 collegeName: selectedQr.collegeName,
                                                 hostelName: selectedQr.hostelName,
                                                 roomNumber: selectedQr.roomNumber,
+                                                yearAndDept: selectedQr.yearAndDept,
                                                 reason: selectedQr.reason,
                                                 valid: `${selectedQr.fromDate} to ${selectedQr.toDate}`,
                                                 status: 'APPROVED'
