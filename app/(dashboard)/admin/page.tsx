@@ -492,7 +492,19 @@ export default function AdminDashboard() {
                             >
                                 Clear History
                             </Button>
-                            <Button onClick={() => window.open('https://docs.google.com/spreadsheets/d/1AkuIj3I7BXB7k7gdp01aVjSET1M___j2cKesFo-7am4/edit?usp=sharing', '_blank')} variant="outline" className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100">
+                            <Button
+                                onClick={() => {
+                                    const GIRLS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1fZpDraz__Bb--8rX5NktVQSJ6Y9fLiDoZ27YhHr1vr0/edit?usp=sharing';
+                                    const BOYS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1AkuIj3I7BXB7k7gdp01aVjSET1M___j2cKesFo-7am4/edit?usp=sharing';
+
+                                    const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
+                                    const isGirlsHostel = normalizedHostel.includes('akshaya');
+
+                                    window.open(isGirlsHostel ? GIRLS_SHEET_URL : BOYS_SHEET_URL, '_blank');
+                                }}
+                                variant="outline"
+                                className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                            >
                                 <FileText className="w-4 h-4 mr-2" /> View Report
                             </Button>
                         </div>
