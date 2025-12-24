@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search } from 'lucide-react';
 import QRCode from 'react-qr-code';
-import { Complaint, Outpass } from '@/lib/types';
+import { Complaint, Outpass, Message } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
@@ -33,13 +33,14 @@ interface OutpassData {
 
 export default function StudentDashboard() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees'>('mess');
+    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
 
     // Data states
     const [complaints, setComplaints] = useState<ComplaintData[]>([]);
     const [outpasses, setOutpasses] = useState<OutpassData[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [feeStatus, setFeeStatus] = useState<any>(null);
     const [loadingData, setLoadingData] = useState(false);
 
@@ -97,6 +98,7 @@ export default function StudentDashboard() {
                 fetchAndSet(`/api/mess-menu?type=${messHostelType}`, setUploadedMenu, 'Menu fetch error'),
                 fetchAndSet(`/api/vending-status`, setVendingStatus, 'Vending fetch error'),
                 fetchAndSet(`/api/mess-timings?type=${messHostelType}`, setMessTimings, 'Timings fetch error'),
+                fetchAndSet(`/api/messages`, setMessages, 'Messages fetch error'),
             ]);
         } catch (e) {
             toast.error('Some data failed to load');
@@ -187,6 +189,34 @@ export default function StudentDashboard() {
         setSubmitting(false);
     };
 
+    const [messageForm, setMessageForm] = useState('');
+    const handleSendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: messageForm,
+                    type: 'info',
+                    senderId: user?.id,
+                    senderName: user?.name,
+                    senderRole: 'student',
+                    hostelName: user?.hostelName
+                })
+            });
+            if (res.ok) {
+                toast.success('Message Sent');
+                setMessageForm('');
+                fetchData();
+            } else {
+                toast.error('Failed to send');
+            }
+        } catch (e) { toast.error('Error sending message'); }
+        finally { setSubmitting(false); }
+    };
+
 
 
     const handleDownloadPass = async () => {
@@ -256,6 +286,10 @@ export default function StudentDashboard() {
                 <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                     <FileText className="h-6 w-6 text-green-600 mb-2" />
                     <h3 className="font-semibold text-slate-800">Outpass</h3>
+                </button>
+                <button onClick={() => setActiveTab('messages')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'messages' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <Send className="h-6 w-6 text-purple-600 mb-2" />
+                    <h3 className="font-semibold text-slate-800">Messages</h3>
                 </button>
                 <div
                     onClick={() => setActiveTab('fees')}
@@ -486,6 +520,61 @@ export default function StudentDashboard() {
                                             </div>
                                         ))
                                     }
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
+                {activeTab === 'messages' && (
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Send Message</CardTitle>
+                                <CardDescription>Contact Admin</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <form onSubmit={handleSendMessage} className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Message</Label>
+                                        <textarea
+                                            className="flex w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm min-h-[100px]"
+                                            placeholder="Type your message..."
+                                            value={messageForm}
+                                            onChange={(e) => setMessageForm(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <Button type="submit" disabled={submitting}> Send Message </Button>
+                                </form>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Inbox & Sent</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                                    {messages.filter(m => (m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))) || m.senderId === user?.id).length === 0 ? (
+                                        <p className="text-sm text-slate-500">No messages.</p>
+                                    ) : (
+                                        messages
+                                            .filter(m => (m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))) || m.senderId === user?.id)
+                                            .map((m) => (
+                                                <div key={m.id} className={`p-3 rounded-lg border ${m.senderRole === 'admin' ? 'bg-blue-50 border-blue-100 dark:bg-blue-900/20' : 'bg-white border-slate-200 dark:bg-slate-800'}`}>
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${m.senderRole === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                                                            {m.senderRole === 'admin' ? 'Admin Notice' : 'You'}
+                                                        </span>
+                                                        <span className="text-[10px] text-slate-400">
+                                                            {new Date(m.timestamp).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{m.message}</p>
+                                                </div>
+                                            ))
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>

@@ -87,3 +87,15 @@ export interface PasswordResetRequest {
     requestDate: string;
     status: 'pending' | 'completed';
 }
+
+export interface Message {
+    id: string;
+    message: string;
+    type: 'info' | 'urgent' | 'success';
+    senderId: string;
+    senderName: string;
+    senderRole: UserRole;
+    targetHostels?: string[]; // If empty/undefined -> Generic/Admin message
+    hostelName?: string; // If sent by student
+    timestamp: string;
+}

@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Complaint, Outpass, User, FeeStatus } from '@/lib/types';
+import { Complaint, Outpass, User, FeeStatus, Message } from '@/lib/types';
 import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees'>('complaints');
+    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages'>('complaints');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
 
@@ -21,7 +21,7 @@ export default function AdminDashboard() {
     const [complaints, setComplaints] = useState<Complaint[]>([]);
     const [outpasses, setOutpasses] = useState<Outpass[]>([]);
     const [fees, setFees] = useState<FeeStatus[]>([]);
-    const [messages, setMessages] = useState<any[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
 
     // Filter for complaints
@@ -241,6 +241,32 @@ export default function AdminDashboard() {
         } catch (e) { toast.error('Update Failed'); }
     };
 
+    const [newMessage, setNewMessage] = useState('');
+    const handleSendMessage = async () => {
+        if (!newMessage.trim()) return;
+        try {
+            const res = await fetch('/api/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: newMessage,
+                    type: 'info',
+                    senderId: user?.id || 'admin',
+                    senderName: user?.name || 'Admin',
+                    senderRole: 'admin',
+                    targetHostels: user?.hostelName ? [user.hostelName] : [] // Target own hostel or global if super admin (though user usually has hostelName)
+                })
+            });
+            if (res.ok) {
+                toast.success('Message Broadcasted');
+                setNewMessage('');
+                fetchData();
+            } else {
+                toast.error('Failed to send message');
+            }
+        } catch (e) { toast.error('Error sending message'); }
+    };
+
     const filteredComplaints = filter === 'all' ? complaints : complaints.filter(c => c.type === filter);
 
     return (
@@ -292,6 +318,13 @@ export default function AdminDashboard() {
                 >
                     <Utensils className="w-4 h-4 mr-2" />
                     Mess Details
+                </button>
+                <button
+                    onClick={() => setActiveTab('messages')}
+                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                >
+                    <Send className="w-4 h-4 mr-2" />
+                    Messages
                 </button>
             </div>
 
@@ -511,6 +544,67 @@ export default function AdminDashboard() {
             )}
 
 
+
+            {
+                !loading && activeTab === 'messages' && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Messages</CardTitle>
+                            <CardDescription>View messages from students and send broadcasts.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-6">
+                                {/* Send Message */}
+                                <div className="space-y-4 border-b pb-6">
+                                    <h3 className="text-lg font-medium">Broadcast Message</h3>
+                                    <div className="flex gap-2">
+                                        <Input
+                                            placeholder="Type your message here..."
+                                            value={newMessage}
+                                            onChange={(e) => setNewMessage(e.target.value)}
+                                        />
+                                        <Button onClick={handleSendMessage}>
+                                            <Send className="w-4 h-4 mr-2" />
+                                            Send
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Message List */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium">Inbox</h3>
+                                    {messages.filter(m => m.senderRole === 'student').length === 0 ? (
+                                        <div className="text-center py-10 text-slate-500 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                            No messages from students
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {messages.filter(m => m.senderRole === 'student').map((msg) => (
+                                                <div key={msg.id} className="p-4 rounded-lg bg-white border shadow-sm dark:bg-slate-900 dark:border-slate-800">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <div>
+                                                            <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                                                {msg.senderName}
+                                                                <span className="text-xs font-normal text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                                                                    {msg.hostelName}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-sm text-slate-500">
+                                                                {new Date(msg.timestamp).toLocaleString()}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-slate-700 dark:text-slate-300">{msg.message}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+            }
 
             {
                 !loading && activeTab === 'mess' && (
