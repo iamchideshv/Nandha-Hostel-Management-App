@@ -39,6 +39,7 @@ export default function AdminDashboard() {
     const [showFoundModal, setShowFoundModal] = useState(false);
     const [foundMessage, setFoundMessage] = useState('Come and collect it on office room');
     const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
+    const [submittingStatusId, setSubmittingStatusId] = useState<string | null>(null);
 
     // Mess Menu State
     const [messMenu, setMessMenu] = useState({
@@ -232,18 +233,26 @@ export default function AdminDashboard() {
     };
 
     const handleLostFoundStatusUpdate = async (id: string, status: 'found' | 'not-found' | 'returned', message?: string) => {
+        setSubmittingStatusId(id);
         try {
             const res = await fetch('/api/lost-found', {
                 method: 'PATCH',
                 body: JSON.stringify({ id, status, adminMessage: message })
             });
             if (res.ok) {
-                toast.success(`Item marked as ${status}`);
+                toast.success(`Item marked as ${status.replace('-', ' ')}`);
                 setShowFoundModal(false);
                 setUpdatingItemId(null);
                 fetchData();
+            } else {
+                const error = await res.json();
+                toast.error(error.error || 'Update Failed');
             }
-        } catch (e) { toast.error('Update Failed'); }
+        } catch (e) {
+            toast.error('Update Failed');
+        } finally {
+            setSubmittingStatusId(null);
+        }
     };
 
     const handleUpdateFee = async () => {
@@ -1122,21 +1131,23 @@ export default function AdminDashboard() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="flex-1 text-xs h-8 border-green-200 text-green-700 hover:bg-green-50"
+                                                            className="flex-1 text-[10px] sm:text-xs h-8 border-green-200 text-green-700 hover:bg-green-50"
                                                             onClick={() => {
                                                                 setUpdatingItemId(item.id);
                                                                 setShowFoundModal(true);
                                                             }}
+                                                            disabled={submittingStatusId === item.id}
                                                         >
-                                                            Found
+                                                            {submittingStatusId === item.id ? '...' : 'Found'}
                                                         </Button>
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="flex-1 text-xs h-8 border-red-200 text-red-700 hover:bg-red-50"
+                                                            className="flex-1 text-[10px] sm:text-xs h-8 border-red-200 text-red-700 hover:bg-red-50"
                                                             onClick={() => handleLostFoundStatusUpdate(item.id, 'not-found')}
+                                                            disabled={submittingStatusId === item.id}
                                                         >
-                                                            Not Found
+                                                            {submittingStatusId === item.id ? '...' : 'Not Found'}
                                                         </Button>
                                                     </div>
                                                 </div>

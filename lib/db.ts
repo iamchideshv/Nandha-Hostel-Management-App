@@ -355,7 +355,11 @@ export const db = {
   },
 
   addLostFoundItem: async (item: any): Promise<void> => {
-    await setDoc(doc(firestore, LOST_FOUND_COL, item.id), item);
+    // Sanitize data to remove undefined values which crash Firestore
+    const cleanData = Object.fromEntries(
+      Object.entries(item).filter(([_, v]) => v !== undefined)
+    );
+    await setDoc(doc(firestore, LOST_FOUND_COL, item.id), cleanData);
   },
 
   clearLostFoundItems: async (hostelName?: string, studentId?: string): Promise<void> => {

@@ -48,7 +48,11 @@ export async function PATCH(req: Request) {
         const body = await req.json();
         const { id, status, adminMessage } = body;
 
-        // Fetch existing item
+        if (!id) {
+            return NextResponse.json({ error: 'Item ID is required' }, { status: 400 });
+        }
+
+        // Fetch existing item to preserve other fields
         const items = await db.getLostFoundItems();
         const existingItem = items.find(i => i.id === id);
 
@@ -58,13 +62,14 @@ export async function PATCH(req: Request) {
 
         const updatedItem = {
             ...existingItem,
-            status,
-            adminMessage: adminMessage || existingItem.adminMessage
+            status: status || existingItem.status,
+            adminMessage: adminMessage !== undefined ? adminMessage : (existingItem.adminMessage || null)
         };
 
         await db.addLostFoundItem(updatedItem);
         return NextResponse.json(updatedItem);
     } catch (error) {
+        console.error('PATCH Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
