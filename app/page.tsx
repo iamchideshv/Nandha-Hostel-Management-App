@@ -37,7 +37,9 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
           <Link href="/login">
-            <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-lg">Student/Admin/Send-Off Login</Button>
+            <button className="uiverse-login-button w-full sm:w-auto">
+              Student/Admin/Send-Off Login
+            </button>
           </Link>
         </div>
 

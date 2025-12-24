@@ -270,3 +270,59 @@ input:checked+.theme-slider:before {
   transform: rotateY(180deg);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+.uiverse-login-button {
+  padding: 15px 25px;
+  border: unset;
+  border-radius: 15px;
+  color: #212121;
+  z-index: 1;
+  background: #e8e8e8;
+  position: relative;
+  font-weight: 1000;
+  font-size: 17px;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+  overflow: hidden;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uiverse-login-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius: 15px;
+  background-color: #212121;
+  z-index: -1;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+}
+
+.uiverse-login-button:hover {
+  color: #e8e8e8;
+}
+
+.uiverse-login-button:hover::before {
+  width: 100%;
+}
+
+.dark .uiverse-login-button {
+  background: #27272a;
+  color: #f4f4f5;
+}
+
+.dark .uiverse-login-button::before {
+  background-color: #f4f4f5;
+}
+
+.dark .uiverse-login-button:hover {
+  color: #18181b;
+}
