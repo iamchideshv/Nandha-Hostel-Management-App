@@ -87,6 +87,7 @@ export default function StudentDashboard() {
     });
 
     const [submitting, setSubmitting] = useState(false);
+    const [imageUploaded, setImageUploaded] = useState(false);
 
     const fetchData = async () => {
         if (!user) return;
@@ -313,6 +314,7 @@ export default function StudentDashboard() {
             if (res.ok) {
                 toast.success('Report Submitted');
                 setLostFoundForm({ productName: '', identification: '', location: '', timeAndDate: '', image: '' });
+                setImageUploaded(false);
                 fetchData();
             } else {
                 toast.error('Failed to submit report');
@@ -327,6 +329,7 @@ export default function StudentDashboard() {
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setImageUploaded(true);
             const reader = new FileReader();
             reader.onloadend = () => {
                 const img = new Image();
@@ -1105,18 +1108,40 @@ export default function StudentDashboard() {
                                         </div>
                                         <div className="space-y-2">
                                             <Label>Upload Image</Label>
-                                            <Input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageUpload}
-                                                className="cursor-pointer"
-                                            />
+                                            <div className="uiverse-upload-container">
+                                                <input
+                                                    type="checkbox"
+                                                    id="check"
+                                                    checked={imageUploaded}
+                                                    readOnly
+                                                />
+                                                <label htmlFor="file-upload" id="upload">
+                                                    <div id="app-upload">
+                                                        <div id="arrow"></div>
+                                                        <div id="success">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                                <input
+                                                    id="file-upload"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageUpload}
+                                                    className="hidden"
+                                                />
+                                            </div>
                                             {lostFoundForm.image && (
                                                 <div className="mt-2 relative w-20 h-20 border rounded-lg overflow-hidden capitalize text-[10px] text-center flex flex-col items-center justify-center bg-slate-50">
                                                     <img src={lostFoundForm.image} alt="Preview" className="w-full h-full object-cover" />
                                                     <button
                                                         type="button"
-                                                        onClick={() => setLostFoundForm({ ...lostFoundForm, image: '' })}
+                                                        onClick={() => {
+                                                            setLostFoundForm({ ...lostFoundForm, image: '' });
+                                                            setImageUploaded(false);
+                                                        }}
                                                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5"
                                                     >
                                                         <XCircle className="w-3 h-3" />
