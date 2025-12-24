@@ -16,13 +16,21 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { message, type } = body;
+        const { message, type, targetHostels, senderId, senderName, senderRole, hostelName } = body;
 
         if (!message) {
             return NextResponse.json({ error: 'Message is required' }, { status: 400 });
         }
 
-        await db.addMessage({ message, type: type || 'info' });
+        await db.addMessage({
+            message,
+            type: type || 'info',
+            targetHostels: targetHostels || [], // Array of hostel names
+            senderId,
+            senderName,
+            senderRole,
+            hostelName // For student messages
+        });
         return NextResponse.json({ success: true, message: 'Message sent successfully' });
     } catch (error) {
         console.error('Error sending message:', error);

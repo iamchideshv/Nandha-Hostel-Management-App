@@ -55,7 +55,7 @@ export default function AuthorityDashboard() {
         <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Outpass Requests</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Outpass Requests</h1>
                     <p className="text-slate-500">Approve or reject student outpass applications</p>
                 </div>
             </div>
@@ -78,7 +78,7 @@ export default function AuthorityDashboard() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="bg-slate-50 p-4 rounded-lg mb-4 grid grid-cols-2 gap-4">
+                                <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-lg mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <p className="text-xs text-slate-500 uppercase font-semibold">Reason</p>
                                         <p className="font-medium">{o.reason}</p>

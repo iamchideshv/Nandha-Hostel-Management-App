@@ -19,6 +19,7 @@ const USERS_COL = 'users';
 const COMPLAINTS_COL = 'complaints';
 const OUTPASS_COL = 'outpasses';
 const FEES_COL = 'fees';
+const MESS_MENU_COL = 'messMenus';
 
 export const db = {
   // --- USERS ---
@@ -144,11 +145,16 @@ export const db = {
     return snap.exists() ? (snap.data() as Outpass) : null;
   },
 
-  clearOutpasses: async (hostelName?: string): Promise<void> => {
+  clearOutpasses: async (hostelName?: string, studentId?: string): Promise<void> => {
     let q = query(collection(firestore, OUTPASS_COL));
-    if (hostelName) {
-      q = query(collection(firestore, OUTPASS_COL), where("hostelName", "==", hostelName));
+    const constraints: QueryConstraint[] = [];
+    if (hostelName) constraints.push(where("hostelName", "==", hostelName));
+    if (studentId) constraints.push(where("studentId", "==", studentId));
+
+    if (constraints.length > 0) {
+      q = query(collection(firestore, OUTPASS_COL), ...constraints);
     }
+
     const snap = await getDocs(q);
     const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
     await Promise.all(deletePromises);
@@ -210,19 +216,19 @@ export const db = {
   },
 
   // --- MESS MENU ---
-  getMessMenu: async (): Promise<any | null> => {
-    const docRef = doc(firestore, 'messMenu', 'current');
+  getMessMenu: async (type: string = 'current'): Promise<any | null> => {
+    const docRef = doc(firestore, 'messMenu', type);
     const snap = await getDoc(docRef);
     return snap.exists() ? snap.data() : null;
   },
 
-  saveMessMenu: async (menuData: any): Promise<void> => {
+  saveMessMenu: async (menuData: any, type: string = 'current'): Promise<void> => {
     const data = {
       ...menuData,
-      id: 'current',
+      id: type,
       lastUpdated: new Date().toISOString()
     };
-    await setDoc(doc(firestore, 'messMenu', 'current'), data);
+    await setDoc(doc(firestore, 'messMenu', type), data);
   },
 
   // --- VENDING STATUS ---
@@ -288,5 +294,22 @@ export const db = {
 
   deletePasswordResetRequest: async (requestId: string): Promise<void> => {
     await deleteDoc(doc(firestore, 'passwordResetRequests', requestId));
-  }
+  },
+
+  // --- MESS TIMINGS ---
+  getMessTimings: async (type: string = 'boys'): Promise<any | null> => {
+    const docRef = doc(firestore, 'messTimings', type);
+    const snap = await getDoc(docRef);
+    return snap.exists() ? snap.data() : null;
+  },
+
+  saveMessTimings: async (timingData: any, type: string = 'boys'): Promise<void> => {
+    const data = {
+      ...timingData,
+      id: type,
+      lastUpdated: new Date().toISOString()
+    };
+    await setDoc(doc(firestore, 'messTimings', type), data);
+  },
+
 };

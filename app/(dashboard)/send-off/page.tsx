@@ -355,7 +355,8 @@ export default function SendOffDashboard() {
                                                         roomNumber: scanResult.roomNumber,
                                                         reason: scanResult.reason,
                                                         outpassId: scanResult.id,
-                                                        scanType: scanMode
+                                                        scanType: scanMode,
+                                                        pwsId: user?.id
                                                     })
                                                 });
 

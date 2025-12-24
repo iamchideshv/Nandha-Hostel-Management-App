@@ -73,7 +73,7 @@ async function ensureSheetExists(sheets: any, spreadsheetId: string, sheetTitle:
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { collegeName, hostelName, roomNumber, fromDate, toDate, reason, studentName, outpassId, scanType } = body;
+        const { collegeName, hostelName, roomNumber, fromDate, toDate, reason, studentName, outpassId, scanType, pwsId } = body;
 
         if (!SPREADSHEET_ID) {
             return NextResponse.json({ error: 'Spreadsheet ID not configured' }, { status: 500 });
@@ -105,7 +105,7 @@ export async function POST(req: Request) {
                         values: [[
                             'S.No', 'Outpass ID', 'Student Name', 'Hostel Name',
                             'College Name', 'Room No', 'From Date', 'To Date',
-                            'Reason', 'Out Time', 'In Time'
+                            'Reason', 'Out Time', 'In Time', 'PWS ID'
                         ]]
                     }
                 });
@@ -123,12 +123,13 @@ export async function POST(req: Request) {
                 toDate,
                 reason,
                 new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-                '' // In Time (empty for now)
+                '', // In Time (empty for now)
+                pwsId || 'N/A'
             ];
 
             await sheets.spreadsheets.values.append({
                 spreadsheetId: SPREADSHEET_ID,
-                range: `${currentSheetName}!A:K`,
+                range: `${currentSheetName}!A:L`,
                 valueInputOption: 'RAW',
                 requestBody: {
                     values: [newRow]
@@ -144,7 +145,7 @@ export async function POST(req: Request) {
 
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
-                range: `${currentSheetName}!A:K`,
+                range: `${currentSheetName}!A:L`,
             });
 
             const rows = response.data.values || [];

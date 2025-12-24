@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 import { auth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
@@ -19,6 +20,7 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [forgotPasswordId, setForgotPasswordId] = useState('');
+    const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
     const [submittingReset, setSubmittingReset] = useState(false);
     const [showDevOpsLogin, setShowDevOpsLogin] = useState(false);
     const [signingInWithGoogle, setSigningInWithGoogle] = useState(false);
@@ -69,6 +71,11 @@ export default function LoginPage() {
             return;
         }
 
+        if (!forgotPasswordEmail.trim() || !forgotPasswordEmail.includes('@')) {
+            setError('Please enter a valid email address');
+            return;
+        }
+
         setSubmittingReset(true);
         setError('');
 
@@ -89,14 +96,15 @@ export default function LoginPage() {
                 body: JSON.stringify({
                     userId: forgotPasswordId,
                     userName: userData.name,
-                    userEmail: userData.email || ''
+                    userEmail: forgotPasswordEmail
                 })
             });
 
             if (res.ok) {
-                alert('Password reset request submitted successfully! DevOps will process your request.');
+                alert('After Updated the Password Will Be Mailed');
                 setShowForgotPassword(false);
                 setForgotPasswordId('');
+                setForgotPasswordEmail('');
             } else {
                 setError('Failed to submit password reset request');
             }
@@ -211,7 +219,7 @@ export default function LoginPage() {
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center mb-4">
                         <img
-                            src="/logo.jpg"
+                            src="/logo-new.png"
                             alt="Logo"
                             className="h-16 w-16 object-contain rounded-lg shadow-sm cursor-pointer select-none transition-transform active:scale-95"
                             onMouseDown={handleLogoPressStart}
@@ -235,6 +243,7 @@ export default function LoginPage() {
                             <Input
                                 id="id"
                                 placeholder="Ex: 21CSE001 or admin"
+                                className="focus-visible:ring-2 focus-visible:ring-blue-600"
                                 value={formData.id}
                                 onChange={(e) => setFormData({ ...formData, id: e.target.value })}
                                 required
@@ -245,6 +254,7 @@ export default function LoginPage() {
                             <Input
                                 id="password"
                                 type="password"
+                                className="focus-visible:ring-2 focus-visible:ring-blue-600"
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 required
@@ -284,13 +294,24 @@ export default function LoginPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="forgotId">Your ID</Label>
+                                <Label htmlFor="forgotId">Your ID / Username</Label>
                                 <Input
                                     id="forgotId"
                                     placeholder="Enter your student/admin ID"
                                     value={forgotPasswordId}
                                     onChange={(e) => setForgotPasswordId(e.target.value)}
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="forgotEmail">Your Email</Label>
+                                <Input
+                                    id="forgotEmail"
+                                    type="email"
+                                    placeholder="Enter your registered email"
+                                    value={forgotPasswordEmail}
+                                    onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                                />
+                                <p className="text-[10px] text-slate-500">We'll use this to verify your identity and contact you.</p>
                             </div>
                             {error && <p className="text-sm text-red-500">{error}</p>}
                         </CardContent>
@@ -300,6 +321,7 @@ export default function LoginPage() {
                                 onClick={() => {
                                     setShowForgotPassword(false);
                                     setForgotPasswordId('');
+                                    setForgotPasswordEmail('');
                                     setError('');
                                 }}
                                 className="flex-1"

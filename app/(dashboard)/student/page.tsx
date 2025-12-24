@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
@@ -34,7 +34,8 @@ interface OutpassData {
 export default function StudentDashboard() {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees'>('mess');
-    const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending' | 'messages'>('menu');
+    const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
+    const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
 
     // Data states
     const [complaints, setComplaints] = useState<ComplaintData[]>([]);
@@ -55,12 +56,20 @@ export default function StudentDashboard() {
         yearAndDept: ''
     });
 
+
+
     // Zoom Modal State
     const [selectedQr, setSelectedQr] = useState<any>(null);
     const [showAbout, setShowAbout] = useState(false);
     const [uploadedMenu, setUploadedMenu] = useState<any>(null);
+
     const [vendingStatus, setVendingStatus] = useState<any>(null);
-    const [messages, setMessages] = useState<any[]>([]);
+    const [messTimings, setMessTimings] = useState({
+        breakfast: '7:30 AM - 9:00 AM',
+        lunch: '12:30 PM - 2:00 PM',
+        snacks: '4:30 PM - 5:30 PM',
+        dinner: '7:30 PM - 9:00 PM'
+    });
 
     const [submitting, setSubmitting] = useState(false);
 
@@ -70,7 +79,7 @@ export default function StudentDashboard() {
 
         const fetchAndSet = async (url: string, setter: (data: any) => void, errorMsg: string) => {
             try {
-                const res = await fetch(url);
+                const res = await fetch(url, { cache: 'no-store' });
                 if (res.ok) {
                     const data = await res.json();
                     setter(data);
@@ -85,9 +94,9 @@ export default function StudentDashboard() {
                 fetchAndSet(`/api/complaints?studentId=${user.id}`, setComplaints, 'Complaints fetch error'),
                 fetchAndSet(`/api/outpass?studentId=${user.id}`, setOutpasses, 'Outpasses fetch error'),
                 fetchAndSet(`/api/fees?studentId=${user.id}`, (d) => setFeeStatus(d.status === 'none' ? null : d), 'Fees fetch error'),
-                fetchAndSet(`/api/mess-menu`, setUploadedMenu, 'Menu fetch error'),
+                fetchAndSet(`/api/mess-menu?type=${messHostelType}`, setUploadedMenu, 'Menu fetch error'),
                 fetchAndSet(`/api/vending-status`, setVendingStatus, 'Vending fetch error'),
-                fetchAndSet(`/api/messages`, setMessages, 'Messages fetch error')
+                fetchAndSet(`/api/mess-timings?type=${messHostelType}`, setMessTimings, 'Timings fetch error'),
             ]);
         } catch (e) {
             toast.error('Some data failed to load');
@@ -98,7 +107,7 @@ export default function StudentDashboard() {
 
     useEffect(() => {
         fetchData();
-    }, [user]);
+    }, [user, messHostelType]);
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -106,6 +115,7 @@ export default function StudentDashboard() {
         try {
             const res = await fetch('/api/complaints', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     studentId: user?.id,
                     studentName: user?.name,
@@ -127,12 +137,14 @@ export default function StudentDashboard() {
         }
     };
 
+
     const handleOutpassSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
         try {
             const res = await fetch('/api/outpass', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     studentId: user?.id,
                     studentName: user?.name,
@@ -161,6 +173,21 @@ export default function StudentDashboard() {
             setSubmitting(false);
         }
     };
+
+    const handleClearOutpassHistory = async () => {
+        if (!confirm('Are you sure you want to clear your outpass history? This action cannot be undone.')) return;
+        setSubmitting(true);
+        try {
+            const res = await fetch(`/api/outpass?studentId=${user?.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                toast.success('History Cleared');
+                fetchData();
+            }
+        } catch (e) { toast.error('Clear Failed'); }
+        setSubmitting(false);
+    };
+
+
 
     const handleDownloadPass = async () => {
         if (!selectedQr) return;
@@ -208,7 +235,7 @@ export default function StudentDashboard() {
         <div className="space-y-6 max-w-5xl mx-auto">
             <header className="mb-8 flex justify-between items-start">
                 <div>
-                    <h1 className="text-3xl font-bold text-black" style={{ color: 'black' }}>Welcome, {user?.name}</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Welcome, {user?.name}</h1>
                     <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-black">
@@ -217,22 +244,22 @@ export default function StudentDashboard() {
                 </Button>
             </header>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50' : 'bg-white hover:bg-slate-50'}`}>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                     <Utensils className="h-6 w-6 text-blue-600 mb-2" />
                     <h3 className="font-semibold text-slate-800">Mess Details</h3>
                 </button>
-                <button onClick={() => setActiveTab('complaints')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'complaints' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50' : 'bg-white hover:bg-slate-50'}`}>
+                <button onClick={() => setActiveTab('complaints')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'complaints' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                     <AlertCircle className="h-6 w-6 text-orange-600 mb-2" />
                     <h3 className="font-semibold text-slate-800">Complaints</h3>
                 </button>
-                <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50' : 'bg-white hover:bg-slate-50'}`}>
+                <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                     <FileText className="h-6 w-6 text-green-600 mb-2" />
                     <h3 className="font-semibold text-slate-800">Outpass</h3>
                 </button>
                 <div
                     onClick={() => setActiveTab('fees')}
-                    className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50' : 'bg-white hover:bg-slate-50'}`}
+                    className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                 >
                     <BadgeCheck className={`h-6 w-6 mb-2 ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-400'}`} />
                     <h3 className="font-semibold text-slate-800">Fees Status</h3>
@@ -251,11 +278,10 @@ export default function StudentDashboard() {
                                     <CardTitle>Mess Details</CardTitle>
                                     <CardDescription>
                                         {messSubTab === 'menu' ? 'Daily food menu' :
-                                            messSubTab === 'timings' ? 'Dining hall opening hours' :
-                                                messSubTab === 'vending' ? 'Vending machine availability' : 'Important announcements'}
+                                            messSubTab === 'timings' ? 'Dining hall opening hours' : 'Vending machine availability'}
                                     </CardDescription>
                                 </div>
-                                <div className="bg-slate-100 p-1 rounded-lg flex space-x-1 self-start md:self-auto">
+                                <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex space-x-1 self-start md:self-auto overflow-x-auto max-w-full">
                                     <button
                                         onClick={() => setMessSubTab('menu')}
                                         className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'menu' ? 'bg-green-600 text-white shadow' : 'bg-white text-black hover:bg-slate-50'}`}
@@ -274,44 +300,53 @@ export default function StudentDashboard() {
                                     >
                                         Vending Machine
                                     </button>
-                                    <button
-                                        onClick={() => setMessSubTab('messages')}
-                                        className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'messages' ? 'bg-green-600 text-white shadow' : 'bg-white text-black hover:bg-slate-50'}`}
-                                    >
-                                        Messages
-                                    </button>
                                 </div>
                             </div>
+                            {messSubTab === 'menu' && (
+                                <div className="flex space-x-2 mt-4 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg w-fit">
+                                    <button
+                                        onClick={() => setMessHostelType('boys')}
+                                        className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${messHostelType === 'boys' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                                    >
+                                        Boys Hostel Menu
+                                    </button>
+                                    <button
+                                        onClick={() => setMessHostelType('girls')}
+                                        className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${messHostelType === 'girls' ? 'bg-pink-600 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                                    >
+                                        Girls Hostel Menu
+                                    </button>
+                                </div>
+                            )}
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {messSubTab === 'menu' ? (
-                                <div className="overflow-x-auto border rounded-lg">
-                                    <table className="w-full text-sm text-left">
-                                        <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b">
+                                <div className="overflow-x-auto border rounded-xl shadow-sm bg-white dark:bg-slate-900">
+                                    <table className="w-full text-xs sm:text-sm text-left border-collapse">
+                                        <thead className="text-[10px] sm:text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-800/50 border-b">
                                             <tr>
-                                                <th className="px-4 py-3 font-medium bg-slate-100 whitespace-nowrap sticky left-0 z-10">Day / Meal</th>
-                                                <th className="px-4 py-3 font-medium min-w-[150px] capitalize">breakfast</th>
-                                                <th className="px-4 py-3 font-medium min-w-[150px] capitalize">lunch</th>
-                                                <th className="px-4 py-3 font-medium min-w-[150px] capitalize">snacks</th>
-                                                <th className="px-4 py-3 font-medium min-w-[150px] capitalize">dinner</th>
+                                                <th className="px-3 py-2 font-bold bg-slate-100 dark:bg-slate-800 whitespace-nowrap sticky left-0 z-20 border-r text-slate-700 dark:text-slate-300">Day / Meal</th>
+                                                {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(meal => (
+                                                    <th key={meal} className="px-3 py-2 font-bold min-w-[120px] border-r last:border-0 text-slate-700 dark:text-slate-300">{meal}</th>
+                                                ))}
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, dayIndex) => (
-                                                <tr key={day} className="border-b last:border-0 hover:bg-slate-50">
-                                                    <td className="px-4 py-3 font-bold bg-slate-50 border-r whitespace-nowrap sticky left-0 z-10 text-slate-900">
+                                                <tr key={day} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                    <td className="px-3 py-3 font-bold bg-slate-50 dark:bg-slate-800 border-r dark:border-slate-700 whitespace-nowrap sticky left-0 z-10 text-slate-900 dark:text-slate-100">
                                                         {day}
                                                     </td>
-                                                    <td className="px-4 py-3 border-r text-slate-600">
+                                                    <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-300 leading-snug">
                                                         {uploadedMenu?.breakfast?.[dayIndex] || 'Idli, Vada, Sambar'}
                                                     </td>
-                                                    <td className="px-4 py-3 border-r text-slate-600">
+                                                    <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-300 leading-snug">
                                                         {uploadedMenu?.lunch?.[dayIndex] || 'Rice, Dal, Curd'}
                                                     </td>
-                                                    <td className="px-4 py-3 border-r text-slate-600">
+                                                    <td className="px-3 py-3 border-r text-slate-600 dark:text-slate-300 leading-snug">
                                                         {uploadedMenu?.snacks?.[dayIndex] || 'Tea, Biscuits'}
                                                     </td>
-                                                    <td className="px-4 py-3 text-slate-600">
+                                                    <td className="px-3 py-3 text-slate-600 dark:text-slate-300 leading-snug">
                                                         {uploadedMenu?.dinner?.[dayIndex] || 'Chapati, Veg Curry'}
                                                     </td>
                                                 </tr>
@@ -323,19 +358,19 @@ export default function StudentDashboard() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="p-4 bg-white border rounded-lg">
                                         <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Breakfast</h4>
-                                        <p className="text-xl font-bold text-slate-900">7:30 AM - 9:00 AM</p>
+                                        <p className="text-xl font-bold text-slate-900">{messTimings.breakfast}</p>
                                     </div>
                                     <div className="p-4 bg-white border rounded-lg">
                                         <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Lunch</h4>
-                                        <p className="text-xl font-bold text-slate-900">12:30 PM - 2:00 PM</p>
+                                        <p className="text-xl font-bold text-slate-900">{messTimings.lunch}</p>
                                     </div>
                                     <div className="p-4 bg-white border rounded-lg">
                                         <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Snacks</h4>
-                                        <p className="text-xl font-bold text-slate-900">4:30 PM - 5:30 PM</p>
+                                        <p className="text-xl font-bold text-slate-900">{messTimings.snacks}</p>
                                     </div>
                                     <div className="p-4 bg-white border rounded-lg">
                                         <h4 className="font-semibold text-slate-600 mb-1 flex items-center"><Clock className="h-4 w-4 mr-2" /> Dinner</h4>
-                                        <p className="text-xl font-bold text-slate-900">7:30 PM - 9:00 PM</p>
+                                        <p className="text-xl font-bold text-slate-900">{messTimings.dinner}</p>
                                     </div>
                                 </div>
                             ) : messSubTab === 'vending' ? (
@@ -381,38 +416,6 @@ export default function StudentDashboard() {
                                             </p>
                                         </div>
                                     </div>
-                                </div>
-                            ) : messSubTab === 'messages' ? (
-                                <div className="space-y-3">
-                                    {messages.length > 0 ? (
-                                        messages.map((msg: any) => (
-                                            <div key={msg.id} className={`p-4 border-l-4 rounded ${msg.type === 'urgent' ? 'bg-red-50 border-red-500' :
-                                                msg.type === 'important' ? 'bg-yellow-50 border-yellow-500' :
-                                                    'bg-blue-50 border-blue-500'
-                                                }`}>
-                                                <div className="flex items-start justify-between">
-                                                    <div className="flex-1">
-                                                        <h4 className={`font-bold mb-1 ${msg.type === 'urgent' ? 'text-red-900' :
-                                                            msg.type === 'important' ? 'text-yellow-900' :
-                                                                'text-blue-900'
-                                                            }`}>
-                                                            {msg.type === 'urgent' ? '🔴 Urgent Message' :
-                                                                msg.type === 'important' ? '⚠️ Important Notice' :
-                                                                    'ℹ️ Information'}
-                                                        </h4>
-                                                        <p className={`text-sm ${msg.type === 'urgent' ? 'text-red-700' :
-                                                            msg.type === 'important' ? 'text-yellow-700' :
-                                                                'text-blue-700'
-                                                            }`}>{msg.message}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="p-8 text-center text-slate-500">
-                                            <p>No messages at this time</p>
-                                        </div>
-                                    )}
                                 </div>
                             ) : null}
                         </CardContent>
@@ -501,6 +504,7 @@ export default function StudentDashboard() {
                                         <Label>College Name</Label>
                                         <Input
                                             placeholder="College Name"
+                                            className={`focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
                                             value={outpassForm.collegeName}
                                             onChange={(e) => setOutpassForm({ ...outpassForm, collegeName: e.target.value })}
                                             required
@@ -510,7 +514,7 @@ export default function StudentDashboard() {
                                     <div className="space-y-2">
                                         <Label>Hostel Name</Label>
                                         <select
-                                            className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+                                            className={`flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
                                             value={outpassForm.hostelName || user?.hostelName || ''}
                                             onChange={(e) => setOutpassForm({ ...outpassForm, hostelName: e.target.value })}
                                             required
@@ -522,6 +526,8 @@ export default function StudentDashboard() {
                                             <option value="NRI-4">NRI-4</option>
                                             <option value="AKSHAYA-1">AKSHAYA-1</option>
                                             <option value="AKSHAYA-2">AKSHAYA-2</option>
+                                            <option value="AKSHAYA-3">AKSHAYA-3</option>
+                                            <option value="AKSHAYA-4">AKSHAYA-4</option>
                                         </select>
                                     </div>
 
@@ -581,8 +587,19 @@ export default function StudentDashboard() {
                         </Card>
 
                         <Card>
-                            <CardHeader>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0">
                                 <CardTitle>History</CardTitle>
+                                {outpasses.length > 0 && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-[10px] text-red-500 hover:text-red-700 hover:bg-red-50 uppercase font-bold tracking-wider"
+                                        onClick={handleClearOutpassHistory}
+                                        disabled={submitting}
+                                    >
+                                        Clear History
+                                    </Button>
+                                )}
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-3">

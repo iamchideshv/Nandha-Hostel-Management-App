@@ -29,6 +29,7 @@ export interface Complaint {
 
 export type OutpassStatus = 'pending' | 'approved' | 'rejected' | 'exited' | 'entered' | 'expired';
 
+
 export interface Outpass {
     id: string;
     studentId: string;
@@ -75,6 +76,7 @@ export interface DBSchema {
     outpasses: Outpass[];
     fees: FeeStatus[];
     messMenu?: MessMenu;
+
 }
 
 export interface PasswordResetRequest {

@@ -53,3 +53,20 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: 'Failed to update password' }, { status: 500 });
     }
 }
+// DELETE: Manually delete a reset request (DevOps only)
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const requestId = searchParams.get('id');
+
+        if (!requestId) {
+            return NextResponse.json({ error: 'Request ID required' }, { status: 400 });
+        }
+
+        await db.deletePasswordResetRequest(requestId);
+        return NextResponse.json({ success: true, message: 'Request deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting reset request:', error);
+        return NextResponse.json({ error: 'Failed to delete request' }, { status: 500 });
+    }
+}
