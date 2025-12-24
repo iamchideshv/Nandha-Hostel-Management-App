@@ -533,7 +533,7 @@ export default function StudentDashboard() {
                 )}
 
                 {activeTab === 'messages' && (
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Send Message</CardTitle>
@@ -558,45 +558,104 @@ export default function StudentDashboard() {
                             </CardContent>
                         </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Inbox & Sent</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                                    {messages.filter(m => (m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))) || m.senderId === user?.id).length === 0 ? (
-                                        <p className="text-sm text-slate-500">No messages.</p>
-                                    ) : (
-                                        messages
-                                            .filter(m => (m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))) || m.senderId === user?.id)
-                                            .map((m) => (
-                                                <div key={m.id} className={`p-3 rounded-lg border ${m.senderRole === 'admin' ? 'bg-blue-50 border-blue-100 dark:bg-blue-900/20' : 'bg-white border-slate-200 dark:bg-slate-800'}`}>
-                                                    <div className="flex justify-between items-start mb-1">
-                                                        <div className="flex gap-2 items-center flex-wrap">
-                                                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${m.senderRole === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
-                                                                {m.senderRole === 'admin' ? 'Admin Notice' : 'You'}
-                                                            </span>
-                                                            {m.senderRole === 'admin' && m.type && (
-                                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${m.type === 'urgent' ? 'bg-red-100 text-red-700' :
-                                                                        m.type === 'important' ? 'bg-orange-100 text-orange-700' :
-                                                                            m.type === 'Mess' ? 'bg-green-100 text-green-700' :
-                                                                                'bg-slate-100 text-slate-700'
-                                                                    }`}>
-                                                                    {m.type}
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <Card>
+                                <CardHeader>
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <CardTitle>Inbox</CardTitle>
+                                            <CardDescription>Messages from Admin</CardDescription>
+                                        </div>
+                                        {messages.filter(m => m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))).length > 0 && (
+                                            <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
+                                                if (!confirm('Are you sure you want to clear your inbox? This action cannot be undone.')) return;
+                                                setMessages(prev => prev.filter(m => !(m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))));
+                                                toast.success('Inbox Cleared');
+                                            }}>
+                                                <XCircle className="w-3 h-3 mr-1" /> Clear
+                                            </Button>
+                                        )}
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                                        {messages.filter(m => m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))).length === 0 ? (
+                                            <p className="text-sm text-slate-500 text-center py-4">No messages from admin.</p>
+                                        ) : (
+                                            messages
+                                                .filter(m => m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))
+                                                .map((m) => (
+                                                    <div key={m.id} className="p-3 rounded-lg border bg-blue-50 border-blue-100 dark:bg-blue-900/20">
+                                                        <div className="flex justify-between items-start mb-1">
+                                                            <div className="flex gap-2 items-center flex-wrap">
+                                                                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                                                                    Admin Notice
                                                                 </span>
-                                                            )}
+                                                                {m.type && (
+                                                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${m.type === 'urgent' ? 'bg-red-100 text-red-700' :
+                                                                            m.type === 'important' ? 'bg-orange-100 text-orange-700' :
+                                                                                m.type === 'Mess' ? 'bg-green-100 text-green-700' :
+                                                                                    'bg-slate-100 text-slate-700'
+                                                                        }`}>
+                                                                        {m.type}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <span className="text-[10px] text-slate-400">
+                                                                {new Date(m.timestamp).toLocaleString()}
+                                                            </span>
                                                         </div>
-                                                        <span className="text-[10px] text-slate-400">
-                                                            {new Date(m.timestamp).toLocaleString()}
-                                                        </span>
+                                                        <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{m.message}</p>
                                                     </div>
-                                                    <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{m.message}</p>
-                                                </div>
-                                            ))
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
+                                                ))
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <CardTitle>Sent History</CardTitle>
+                                            <CardDescription>Your sent messages</CardDescription>
+                                        </div>
+                                        {messages.filter(m => m.senderId === user?.id).length > 0 && (
+                                            <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
+                                                if (!confirm('Are you sure you want to clear your sent history? This action cannot be undone.')) return;
+                                                setMessages(prev => prev.filter(m => m.senderId !== user?.id));
+                                                toast.success('History Cleared');
+                                            }}>
+                                                <XCircle className="w-3 h-3 mr-1" /> Clear
+                                            </Button>
+                                        )}
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                                        {messages.filter(m => m.senderId === user?.id).length === 0 ? (
+                                            <p className="text-sm text-slate-500 text-center py-4">No sent messages.</p>
+                                        ) : (
+                                            messages
+                                                .filter(m => m.senderId === user?.id)
+                                                .map((m) => (
+                                                    <div key={m.id} className="p-3 rounded-lg border bg-white border-slate-200 dark:bg-slate-800">
+                                                        <div className="flex justify-between items-start mb-1">
+                                                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                                                                You
+                                                            </span>
+                                                            <span className="text-[10px] text-slate-400">
+                                                                {new Date(m.timestamp).toLocaleString()}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{m.message}</p>
+                                                    </div>
+                                                ))
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
                     </div>
                 )}
 
