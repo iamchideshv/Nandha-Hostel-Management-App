@@ -1171,9 +1171,17 @@ export default function StudentDashboard() {
                                                         )}
                                                         <div>
                                                             <p className="font-medium text-sm">{item.productName}</p>
-                                                            <p className={`text-[10px] font-medium capitalize ${item.status === 'not-found' ? 'text-red-500' : 'text-slate-500'}`}>
+                                                            <p className={`text-[10px] font-bold capitalize ${item.status === 'not-found' ? 'text-red-500' :
+                                                                    (item.status === 'found' || item.status === 'returned') ? 'text-green-500' :
+                                                                        'text-slate-500'
+                                                                }`}>
                                                                 {item.status === 'not-found' ? 'Not Found' : item.status}
                                                             </p>
+                                                            {item.adminMessage && (
+                                                                <p className="text-[9px] text-slate-400 italic mt-0.5 line-clamp-1">
+                                                                    {item.adminMessage}
+                                                                </p>
+                                                            )}
                                                         </div>
                                                     </div>
                                                     <div className="text-right">
@@ -1224,10 +1232,19 @@ export default function StudentDashboard() {
                                     )}
                                     <div>
                                         <p className="text-slate-500 text-[10px] uppercase font-bold">Status</p>
-                                        <p className={`font-medium capitalize ${selectedItemDetail.status === 'not-found' ? 'text-red-500' : ''}`}>
+                                        <p className={`font-bold capitalize ${selectedItemDetail.status === 'not-found' ? 'text-red-500' :
+                                                (selectedItemDetail.status === 'found' || selectedItemDetail.status === 'returned') ? 'text-green-500' :
+                                                    ''
+                                            }`}>
                                             {selectedItemDetail.status === 'not-found' ? 'Not Found' : selectedItemDetail.status}
                                         </p>
                                     </div>
+                                    {selectedItemDetail.adminMessage && (
+                                        <div className="col-span-2 p-2 bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-100 dark:border-slate-800">
+                                            <p className="text-slate-500 text-[10px] uppercase font-bold mb-1">Admin Message</p>
+                                            <p className="text-sm italic text-slate-700 dark:text-slate-300">"{selectedItemDetail.adminMessage}"</p>
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="text-slate-500 text-[10px] uppercase font-bold">Location</p>
                                         <p className="font-medium">{selectedItemDetail.location}</p>
