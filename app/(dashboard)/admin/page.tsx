@@ -245,22 +245,29 @@ export default function AdminDashboard() {
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
         try {
+            const tempId = Date.now().toString();
+            const messageData: any = {
+                id: tempId,
+                message: newMessage,
+                type: 'info',
+                senderId: user?.id || 'admin',
+                senderName: user?.name || 'Admin',
+                senderRole: 'admin',
+                targetHostels: user?.hostelName ? [user.hostelName] : [],
+                timestamp: new Date().toISOString()
+            };
+
             const res = await fetch('/api/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: newMessage,
-                    type: 'info',
-                    senderId: user?.id || 'admin',
-                    senderName: user?.name || 'Admin',
-                    senderRole: 'admin',
-                    targetHostels: user?.hostelName ? [user.hostelName] : [] // Target own hostel or global if super admin (though user usually has hostelName)
-                })
+                body: JSON.stringify(messageData)
             });
+
             if (res.ok) {
                 toast.success('Message Broadcasted');
                 setNewMessage('');
-                fetchData();
+                // Optimistic update to avoid "reload" flash
+                setMessages(prev => [messageData, ...prev]);
             } else {
                 toast.error('Failed to send message');
             }
@@ -572,7 +579,15 @@ export default function AdminDashboard() {
 
                                 {/* Message List */}
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-medium">Inbox</h3>
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-lg font-medium">Inbox</h3>
+                                        <Button variant="ghost" size="sm" onClick={() => {
+                                            fetch(`/api/messages`).then(res => res.json()).then(data => setMessages(data));
+                                            toast.info('Inbox Refreshed');
+                                        }}>
+                                            <Clock className="w-3 h-3 mr-1" /> Refresh
+                                        </Button>
+                                    </div>
                                     {messages.filter(m => m.senderRole === 'student').length === 0 ? (
                                         <div className="text-center py-10 text-slate-500 bg-slate-50 dark:bg-slate-900 rounded-lg">
                                             No messages from students
