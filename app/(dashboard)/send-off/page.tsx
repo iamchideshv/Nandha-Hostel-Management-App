@@ -5,7 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { toPng } from 'html-to-image';
 import { toast } from 'sonner';
+
+const formatDate = (dateStr: string) => {
+    if (!dateStr || !dateStr.includes('-')) return dateStr;
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const [y, m, d] = parts;
+    return `${d}-${m}-${y}`;
+};
+
 import { ScanLine, CheckCircle, XCircle, LogOut, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { AboutModal } from '@/components/about-modal';
@@ -319,11 +329,11 @@ export default function SendOffDashboard() {
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
                                         <span className="text-slate-500">From Date</span>
-                                        <span className="font-semibold">{scanResult.valid?.split(' to ')[0] || 'N/A'}</span>
+                                        <span className="font-semibold">{formatDate(scanResult.valid?.split(' to ')[0]) || 'N/A'}</span>
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
                                         <span className="text-slate-500">To Date</span>
-                                        <span className="font-semibold">{scanResult.valid?.split(' to ')[1] || 'N/A'}</span>
+                                        <span className="font-semibold">{formatDate(scanResult.valid?.split(' to ')[1]) || 'N/A'}</span>
                                     </div>
                                     <div className="flex justify-between border-b pb-2">
                                         <span className="text-slate-500">Reason</span>
@@ -352,8 +362,8 @@ export default function SendOffDashboard() {
                                                     headers: { 'Content-Type': 'application/json' },
                                                     body: JSON.stringify({
                                                         studentName: scanResult.student,
-                                                        fromDate: scanResult.valid?.split(' to ')[0],
-                                                        toDate: scanResult.valid?.split(' to ')[1],
+                                                        fromDate: formatDate(scanResult.valid?.split(' to ')[0]),
+                                                        toDate: formatDate(scanResult.valid?.split(' to ')[1]),
                                                         collegeName: scanResult.collegeName,
                                                         hostelName: scanResult.hostelName,
                                                         roomNumber: scanResult.roomNumber,
