@@ -10,7 +10,7 @@ import { ArrowRight, Building, ShieldCheck, User, Users } from 'lucide-react';
 export default function Home() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-slate-900 dark:to-slate-950 flex flex-col transition-colors duration-500">
+    <div className="min-h-screen flex flex-col transition-colors duration-500">
       <header className="p-4 md:p-6 flex justify-between items-center max-w-7xl mx-auto w-full gap-2">
         <div className="flex items-center space-x-2 min-w-0 flex-shrink">
           <img src="/logo-main.png" alt="Logo" className="h-8 w-8 md:h-10 md:w-10 object-contain rounded-md flex-shrink-0" />

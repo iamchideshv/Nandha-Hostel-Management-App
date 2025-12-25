@@ -20,7 +20,8 @@
 @variant dark (&:where(.dark, .dark *));
 
 body {
-  background: var(--background);
+  background: url('/background.avif') no-repeat center center fixed;
+  background-size: cover;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;

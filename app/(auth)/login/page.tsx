@@ -263,7 +263,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 transition-colors duration-300">
+        <div className="flex min-h-screen items-center justify-center p-4 transition-colors duration-300">
             {/* Back to Home Button */}
             <Link href="/" className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
                 <Button variant="ghost" size="sm" className="gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
