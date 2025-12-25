@@ -828,7 +828,7 @@ export default function StudentDashboard() {
                                         <div className="space-y-2">
                                             <Label>Hostel Name</Label>
                                             <select
-                                                className={`flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
+                                                className={`flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-slate-900 dark:border-slate-800 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
                                                 value={outpassForm.hostelName || user?.hostelName || ''}
                                                 onChange={(e) => setOutpassForm({ ...outpassForm, hostelName: e.target.value })}
                                                 required
@@ -919,22 +919,22 @@ export default function StudentDashboard() {
                                     <div className="space-y-3">
                                         {!outpasses.length ? <p className="text-sm text-slate-500">No outpass history.</p> :
                                             outpasses.map((o) => (
-                                                <div key={o.id} className="p-3 border rounded-lg flex flex-col bg-white">
+                                                <div key={o.id} className="p-3 border rounded-lg flex flex-col bg-white dark:bg-slate-900">
                                                     <div className="flex justify-between items-center w-full">
                                                         <div>
                                                             <p className="font-medium text-sm">{o.reason}</p>
                                                             <p className="text-xs text-slate-500">{o.fromDate} to {o.toDate}</p>
                                                         </div>
                                                         <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium
-                                                ${o.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                                o.status === 'expired' ? 'bg-slate-100 text-slate-600' :
-                                                                    o.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}
+                                                ${o.status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                                                                o.status === 'expired' ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' :
+                                                                    o.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}
                                             `}>
                                                             {o.status}
                                                         </div>
                                                     </div>
                                                     {(o.status === 'approved' || o.status === 'exited' || o.status === 'entered') && (
-                                                        <div className="mt-4 self-center p-4 bg-white rounded border cursor-pointer hover:bg-slate-50 transition-colors"
+                                                        <div className="mt-4 self-center p-4 bg-white dark:bg-slate-800 rounded border dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                                                             onClick={() => setSelectedQr({
                                                                 ...o,
                                                                 studentName: user?.name || '',
@@ -979,7 +979,7 @@ export default function StudentDashboard() {
                             <CardContent className="space-y-6">
                                 {!feeStatus ? (
                                     <div className="text-center py-8 space-y-4">
-                                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
+                                        <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto text-slate-400">
                                             <BadgeCheck className="w-8 h-8" />
                                         </div>
                                         <h3 className="text-lg font-medium">Status Unknown</h3>
@@ -1005,8 +1005,8 @@ export default function StudentDashboard() {
                                 ) : (
                                     <div className="space-y-6">
                                         <div className={`p-6 rounded-xl border flex flex-col items-center justify-center text-center space-y-2
-                                    ${feeStatus.status === 'paid' ? 'bg-green-50 border-green-200' :
-                                                feeStatus.status === 'unpaid' ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'}`}>
+                                    ${feeStatus.status === 'paid' ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' :
+                                                feeStatus.status === 'unpaid' ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'}`}>
 
                                             <h2 className="text-2xl font-bold uppercase tracking-wide mb-4">
                                                 {feeStatus.status === 'pending_request' ? 'Pending Admin Review' : feeStatus.status}
@@ -1021,7 +1021,7 @@ export default function StudentDashboard() {
 
                                         {feeStatus.status === 'unpaid' && (
                                             <div className="space-y-4">
-                                                <div className="p-4 bg-slate-50 rounded-lg border text-sm space-y-2">
+                                                <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border dark:border-slate-800 text-sm space-y-2">
                                                     <div className="flex justify-between">
                                                         <span className="text-slate-500">Total Course Fee</span>
                                                         <span className="font-medium">₹75,000</span>
@@ -1183,14 +1183,14 @@ export default function StudentDashboard() {
                                             <p className="text-sm text-slate-500 text-center py-4">No reports found.</p>
                                         ) : (
                                             lostItems.map((item) => (
-                                                <div key={item.id} className="p-4 rounded-xl border bg-white dark:bg-slate-800 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
+                                                <div key={item.id} className="p-4 rounded-xl border bg-white dark:bg-slate-900/50 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
                                                     <div className="flex items-center gap-4">
                                                         {item.image ? (
-                                                            <div className="w-16 h-16 rounded-lg border overflow-hidden cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
+                                                            <div className="w-16 h-16 rounded-lg border dark:border-slate-800 overflow-hidden cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
                                                                 <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
                                                             </div>
                                                         ) : (
-                                                            <div className="w-16 h-16 rounded-lg border bg-slate-100 flex items-center justify-center text-slate-400">
+                                                            <div className="w-16 h-16 rounded-lg border dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
                                                                 <Search className="w-6 h-6" />
                                                             </div>
                                                         )}
@@ -1246,17 +1246,17 @@ export default function StudentDashboard() {
                                 )}
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div className="col-span-2">
-                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Identification</p>
-                                        <p className="font-medium p-2 bg-slate-50 dark:bg-slate-800 rounded mt-1">{selectedItemDetail.identification}</p>
+                                        <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Identification</p>
+                                        <p className="font-medium p-2 bg-slate-50 dark:bg-slate-900 rounded mt-1">{selectedItemDetail.identification}</p>
                                     </div>
                                     {selectedItemDetail.adminMessage && (
                                         <div className="col-span-2">
-                                            <p className="text-blue-500 text-[10px] uppercase font-bold">Admin Message</p>
-                                            <p className="font-medium p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded mt-1 border border-blue-100 dark:border-blue-800">{selectedItemDetail.adminMessage}</p>
+                                            <p className="text-blue-500 dark:text-blue-400 text-[10px] uppercase font-bold">Admin Message</p>
+                                            <p className="font-medium p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded mt-1 border border-blue-100 dark:border-blue-800">{selectedItemDetail.adminMessage}</p>
                                         </div>
                                     )}
                                     <div>
-                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Status</p>
+                                        <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Status</p>
                                         <p className={`font-bold capitalize ${selectedItemDetail.status === 'not-found' ? 'text-red-500' :
                                             (selectedItemDetail.status === 'found' || selectedItemDetail.status === 'returned') ? 'text-green-500' :
                                                 ''
@@ -1266,7 +1266,7 @@ export default function StudentDashboard() {
                                     </div>
                                     {selectedItemDetail.adminMessage && (
                                         <div className="col-span-2 p-2 bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-100 dark:border-slate-800">
-                                            <p className="text-slate-500 text-[10px] uppercase font-bold mb-1">Admin Message</p>
+                                            <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold mb-1">Admin Message</p>
                                             <p className="text-sm italic text-slate-700 dark:text-slate-300">"{selectedItemDetail.adminMessage}"</p>
                                         </div>
                                     )}
@@ -1300,7 +1300,7 @@ export default function StudentDashboard() {
 
                 {selectedQr && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedQr(null)}>
-                        <div className="bg-white rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                        <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
                             {/* The Printable A6 Area */}
                             <div className="overflow-auto max-h-[80vh]">
                                 <div id="outpass-to-download" className="bg-white p-6 flex flex-col items-center w-[400px] h-[564px] mx-auto shadow-sm">
