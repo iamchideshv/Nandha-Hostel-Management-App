@@ -116,3 +116,13 @@ export interface LostFound {
     adminMessage?: string;
     createdAt: string;
 }
+
+export interface Feedback {
+    id: string;
+    studentId: string;
+    studentName: string;
+    hostelName?: string;
+    rating: number;
+    message: string;
+    createdAt: string;
+}

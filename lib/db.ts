@@ -21,6 +21,7 @@ const OUTPASS_COL = 'outpasses';
 const FEES_COL = 'fees';
 const MESS_MENU_COL = 'messMenus';
 const LOST_FOUND_COL = 'lostFound';
+const FEEDBACK_COL = 'feedback';
 
 export const db = {
   // --- USERS ---
@@ -374,6 +375,18 @@ export const db = {
     const snap = await getDocs(q);
     const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
     await Promise.all(deletePromises);
+  },
+
+  // --- FEEDBACK ---
+  getFeedback: async (): Promise<any[]> => {
+    const q = query(collection(firestore, FEEDBACK_COL));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  addFeedback: async (feedback: any): Promise<void> => {
+    await setDoc(doc(firestore, FEEDBACK_COL, feedback.id), feedback);
   },
 
 };

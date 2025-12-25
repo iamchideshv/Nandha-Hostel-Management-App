@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Key, RefreshCw, Trash2, UserCog, Loader2, Search, MoreVertical } from 'lucide-react';
+import { Key, RefreshCw, Trash2, UserCog, Loader2, Search, MoreVertical, MessageSquare, Star, User } from 'lucide-react';
 
 export default function DevOpsDashboard() {
     const { user } = useAuth();
@@ -26,6 +26,9 @@ export default function DevOpsDashboard() {
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [roleFilter, setRoleFilter] = useState('all');
     const [hostelFilter, setHostelFilter] = useState('all');
+    const [activeTab, setActiveTab] = useState<'accounts' | 'feedback'>('accounts');
+    const [feedback, setFeedback] = useState<any[]>([]);
+    const [feedbackLoading, setFeedbackLoading] = useState(false);
 
     const fetchRequests = async () => {
         // setLoading(true);
@@ -53,9 +56,23 @@ export default function DevOpsDashboard() {
         }
     };
 
+    const fetchFeedback = async () => {
+        setFeedbackLoading(true);
+        try {
+            const res = await fetch('/api/feedback');
+            const data = await res.json();
+            setFeedback(data);
+        } catch (error) {
+            toast.error('Failed to load feedback');
+        } finally {
+            setFeedbackLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchRequests();
         fetchUsers();
+        fetchFeedback();
     }, []);
 
     const handleResetPassword = async () => {
@@ -186,241 +203,471 @@ export default function DevOpsDashboard() {
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
-            <div className="mb-6">
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">DevOps Dashboard</h1>
-                <p className="text-slate-600 dark:text-slate-400 mt-1">Manage password reset requests</p>
+            <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">DevOps Dashboard</h1>
+                    <p className="text-slate-600 dark:text-slate-400 mt-1">
+                        {activeTab === 'accounts' ? 'Manage password reset requests and users' : 'Review user feedback and suggestions'}
+                    </p>
+                </div>
+                <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+                    <button
+                        onClick={() => setActiveTab('accounts')}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'accounts'
+                            ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                            }`}
+                    >
+                        Account Management
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('feedback')}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'feedback'
+                            ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                            }`}
+                    >
+                        Feedback Submitted
+                    </button>
+                </div>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <CardTitle>Password Reset Requests</CardTitle>
-                            <CardDescription>Review and process user password reset requests</CardDescription>
-                        </div>
-                        <Button onClick={fetchRequests} variant="outline" size="sm">
-                            <RefreshCw className="w-4 h-4 mr-2" />
-                            Refresh
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {false ? (
-                        <div className="text-center py-8 text-slate-500">Loading...</div>
-                    ) : requests.length === 0 ? (
-                        <div className="text-center py-8 text-slate-500">
-                            No pending password reset requests
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead className="border-b">
-                                    <tr className="text-left">
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">User ID</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Name</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Email</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Request Date</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {requests.map((req) => (
-                                        <tr key={req.id} className="border-b last:border-0">
-                                            <td className="py-3 font-medium text-slate-900 dark:text-white">{req.userId}</td>
-                                            <td className="py-3 text-slate-600 dark:text-slate-400">{req.userName}</td>
-                                            <td className="py-3 text-slate-600 dark:text-slate-400">{req.userEmail || 'N/A'}</td>
-                                            <td className="py-3 text-slate-600 dark:text-slate-400">
-                                                {new Date(req.requestDate).toLocaleString()}
-                                            </td>
-                                            <td className="py-3">
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        size="sm"
-                                                        onClick={() => setSelectedRequest(req)}
-                                                        className="bg-blue-600 hover:bg-blue-700"
-                                                    >
-                                                        <Key className="w-4 h-4 mr-1" />
-                                                        Reset Password
-                                                    </Button>
+            {activeTab === 'accounts' ? (
+                <>
 
-                                                    <div className="relative">
-                                                        <Button
-                                                            size="sm"
-                                                            variant="ghost"
-                                                            className="p-1 h-8 w-8"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setOpenMenuId(openMenuId === req.id ? null : req.id);
-                                                            }}
-                                                        >
-                                                            <MoreVertical className="w-4 h-4" />
-                                                        </Button>
+                    <Card>
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <CardTitle>Password Reset Requests</CardTitle>
+                                    <CardDescription>Review and process user password reset requests</CardDescription>
+                                </div>
+                                <Button onClick={fetchRequests} variant="outline" size="sm">
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                    Refresh
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            {false ? (
+                                <div className="text-center py-8 text-slate-500">Loading...</div>
+                            ) : requests.length === 0 ? (
+                                <div className="text-center py-8 text-slate-500">
+                                    No pending password reset requests
+                                </div>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead className="border-b">
+                                            <tr className="text-left">
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">User ID</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Name</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Email</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Request Date</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {requests.map((req) => (
+                                                <tr key={req.id} className="border-b last:border-0">
+                                                    <td className="py-3 font-medium text-slate-900 dark:text-white">{req.userId}</td>
+                                                    <td className="py-3 text-slate-600 dark:text-slate-400">{req.userName}</td>
+                                                    <td className="py-3 text-slate-600 dark:text-slate-400">{req.userEmail || 'N/A'}</td>
+                                                    <td className="py-3 text-slate-600 dark:text-slate-400">
+                                                        {new Date(req.requestDate).toLocaleString()}
+                                                    </td>
+                                                    <td className="py-3">
+                                                        <div className="flex items-center gap-2">
+                                                            <Button
+                                                                size="sm"
+                                                                onClick={() => setSelectedRequest(req)}
+                                                                className="bg-blue-600 hover:bg-blue-700"
+                                                            >
+                                                                <Key className="w-4 h-4 mr-1" />
+                                                                Reset Password
+                                                            </Button>
 
-                                                        {openMenuId === req.id && (
-                                                            <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-slate-800 border rounded-md shadow-lg z-50 overflow-hidden">
-                                                                <button
-                                                                    className="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
-                                                                    disabled={deletingRequestId === req.id}
-                                                                    onClick={() => handleDeleteRequest(req.id)}
+                                                            <div className="relative">
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    className="p-1 h-8 w-8"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setOpenMenuId(openMenuId === req.id ? null : req.id);
+                                                                    }}
                                                                 >
-                                                                    {deletingRequestId === req.id ? (
-                                                                        <Loader2 className="w-3 h-3 animate-spin" />
-                                                                    ) : (
-                                                                        <Trash2 className="w-3 h-3" />
-                                                                    )}
-                                                                    Delete Request
-                                                                </button>
+                                                                    <MoreVertical className="w-4 h-4" />
+                                                                </Button>
+
+                                                                {openMenuId === req.id && (
+                                                                    <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-slate-800 border rounded-md shadow-lg z-50 overflow-hidden">
+                                                                        <button
+                                                                            className="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                                                                            disabled={deletingRequestId === req.id}
+                                                                            onClick={() => handleDeleteRequest(req.id)}
+                                                                        >
+                                                                            {deletingRequestId === req.id ? (
+                                                                                <Loader2 className="w-3 h-3 animate-spin" />
+                                                                            ) : (
+                                                                                <Trash2 className="w-3 h-3" />
+                                                                            )}
+                                                                            Delete Request
+                                                                        </button>
+                                                                    </div>
+                                                                )}
                                                             </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card className="mt-8 border-red-200">
+                        <CardHeader className="bg-red-50/50">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <CardTitle className="text-red-900">All User Logins (Master Access)</CardTitle>
+                                    <CardDescription className="text-red-700">View all registered users and their plain-text passwords</CardDescription>
+                                </div>
+                                <Button onClick={fetchUsers} variant="outline" size="sm" className="border-red-200 hover:bg-red-100 text-red-700">
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                    Refresh User List
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex flex-col md:flex-row gap-4">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Input
+                                        placeholder="Search by ID, Name, or Role..."
+                                        className="pl-10 h-10"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <div className="w-full md:w-48">
+                                    <select
+                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                        value={roleFilter}
+                                        onChange={(e) => setRoleFilter(e.target.value)}
+                                    >
+                                        <option value="all">All Roles</option>
+                                        <option value="student">Students</option>
+                                        <option value="admin">Admins</option>
+                                        <option value="send-off">Send-off</option>
+                                        <option value="authority">Authority</option>
+                                        <option value="devops">DevOps</option>
+                                    </select>
+                                </div>
+                                <div className="w-full md:w-48">
+                                    <select
+                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                        value={hostelFilter}
+                                        onChange={(e) => setHostelFilter(e.target.value)}
+                                    >
+                                        <option value="all">All Hostels</option>
+                                        <option value="NRI-1">NRI-1</option>
+                                        <option value="NRI-2">NRI-2</option>
+                                        <option value="NRI-3">NRI-3</option>
+                                        <option value="NRI-4">NRI-4</option>
+                                        <option value="AKSHAYA-1">AKSHAYA-1</option>
+                                        <option value="AKSHAYA-2">AKSHAYA-2</option>
+                                        <option value="AKSHAYA-3">AKSHAYA-3</option>
+                                        <option value="AKSHAYA-4">AKSHAYA-4</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {false ? (
+                                <div className="text-center py-8 text-slate-500">Loading master user list...</div>
+                            ) : users.length === 0 ? (
+                                <div className="text-center py-8 text-slate-500">
+                                    No users found in the database
+                                </div>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead className="border-b">
+                                            <tr className="text-left">
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Login ID / Username</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Full Name</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Role</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Hostel</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 font-mono text-red-600">Password</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredUsers.map((u) => (
+                                                <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                    <td className="py-3 font-medium text-slate-900 dark:text-white">{u.id}</td>
+                                                    <td className="py-3 text-slate-600 dark:text-slate-400">{u.name}</td>
+                                                    <td className="py-3">
+                                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                                                            u.role === 'devops' ? 'bg-red-100 text-red-700' :
+                                                                u.role === 'authority' ? 'bg-amber-100 text-amber-700' :
+                                                                    'bg-blue-100 text-blue-700'
+                                                            }`}>
+                                                            {u.role}
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-3 text-slate-600 dark:text-slate-400">{u.hostelName || 'N/A'}</td>
+                                                    <td className="py-3">
+                                                        <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-red-700 dark:text-red-400 rounded font-bold border border-yellow-200 dark:border-yellow-700/50">
+                                                            {u.password || 'SECRET'}
+                                                        </code>
+                                                    </td>
+                                                    <td className="py-3">
+                                                        <div className="flex justify-end gap-2">
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                onClick={() => {
+                                                                    setSelectedUser(u);
+                                                                    setEditData({
+                                                                        id: u.id,
+                                                                        name: u.name,
+                                                                        password: u.password || '',
+                                                                        role: u.role
+                                                                    });
+                                                                }}
+                                                                className="hover:text-blue-600 hover:border-blue-600"
+                                                            >
+                                                                <UserCog className="w-4 h-4" />
+                                                            </Button>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                disabled={deletingId === u.id}
+                                                                onClick={() => handleDeleteUser(u.id)}
+                                                                className="hover:text-red-600 hover:border-red-600"
+                                                            >
+                                                                {deletingId === u.id ? (
+                                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                                ) : (
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Edit User Modal */}
+                    {selectedUser && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                            <Card className="w-full max-w-md shadow-2xl">
+                                <CardHeader>
+                                    <CardTitle>Edit User: {selectedUser.name}</CardTitle>
+                                    <CardDescription>Update Login ID, Full Name, or Password</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="editId">Login ID / Username</Label>
+                                        <Input
+                                            id="editId"
+                                            value={editData.id}
+                                            onChange={(e) => setEditData({ ...editData, id: e.target.value })}
+                                            placeholder="Enter new login ID"
+                                        />
+                                        <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Warning: Changing this will change their login username.</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="editName">Full Name</Label>
+                                        <Input
+                                            id="editName"
+                                            value={editData.name}
+                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                                            placeholder="Enter full name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="editPassword">Password</Label>
+                                        <Input
+                                            id="editPassword"
+                                            value={editData.password}
+                                            onChange={(e) => setEditData({ ...editData, password: e.target.value })}
+                                            placeholder="Enter new password"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="editRole">User Role</Label>
+                                        <select
+                                            id="editRole"
+                                            className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                            value={editData.role}
+                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
+                                        >
+                                            <option value="student">Student</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="send-off">Send-off</option>
+                                            <option value="authority">Authority</option>
+                                            <option value="devops">DevOps</option>
+                                        </select>
+                                    </div>
+                                </CardContent>
+                                <div className="flex gap-2 p-6 pt-0">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setSelectedUser(null)}
+                                        className="flex-1"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        onClick={handleUpdateUser}
+                                        disabled={resetting}
+                                        className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                                    >
+                                        {resetting ? 'Updating...' : 'Save Changes'}
+                                    </Button>
+                                </div>
+                            </Card>
+                        </div>
+                    )}
+
+                    {/* Password Reset Modal */}
+                    {selectedRequest && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                            <Card className="w-full max-w-md shadow-2xl">
+                                <CardHeader>
+                                    <CardTitle>Reset Password</CardTitle>
+                                    <CardDescription>
+                                        Setting new password for <strong>{selectedRequest.userName}</strong> ({selectedRequest.userId})
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="newPassword">New Password</Label>
+                                        <Input
+                                            id="newPassword"
+                                            type="password"
+                                            placeholder="Enter new password (min 6 characters)"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                        />
+                                    </div>
+                                </CardContent>
+                                <div className="flex gap-2 p-6 pt-0">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setSelectedRequest(null);
+                                            setNewPassword('');
+                                        }}
+                                        className="flex-1"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        onClick={handleResetPassword}
+                                        disabled={resetting}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                                    >
+                                        {resetting ? 'Resetting...' : 'Reset Password'}
+                                    </Button>
+                                </div>
+                            </Card>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <Card>
+                    <CardHeader>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <CardTitle>User Feedback & Suggestions</CardTitle>
+                                <CardDescription>Ratings and queries submitted by users</CardDescription>
+                            </div>
+                            <Button onClick={fetchFeedback} variant="outline" size="sm" disabled={feedbackLoading}>
+                                <RefreshCw className={`w-4 h-4 mr-2 ${feedbackLoading ? 'animate-spin' : ''}`} />
+                                Refresh Feedback
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {feedbackLoading ? (
+                            <div className="text-center py-12">
+                                <p className="text-slate-500">Loading feedback...</p>
+                            </div>
+                        ) : feedback.length === 0 ? (
+                            <div className="text-center py-12 border-2 border-dashed rounded-xl bg-slate-50/50 dark:bg-slate-900/50">
+                                <MessageSquare className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">No Feedback Yet</h3>
+                                <p className="text-slate-500 max-w-xs mx-auto">Feedback submitted by students will appear here.</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead className="border-b">
+                                        <tr className="text-left">
+                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">User</th>
+                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Rating</th>
+                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Query & Suggestions</th>
+                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Submitted At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {feedback.map((item) => (
+                                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                <td className="py-4 align-top">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                                            <User className="w-4 h-4" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-semibold text-slate-900 dark:text-white">{item.studentName}</p>
+                                                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">{item.studentId}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 align-top">
+                                                    <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded w-fit border border-amber-100 dark:border-amber-800/50">
+                                                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                                                        <span className="font-bold text-amber-700 dark:text-amber-400">{item.rating}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 align-top">
+                                                    <div className="max-w-md">
+                                                        {item.message ? (
+                                                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                                                "{item.message}"
+                                                            </p>
+                                                        ) : (
+                                                            <span className="text-slate-400 italic">No comments provided</span>
                                                         )}
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-
-            <Card className="mt-8 border-red-200">
-                <CardHeader className="bg-red-50/50">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <CardTitle className="text-red-900">All User Logins (Master Access)</CardTitle>
-                            <CardDescription className="text-red-700">View all registered users and their plain-text passwords</CardDescription>
-                        </div>
-                        <Button onClick={fetchUsers} variant="outline" size="sm" className="border-red-200 hover:bg-red-100 text-red-700">
-                            <RefreshCw className="w-4 h-4 mr-2" />
-                            Refresh User List
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            <Input
-                                placeholder="Search by ID, Name, or Role..."
-                                className="pl-10 h-10"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <div className="w-full md:w-48">
-                            <select
-                                className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
-                                value={roleFilter}
-                                onChange={(e) => setRoleFilter(e.target.value)}
-                            >
-                                <option value="all">All Roles</option>
-                                <option value="student">Students</option>
-                                <option value="admin">Admins</option>
-                                <option value="send-off">Send-off</option>
-                                <option value="authority">Authority</option>
-                                <option value="devops">DevOps</option>
-                            </select>
-                        </div>
-                        <div className="w-full md:w-48">
-                            <select
-                                className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
-                                value={hostelFilter}
-                                onChange={(e) => setHostelFilter(e.target.value)}
-                            >
-                                <option value="all">All Hostels</option>
-                                <option value="NRI-1">NRI-1</option>
-                                <option value="NRI-2">NRI-2</option>
-                                <option value="NRI-3">NRI-3</option>
-                                <option value="NRI-4">NRI-4</option>
-                                <option value="AKSHAYA-1">AKSHAYA-1</option>
-                                <option value="AKSHAYA-2">AKSHAYA-2</option>
-                                <option value="AKSHAYA-3">AKSHAYA-3</option>
-                                <option value="AKSHAYA-4">AKSHAYA-4</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {false ? (
-                        <div className="text-center py-8 text-slate-500">Loading master user list...</div>
-                    ) : users.length === 0 ? (
-                        <div className="text-center py-8 text-slate-500">
-                            No users found in the database
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead className="border-b">
-                                    <tr className="text-left">
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Login ID / Username</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Full Name</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Role</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Hostel</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 font-mono text-red-600">Password</th>
-                                        <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredUsers.map((u) => (
-                                        <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td className="py-3 font-medium text-slate-900 dark:text-white">{u.id}</td>
-                                            <td className="py-3 text-slate-600 dark:text-slate-400">{u.name}</td>
-                                            <td className="py-3">
-                                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                                    u.role === 'devops' ? 'bg-red-100 text-red-700' :
-                                                        u.role === 'authority' ? 'bg-amber-100 text-amber-700' :
-                                                            'bg-blue-100 text-blue-700'
-                                                    }`}>
-                                                    {u.role}
-                                                </span>
-                                            </td>
-                                            <td className="py-3 text-slate-600 dark:text-slate-400">{u.hostelName || 'N/A'}</td>
-                                            <td className="py-3">
-                                                <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-red-700 dark:text-red-400 rounded font-bold border border-yellow-200 dark:border-yellow-700/50">
-                                                    {u.password || 'SECRET'}
-                                                </code>
-                                            </td>
-                                            <td className="py-3">
-                                                <div className="flex justify-end gap-2">
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        onClick={() => {
-                                                            setSelectedUser(u);
-                                                            setEditData({
-                                                                id: u.id,
-                                                                name: u.name,
-                                                                password: u.password || '',
-                                                                role: u.role
-                                                            });
-                                                        }}
-                                                        className="hover:text-blue-600 hover:border-blue-600"
-                                                    >
-                                                        <UserCog className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        disabled={deletingId === u.id}
-                                                        onClick={() => handleDeleteUser(u.id)}
-                                                        className="hover:text-red-600 hover:border-red-600"
-                                                    >
-                                                        {deletingId === u.id ? (
-                                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                                        ) : (
-                                                            <Trash2 className="w-4 h-4" />
-                                                        )}
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                                                </td>
+                                                <td className="py-4 align-top whitespace-nowrap">
+                                                    <p className="text-slate-500 dark:text-slate-400 text-xs text-right">
+                                                        {new Date(item.createdAt).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                    </p>
+                                                    <p className="text-slate-400 dark:text-slate-500 text-[10px] text-right">
+                                                        {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Edit User Modal */}
             {selectedUser && (

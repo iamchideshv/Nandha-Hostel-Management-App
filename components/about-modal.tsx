@@ -1,6 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Info, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/auth-context';
+import { toast } from 'sonner';
+import React from 'react';
 
 interface AboutModalProps {
     isOpen: boolean;
@@ -8,8 +11,11 @@ interface AboutModalProps {
 }
 
 export function AboutModal({ isOpen, onClose }: AboutModalProps) {
+    const { user } = useAuth();
     const [view, setView] = useState<'info' | 'feedback' | 'success'>('info');
     const [rating, setRating] = useState<number>(0);
+    const [message, setMessage] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     // Reset view when modal closes
     useEffect(() => {
@@ -17,22 +23,41 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
             setTimeout(() => {
                 setView('info');
                 setRating(0);
-            }, 300); // Wait for close animation
+                setMessage('');
+                setSubmitting(false);
+            }, 300);
         }
     }, [isOpen]);
 
     if (!isOpen) return null;
 
-    const handleSubmitFeedback = () => {
+    const handleSubmitFeedback = async () => {
         if (rating === 0) return;
 
-        // You could send this to an API, but for now we'll just show success
-        // and link to email if they want to say more
-        setView('success');
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    studentId: user?.id || 'anonymous',
+                    studentName: user?.name || 'Anonymous User',
+                    hostelName: user?.hostelName || 'N/A',
+                    rating,
+                    message: message.trim()
+                })
+            });
 
-        // Optional: Open email with the rating
-        const mailto = `mailto:chideshv@gmail.com?subject=Hostel%20App%20Feedback&body=I%20gave%20the%20app%20a%20${rating}%20star%20rating!`;
-        window.location.href = mailto;
+            if (res.ok) {
+                setView('success');
+            } else {
+                toast.error('Failed to submit feedback');
+            }
+        } catch (error) {
+            toast.error('Error submitting feedback');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -102,13 +127,32 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
                             ))}
                         </div>
 
+                        <div className="space-y-4 text-left">
+                            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Type Your Queries & Suggestions
+                            </label>
+                            <textarea
+                                className="w-full min-h-[100px] p-3 text-sm bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
+                                placeholder="Tell us what we can improve..."
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                            />
+                        </div>
+
                         <div className="space-y-3 pt-4">
                             <Button
                                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 rounded-xl transition-all active:scale-95 disabled:opacity-50"
                                 onClick={handleSubmitFeedback}
-                                disabled={rating === 0}
+                                disabled={rating === 0 || submitting}
                             >
-                                {rating > 0 ? `Submit ${rating} Star Rating` : 'Select a Rating'}
+                                {submitting ? (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Submitting...
+                                    </div>
+                                ) : (
+                                    rating > 0 ? `Submit ${rating} Star Rating` : 'Select a Rating'
+                                )}
                             </Button>
 
                             <Button
@@ -146,4 +190,3 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
     );
 }
 
-import React from 'react';
