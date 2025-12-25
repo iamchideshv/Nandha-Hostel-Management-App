@@ -225,7 +225,7 @@ export default function SendOffDashboard() {
 
     return (
         <div className="max-w-4xl mx-auto p-4 space-y-6">
-            <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-xl border shadow-sm">
+            <header className="flex justify-between items-center mb-8 bg-white dark:bg-black p-4 rounded-xl border dark:border-slate-800 shadow-sm">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Send-Off Security</h1>
                     <p className="text-slate-500 text-sm">PWS ID: {user?.id} • {user?.name}</p>
@@ -302,7 +302,7 @@ export default function SendOffDashboard() {
                                     </div>
                                 )}
 
-                                <div className="bg-slate-50 p-4 rounded-lg text-left text-sm space-y-2 border">
+                                <div className="bg-slate-50 dark:bg-black p-4 rounded-lg text-left text-sm space-y-2 border dark:border-slate-800">
                                     <div className="flex justify-between border-b pb-2">
                                         <span className="text-slate-500">Outpass ID</span>
                                         <span className="font-mono text-xs">{scanResult.id ? scanResult.id.slice(0, 12) : 'N/A'}</span>

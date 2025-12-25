@@ -39,7 +39,7 @@ export default function DashboardLayout({
     return (
         <div className="min-h-screen flex flex-col md:flex-row transition-colors duration-300">
             {/* Mobile Topbar */}
-            <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b dark:border-slate-800 sticky top-0 z-10">
+            <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-black border-b dark:border-slate-800 sticky top-0 z-10">
                 <div className="flex items-center space-x-2">
                     <img src="/logo-main.png" alt="Logo" className="h-8 w-8 object-contain rounded" />
                     <h1 className="font-bold text-lg text-blue-900 dark:text-blue-400">NEI Smart Hostel</h1>
@@ -57,7 +57,7 @@ export default function DashboardLayout({
 
             {/* Sidebar / Mobile Menu */}
             <aside className={`
-        fixed inset-0 z-20 bg-white dark:bg-slate-900 md:bg-white md:dark:bg-slate-900 border-r dark:border-slate-800 md:static md:w-64 md:border-r 
+        fixed inset-0 z-20 bg-white dark:bg-black md:bg-white md:dark:bg-black border-r dark:border-slate-800 md:static md:w-64 md:border-r 
         flex-col transition-all transform md:translate-x-0
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
@@ -130,7 +130,7 @@ export default function DashboardLayout({
             {/* Go to Home Confirmation Modal */}
             {showHomeConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowHomeConfirm(false)}>
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-xl max-w-sm w-full space-y-4 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white dark:bg-black p-6 rounded-xl max-w-sm w-full space-y-4 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
                         <h3 className="text-lg font-semibold text-slate-900 dark:text-white text-center">Like to signout?</h3>
                         <div className="flex gap-3">
                             <Button className="flex-1" variant="outline" onClick={() => setShowHomeConfirm(false)}>Cancel</Button>

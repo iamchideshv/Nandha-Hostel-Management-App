@@ -45,21 +45,21 @@ export default function Home() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mt-16 w-full text-left">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border-2 border-slate-300 dark:border-slate-700 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgb(0,0,0,0.2)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.6)] hover:bg-slate-50 dark:hover:bg-black group">
+          <div className="bg-white dark:bg-black p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border-2 border-slate-300 dark:border-slate-700 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgb(0,0,0,0.2)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.6)] hover:bg-slate-50 dark:hover:bg-black group">
             <div className="h-12 w-12 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400 transition-colors">
               <User className="h-6 w-6" />
             </div>
             <h3 className="font-bold text-lg mb-2 text-slate-900 dark:text-white">Student Portal</h3>
             <p className="text-slate-600 dark:text-slate-400 underline-offset-4">Check mess menu, apply for outpass, and register complaints in seconds.</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border-2 border-slate-300 dark:border-slate-700 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgb(0,0,0,0.2)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.6)] hover:bg-slate-50 dark:hover:bg-black group">
+          <div className="bg-white dark:bg-black p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border-2 border-slate-300 dark:border-slate-700 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgb(0,0,0,0.2)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.6)] hover:bg-slate-50 dark:hover:bg-black group">
             <div className="h-12 w-12 bg-green-500/10 dark:bg-green-500/20 rounded-xl flex items-center justify-center mb-4 text-green-600 dark:text-green-400 transition-colors">
               <Users className="h-6 w-6" />
             </div>
             <h3 className="font-bold text-lg mb-2 text-slate-900 dark:text-white">Admin Dashboard</h3>
             <p className="text-slate-600 dark:text-slate-400">Track and resolve complaints efficiently. Keep the hostel running smooth.</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border-2 border-slate-300 dark:border-slate-700 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgb(0,0,0,0.2)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.6)] hover:bg-slate-50 dark:hover:bg-black group">
+          <div className="bg-white dark:bg-black p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border-2 border-slate-300 dark:border-slate-700 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgb(0,0,0,0.2)] dark:hover:shadow-[0_20px_50px_rgb(0,0,0,0.6)] hover:bg-slate-50 dark:hover:bg-black group">
             <div className="h-12 w-12 bg-purple-500/10 dark:bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 text-purple-600 dark:text-purple-400 transition-colors">
               <ShieldCheck className="h-6 w-6" />
             </div>

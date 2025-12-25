@@ -354,7 +354,7 @@ export default function DevOpsDashboard() {
                                 </div>
                                 <div className="w-full md:w-48">
                                     <select
-                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
                                         value={roleFilter}
                                         onChange={(e) => setRoleFilter(e.target.value)}
                                     >
@@ -368,7 +368,7 @@ export default function DevOpsDashboard() {
                                 </div>
                                 <div className="w-full md:w-48">
                                     <select
-                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
                                         value={hostelFilter}
                                         onChange={(e) => setHostelFilter(e.target.value)}
                                     >
@@ -507,7 +507,7 @@ export default function DevOpsDashboard() {
                                         <Label htmlFor="editRole">User Role</Label>
                                         <select
                                             id="editRole"
-                                            className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                            className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
                                             value={editData.role}
                                             onChange={(e) => setEditData({ ...editData, role: e.target.value })}
                                         >
@@ -604,7 +604,7 @@ export default function DevOpsDashboard() {
                                 <p className="text-slate-500">Loading feedback...</p>
                             </div>
                         ) : feedback.length === 0 ? (
-                            <div className="text-center py-12 border-2 border-dashed rounded-xl bg-slate-50/50 dark:bg-slate-900/50">
+                            <div className="text-center py-12 border-2 border-dashed rounded-xl bg-slate-50/50 dark:bg-black/50">
                                 <MessageSquare className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">No Feedback Yet</h3>
                                 <p className="text-slate-500 max-w-xs mx-auto">Feedback submitted by students will appear here.</p>
@@ -710,7 +710,7 @@ export default function DevOpsDashboard() {
                                 <Label htmlFor="editRole">User Role</Label>
                                 <select
                                     id="editRole"
-                                    className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                    className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
                                     value={editData.role}
                                     onChange={(e) => setEditData({ ...editData, role: e.target.value })}
                                 >

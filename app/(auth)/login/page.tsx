@@ -494,7 +494,7 @@ export default function LoginPage() {
             {
                 showForgotPassword && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                        <Card className="w-full max-w-md border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                        <Card className="w-full max-w-md dark:bg-black border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                             <CardHeader>
                                 <CardTitle className="text-xl font-black">Forgot Password</CardTitle>
                                 <CardDescription className="font-bold">Enter your ID to request a password reset</CardDescription>
@@ -554,7 +554,7 @@ export default function LoginPage() {
             {
                 showDevOpsLogin && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                        <Card className="w-full max-w-md dark:bg-slate-900 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                        <Card className="w-full max-w-md dark:bg-black border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                             <CardHeader>
                                 <CardTitle className="dark:text-white font-black">DevOps Access</CardTitle>
                                 <CardDescription className="dark:text-slate-400 font-bold">

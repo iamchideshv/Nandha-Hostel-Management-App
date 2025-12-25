@@ -78,7 +78,7 @@ export default function AuthorityDashboard() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-lg mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="bg-slate-50 dark:bg-black p-4 rounded-lg mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Reason</p>
                                         <p className="font-medium dark:text-slate-100">{o.reason}</p>

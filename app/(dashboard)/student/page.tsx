@@ -362,7 +362,7 @@ export default function StudentDashboard() {
             {/* Mobile Navigation Overlay */}
             {isMobileNavOpen && (
                 <div className="fixed inset-0 z-50 md:hidden" onClick={() => setIsMobileNavOpen(false)}>
-                    <div className="absolute inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 shadow-xl" onClick={(e) => e.stopPropagation()}>
+                    <div className="absolute inset-y-0 left-0 w-64 bg-white dark:bg-black shadow-xl" onClick={(e) => e.stopPropagation()}>
                         <div className="p-4 border-b dark:border-slate-800">
                             <h2 className="font-semibold text-lg">Navigation</h2>
                         </div>
@@ -424,25 +424,25 @@ export default function StudentDashboard() {
                 </header>
 
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Utensils className="h-6 w-6 text-blue-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
                     </button>
-                    <button onClick={() => setActiveTab('complaints')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'complaints' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => setActiveTab('complaints')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'complaints' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <AlertCircle className="h-6 w-6 text-orange-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Complaints</h3>
                     </button>
-                    <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <FileText className="h-6 w-6 text-green-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Outpass</h3>
                     </button>
-                    <button onClick={() => setActiveTab('messages')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'messages' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => setActiveTab('messages')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'messages' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Send className="h-6 w-6 text-purple-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Messages</h3>
                     </button>
                     <div
                         onClick={() => setActiveTab('fees')}
-                        className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                        className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                     >
                         <BadgeCheck className={`h-6 w-6 mb-2 ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-400'}`} />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Fees Status</h3>
@@ -450,7 +450,7 @@ export default function StudentDashboard() {
                             {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                         </p>
                     </div>
-                    <button onClick={() => setActiveTab('lost-found')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'lost-found' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => setActiveTab('lost-found')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'lost-found' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Search className="h-6 w-6 text-amber-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Lost & Found</h3>
                     </button>
@@ -471,19 +471,19 @@ export default function StudentDashboard() {
                                     <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex space-x-1 self-start md:self-auto overflow-x-auto max-w-full">
                                         <button
                                             onClick={() => setMessSubTab('menu')}
-                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'menu' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'menu' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-black text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                         >
                                             Mess Menu
                                         </button>
                                         <button
                                             onClick={() => setMessSubTab('timings')}
-                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'timings' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'timings' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-black text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                         >
                                             Mess Timings
                                         </button>
                                         <button
                                             onClick={() => setMessSubTab('vending')}
-                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'vending' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'vending' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-black text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                         >
                                             Vending Machine
                                         </button>
@@ -508,7 +508,7 @@ export default function StudentDashboard() {
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {messSubTab === 'menu' ? (
-                                    <div className="overflow-x-auto border rounded-xl shadow-sm bg-white dark:bg-slate-900">
+                                    <div className="overflow-x-auto border rounded-xl shadow-sm bg-white dark:bg-black">
                                         <table className="w-full text-xs sm:text-sm text-left border-collapse">
                                             <thead className="text-[10px] sm:text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-800/50 border-b">
                                                 <tr>
@@ -620,7 +620,7 @@ export default function StudentDashboard() {
                                         <div className="space-y-2">
                                             <Label>Issue Type</Label>
                                             <select
-                                                className="flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm"
+                                                className="flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-black text-slate-900 dark:text-white px-3 py-2 text-sm"
                                                 value={complaintForm.type}
                                                 onChange={(e) => setComplaintForm({ ...complaintForm, type: e.target.value })}
                                             >
@@ -660,7 +660,7 @@ export default function StudentDashboard() {
                                     <div className="space-y-3">
                                         {!complaints.length ? <p className="text-sm text-slate-500">No active complaints.</p> :
                                             complaints.map((c) => (
-                                                <div key={c.id} className="p-3 border rounded-lg flex justify-between items-center bg-white dark:bg-slate-900">
+                                                <div key={c.id} className="p-3 border rounded-lg flex justify-between items-center bg-white dark:bg-black">
                                                     <div>
                                                         <p className="font-medium text-sm">{c.title}</p>
                                                         <p className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</p>
@@ -828,7 +828,7 @@ export default function StudentDashboard() {
                                         <div className="space-y-2">
                                             <Label>Hostel Name</Label>
                                             <select
-                                                className={`flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-slate-900 dark:border-slate-800 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
+                                                className={`flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-black dark:border-slate-800 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
                                                 value={outpassForm.hostelName || user?.hostelName || ''}
                                                 onChange={(e) => setOutpassForm({ ...outpassForm, hostelName: e.target.value })}
                                                 required
@@ -919,7 +919,7 @@ export default function StudentDashboard() {
                                     <div className="space-y-3">
                                         {!outpasses.length ? <p className="text-sm text-slate-500">No outpass history.</p> :
                                             outpasses.map((o) => (
-                                                <div key={o.id} className="p-3 border rounded-lg flex flex-col bg-white dark:bg-slate-900">
+                                                <div key={o.id} className="p-3 border rounded-lg flex flex-col bg-white dark:bg-black">
                                                     <div className="flex justify-between items-center w-full">
                                                         <div>
                                                             <p className="font-medium text-sm">{o.reason}</p>
@@ -1021,7 +1021,7 @@ export default function StudentDashboard() {
 
                                         {feeStatus.status === 'unpaid' && (
                                             <div className="space-y-4">
-                                                <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border dark:border-slate-800 text-sm space-y-2">
+                                                <div className="p-4 bg-slate-50 dark:bg-black rounded-lg border dark:border-slate-800 text-sm space-y-2">
                                                     <div className="flex justify-between">
                                                         <span className="text-slate-500 dark:text-slate-400">Total Course Fee</span>
                                                         <span className="font-medium dark:text-white">₹75,000</span>
@@ -1183,7 +1183,7 @@ export default function StudentDashboard() {
                                             <p className="text-sm text-slate-500 text-center py-4">No reports found.</p>
                                         ) : (
                                             lostItems.map((item) => (
-                                                <div key={item.id} className="p-4 rounded-xl border bg-white dark:bg-slate-900/50 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
+                                                <div key={item.id} className="p-4 rounded-xl border bg-white dark:bg-black/50 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
                                                     <div className="flex items-center gap-4">
                                                         {item.image ? (
                                                             <div className="w-16 h-16 rounded-lg border dark:border-slate-800 overflow-hidden cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
@@ -1247,7 +1247,7 @@ export default function StudentDashboard() {
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div className="col-span-2">
                                         <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Identification</p>
-                                        <p className="font-medium p-2 bg-slate-50 dark:bg-slate-900 rounded mt-1">{selectedItemDetail.identification}</p>
+                                        <p className="font-medium p-2 bg-slate-50 dark:bg-black rounded mt-1">{selectedItemDetail.identification}</p>
                                     </div>
                                     {selectedItemDetail.adminMessage && (
                                         <div className="col-span-2">
@@ -1265,7 +1265,7 @@ export default function StudentDashboard() {
                                         </p>
                                     </div>
                                     {selectedItemDetail.adminMessage && (
-                                        <div className="col-span-2 p-2 bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-100 dark:border-slate-800">
+                                        <div className="col-span-2 p-2 bg-slate-50 dark:bg-black/50 rounded border border-slate-100 dark:border-slate-800">
                                             <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold mb-1">Admin Message</p>
                                             <p className="text-sm italic text-slate-700 dark:text-slate-300">"{selectedItemDetail.adminMessage}"</p>
                                         </div>
@@ -1300,7 +1300,7 @@ export default function StudentDashboard() {
 
                 {selectedQr && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedQr(null)}>
-                        <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                        <div className="bg-white dark:bg-black rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
                             {/* The Printable A6 Area */}
                             <div className="overflow-auto max-h-[80vh]">
                                 <div id="outpass-to-download" className="bg-white p-6 flex flex-col items-center w-[400px] h-[564px] mx-auto shadow-sm">

@@ -352,7 +352,7 @@ export default function AdminDashboard() {
             {/* Mobile Navigation Overlay */}
             {isMobileNavOpen && (
                 <div className="fixed inset-0 z-50 md:hidden" onClick={() => setIsMobileNavOpen(false)}>
-                    <div className="absolute inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 shadow-xl" onClick={(e) => e.stopPropagation()}>
+                    <div className="absolute inset-y-0 left-0 w-64 bg-white dark:bg-black shadow-xl" onClick={(e) => e.stopPropagation()}>
                         <div className="p-4 border-b dark:border-slate-800">
                             <h2 className="font-semibold text-lg">Navigation</h2>
                         </div>
@@ -472,7 +472,7 @@ export default function AdminDashboard() {
                     <div className="space-y-4">
                         <div className="flex justify-end space-x-2">
                             <select
-                                className="border rounded-md px-3 py-1 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800"
+                                className="border rounded-md px-3 py-1 text-sm bg-white dark:bg-black text-slate-900 dark:text-white border-slate-200 dark:border-slate-800"
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value as any)}
                             >
@@ -709,7 +709,7 @@ export default function AdminDashboard() {
                                         <h3 className="text-lg font-medium">Broadcast Message</h3>
                                         <div className="flex gap-2">
                                             <select
-                                                className="flex h-10 rounded-md border border-slate-300 bg-white dark:bg-slate-900 dark:border-slate-800 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="flex h-10 rounded-md border border-slate-300 bg-white dark:bg-black dark:border-slate-800 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 value={messageType}
                                                 onChange={(e) => setMessageType(e.target.value as any)}
                                             >
@@ -749,13 +749,13 @@ export default function AdminDashboard() {
                                             </div>
                                         </div>
                                         {messages.filter(m => m.senderRole === 'student').length === 0 ? (
-                                            <div className="text-center py-10 text-slate-500 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                                            <div className="text-center py-10 text-slate-500 bg-slate-50 dark:bg-black/50 rounded-lg">
                                                 No messages from students
                                             </div>
                                         ) : (
                                             <div className="space-y-3">
                                                 {messages.filter(m => m.senderRole === 'student').map((msg) => (
-                                                    <div key={msg.id} className="p-4 rounded-lg bg-white border shadow-sm dark:bg-slate-900 dark:border-slate-800">
+                                                    <div key={msg.id} className="p-4 rounded-lg bg-white border shadow-sm dark:bg-black dark:border-slate-800">
                                                         <div className="flex justify-between items-start mb-2">
                                                             <div>
                                                                 <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
@@ -868,7 +868,7 @@ export default function AdminDashboard() {
                             <CardContent className="space-y-4">
                                 {messSubTab === 'menu' ? (
                                     <div className="space-y-4">
-                                        <div className="overflow-x-auto border rounded-xl shadow-sm bg-white dark:bg-slate-900">
+                                        <div className="overflow-x-auto border rounded-xl shadow-sm bg-white dark:bg-black">
                                             <table className="w-full text-xs sm:text-sm text-left border-collapse">
                                                 <thead className="text-[10px] sm:text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-800/50 border-b">
                                                     <tr>
@@ -1092,7 +1092,7 @@ export default function AdminDashboard() {
                                     </div>
                                 ) : (
                                     lostItems.map((item) => (
-                                        <div key={item.id} className="group relative border rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all">
+                                        <div key={item.id} className="group relative border rounded-xl overflow-hidden bg-white dark:bg-black shadow-sm hover:shadow-md transition-all">
                                             {item.image ? (
                                                 <div className="aspect-video w-full overflow-hidden bg-slate-100 cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
                                                     <img src={item.image} alt={item.productName} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
@@ -1172,7 +1172,7 @@ export default function AdminDashboard() {
                                     <div>
                                         <label className="text-sm font-medium text-slate-900">Status</label>
                                         <select
-                                            className="w-full border rounded p-2 text-slate-900 dark:text-white bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                                            className="w-full border rounded p-2 text-slate-900 dark:text-white bg-white dark:bg-black border-slate-200 dark:border-slate-700"
                                             value={feeForm.status}
                                             onChange={e => setFeeForm({ ...feeForm, status: e.target.value })}
                                         >
@@ -1262,7 +1262,7 @@ export default function AdminDashboard() {
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Collection Message</label>
                                     <textarea
-                                        className="w-full min-h-[100px] p-3 text-sm rounded-lg border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full min-h-[100px] p-3 text-sm rounded-lg border bg-white dark:bg-black focus:ring-2 focus:ring-blue-500 outline-none"
                                         placeholder="e.g., Come and collect it on office room"
                                         value={foundMessage}
                                         onChange={(e) => setFoundMessage(e.target.value)}

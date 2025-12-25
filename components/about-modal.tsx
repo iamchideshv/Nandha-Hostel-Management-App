@@ -62,7 +62,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={onClose}>
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl max-w-sm w-full space-y-4 animate-in fade-in zoom-in duration-200 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="bg-white dark:bg-black p-6 rounded-xl max-w-sm w-full space-y-4 animate-in fade-in zoom-in duration-200 shadow-2xl" onClick={e => e.stopPropagation()}>
                 {view === 'info' && (
                     <>
                         <div className="text-center space-y-2">
@@ -132,7 +132,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
                                 Type Your Queries & Suggestions
                             </label>
                             <textarea
-                                className="w-full min-h-[100px] p-3 text-sm bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
+                                className="w-full min-h-[100px] p-3 text-sm bg-slate-50 dark:bg-black border dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
                                 placeholder="Tell us what we can improve..."
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
