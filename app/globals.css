@@ -811,8 +811,11 @@ input:checked+.theme-slider:before {
   --bg-color-alt: #666;
   --main-color: #323232;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  gap: 50px;
 }
 
 .dark .auth-wrapper {
@@ -820,6 +823,13 @@ input:checked+.theme-slider:before {
   --font-color-sub: #a1a1aa;
   --bg-color: #18181b;
   --main-color: #f4f4f5;
+}
+
+.auth-switch-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
 }
 
 .auth-switch {
@@ -832,17 +842,15 @@ input:checked+.theme-slider:before {
   width: 50px;
   height: 20px;
   z-index: 10;
-  margin-bottom: 30px;
-  /* Space for the toggle above the card */
+  cursor: pointer;
 }
 
 .auth-card-side::before {
   position: absolute;
   content: 'Log in';
-  left: -75px;
+  left: -80px;
   top: 0;
   width: 100px;
-  text-decoration: underline;
   color: var(--font-color);
   font-weight: 600;
   text-align: right;
@@ -852,10 +860,9 @@ input:checked+.theme-slider:before {
 .auth-card-side::after {
   position: absolute;
   content: 'Sign up';
-  left: 25px;
+  left: 30px;
   top: 0;
   width: 100px;
-  text-decoration: none;
   color: var(--font-color);
   font-weight: 600;
   text-align: left;
@@ -898,20 +905,32 @@ input:checked+.theme-slider:before {
   transition: 0.3s;
 }
 
-.auth-toggle:checked+.auth-slider {
+.auth-toggle:checked~.auth-switch-container .auth-slider {
   background-color: var(--input-focus);
 }
 
-.auth-toggle:checked+.auth-slider:before {
+.auth-toggle:checked~.auth-switch-container .auth-slider:before {
   transform: translateX(30px);
 }
 
-.auth-toggle:checked~.auth-card-side:before {
+.auth-toggle:checked~.auth-switch-container .auth-card-side:before {
   text-decoration: none;
+  opacity: 0.6;
 }
 
-.auth-toggle:checked~.auth-card-side:after {
+.auth-toggle:checked~.auth-switch-container .auth-card-side:after {
   text-decoration: underline;
+  opacity: 1;
+}
+
+.auth-toggle:not(:checked)~.auth-switch-container .auth-card-side:before {
+  text-decoration: underline;
+  opacity: 1;
+}
+
+.auth-toggle:not(:checked)~.auth-switch-container .auth-card-side:after {
+  text-decoration: none;
+  opacity: 0.6;
 }
 
 .flip-card__inner {
@@ -943,7 +962,7 @@ input:checked+.theme-slider:before {
   gap: 15px;
   border-radius: 12px;
   border: 2px solid var(--main-color);
-  box-shadow: 6px 6px var(--main-color);
+  box-shadow: 10px 10px var(--main-color);
   width: 100%;
   top: 0;
   left: 0;
