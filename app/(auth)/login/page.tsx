@@ -334,6 +334,14 @@ export default function LoginPage() {
                                 {isLoading ? 'Wait...' : "Let's go!"}
                             </button>
                         </form>
+                        <div className="mt-4 text-center">
+                            <button
+                                onClick={() => setIsRegisterPage(true)}
+                                className="text-[10px] text-slate-500 font-bold hover:text-blue-600 transition-colors"
+                            >
+                                Don't Have An Account? <span className="text-blue-600 underline">create new</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Back Side: Sign up */}
@@ -440,6 +448,14 @@ export default function LoginPage() {
                                 {isRegisterLoading ? 'Registering...' : 'Confirm!'}
                             </button>
                         </form>
+                        <div className="mt-4 text-center">
+                            <button
+                                onClick={() => setIsRegisterPage(false)}
+                                className="text-[10px] text-slate-500 font-bold hover:text-blue-600 transition-colors"
+                            >
+                                Already Have An Account? <span className="text-blue-600 underline">login</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
