@@ -823,7 +823,6 @@ input:checked+.theme-slider:before {
 }
 
 .auth-switch {
-  transform: translateY(-240px);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -833,6 +832,8 @@ input:checked+.theme-slider:before {
   width: 50px;
   height: 20px;
   z-index: 10;
+  margin-bottom: 30px;
+  /* Space for the toggle above the card */
 }
 
 .auth-card-side::before {
