@@ -13,6 +13,7 @@ import { User as UserIcon, Shield, KeyRound, Loader2, ArrowLeft } from 'lucide-r
 import { toast } from 'sonner';
 import { auth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import confetti from 'canvas-confetti';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -98,6 +99,14 @@ export default function LoginPage() {
             if (!res.ok) {
                 throw new Error(data.error || 'Registration failed');
             }
+
+            // Celebration!
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#2563eb', '#3b82f6', '#1e40af', '#60a5fa']
+            });
 
             login(data);
             if (data.role === 'admin') router.push('/admin');
