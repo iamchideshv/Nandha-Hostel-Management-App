@@ -28,10 +28,13 @@ export default function Home() {
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-4xl mx-auto space-y-8">
-        <h1 className="text-2xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight transition-colors duration-300 font-zenitha flex flex-col items-center">
-          <span className="block font-bold">Nandha Educational Institute</span>
-          <span className="text-blue-600 dark:text-blue-400 mt-1 text-xl md:text-3xl">Smart Hostel</span>
-        </h1>
+        <div className="flex flex-col items-center mb-0">
+          <img src="/hero-logo.png" alt="NEI Logo" className="w-[280px] md:w-[600px] h-auto object-contain" />
+          <h1 className="text-2xl md:text-5xl font-extrabold text-[#1a2e44] dark:text-white tracking-widest transition-colors duration-300 font-zenitha flex flex-col items-center -mt-4 md:-mt-8">
+            <span className="block font-bold uppercase">Nandha Educational Institute</span>
+            <span className="text-blue-600 dark:text-blue-400 text-lg md:text-3xl uppercase tracking-[0.2em]">Smart Hostel</span>
+          </h1>
+        </div>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl transition-colors duration-300">
           A unified portal for students, admins, and wardens to manage mess, complaints, fees, and outpasses seamlessly.
         </p>
