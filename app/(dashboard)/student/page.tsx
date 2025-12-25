@@ -1023,15 +1023,15 @@ export default function StudentDashboard() {
                                             <div className="space-y-4">
                                                 <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border dark:border-slate-800 text-sm space-y-2">
                                                     <div className="flex justify-between">
-                                                        <span className="text-slate-500">Total Course Fee</span>
-                                                        <span className="font-medium">₹75,000</span>
+                                                        <span className="text-slate-500 dark:text-slate-400">Total Course Fee</span>
+                                                        <span className="font-medium dark:text-white">₹75,000</span>
                                                     </div>
                                                     <div className="flex justify-between">
-                                                        <span className="text-slate-500">Amount Paid</span>
+                                                        <span className="text-slate-500 dark:text-slate-400">Amount Paid</span>
                                                         <span className="font-medium text-green-600">₹{(75000 - (feeStatus.amountDue || 0)).toLocaleString()}</span>
                                                     </div>
-                                                    <div className="flex justify-between pt-2 border-t">
-                                                        <span className="text-slate-900 font-medium">Balance / Remaining</span>
+                                                    <div className="flex justify-between pt-2 border-t dark:border-slate-800">
+                                                        <span className="text-slate-900 dark:text-white font-medium">Balance / Remaining</span>
                                                         <span className="font-bold text-red-600">₹{feeStatus.amountDue}</span>
                                                     </div>
                                                 </div>
