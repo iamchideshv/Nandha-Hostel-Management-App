@@ -21,7 +21,7 @@ export default function Home() {
           <Link href="/login">
             <Button variant="ghost" size="sm" className="dark:text-slate-300 dark:hover:text-white text-xs md:text-sm px-2 md:px-4">Login</Button>
           </Link>
-          <Link href="/register">
+          <Link href="/login?mode=register">
             <Button size="sm" className="text-xs md:text-sm px-2 md:px-4">Get Started <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4" /></Button>
           </Link>
         </div>

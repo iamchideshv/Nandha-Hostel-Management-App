@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
@@ -46,6 +46,13 @@ export default function LoginPage() {
         secretCode: ''
     });
     const [hostelType, setHostelType] = useState<'boys' | 'girls'>('boys');
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('mode') === 'register') {
+            setIsRegisterPage(true);
+        }
+    }, []);
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
