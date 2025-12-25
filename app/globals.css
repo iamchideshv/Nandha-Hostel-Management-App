@@ -848,36 +848,36 @@ input:checked+.theme-slider:before {
 .auth-card-side::before {
   position: absolute;
   content: 'Log in';
-  left: -80px;
-  top: 0;
+  left: -90px;
+  top: -2px;
   width: 100px;
   color: var(--font-color);
   font-weight: 600;
   text-align: right;
   transition: 0.3s;
+  pointer-events: none;
 }
 
 .auth-card-side::after {
   position: absolute;
   content: 'Sign up';
-  left: 30px;
-  top: 0;
+  left: 40px;
+  top: -2px;
   width: 100px;
   color: var(--font-color);
   font-weight: 600;
   text-align: left;
   transition: 0.3s;
+  pointer-events: none;
 }
 
 .auth-toggle {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  display: none;
 }
 
 .auth-slider {
   box-sizing: border-box;
-  border-radius: 5px;
+  border-radius: 12px;
   border: 2px solid var(--main-color);
   box-shadow: 4px 4px var(--main-color);
   position: absolute;
@@ -894,19 +894,19 @@ input:checked+.theme-slider:before {
   box-sizing: border-box;
   position: absolute;
   content: "";
-  height: 20px;
-  width: 20px;
+  height: 22px;
+  width: 22px;
   border: 2px solid var(--main-color);
-  border-radius: 5px;
+  border-radius: 50%;
   left: -2px;
-  bottom: 2px;
+  bottom: -3px;
   background-color: var(--bg-color);
   box-shadow: 0 3px 0 var(--main-color);
   transition: 0.3s;
 }
 
 .auth-toggle:checked~.auth-switch-container .auth-slider {
-  background-color: var(--input-focus);
+  background-color: #3b82f6;
 }
 
 .auth-toggle:checked~.auth-switch-container .auth-slider:before {
