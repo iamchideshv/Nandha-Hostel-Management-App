@@ -27,6 +27,13 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+@media (max-width: 768px) {
+  body {
+    background: url('/mob-bac.webp') no-repeat center center fixed;
+    background-size: cover;
+  }
+}
+
 .dark body {
   background: url('/background-dark.jpg') no-repeat center center fixed;
   background-size: cover;
