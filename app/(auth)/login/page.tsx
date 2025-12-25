@@ -410,7 +410,7 @@ export default function LoginPage() {
                             />
                             <input
                                 className="flip-card__input"
-                                placeholder={registerRole === 'student' ? "Ex: 21CSE001" : "Login ID"}
+                                placeholder={registerRole === 'student' ? "Unique User ID" : "Login ID"}
                                 type="text"
                                 value={registerData.id}
                                 onChange={(e) => setRegisterData({ ...registerData, id: e.target.value })}
