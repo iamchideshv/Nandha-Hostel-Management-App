@@ -278,7 +278,10 @@ export default function LoginPage() {
                     type="checkbox"
                     className="auth-toggle"
                     checked={isRegisterPage}
-                    onChange={(e) => setIsRegisterPage(e.target.checked)}
+                    onChange={(e) => {
+                        setIsRegisterPage(e.target.checked);
+                        setError('');
+                    }}
                 />
                 <div className="auth-switch-container flex items-center justify-center gap-8 mb-4">
                     <span className={`text-sm font-black uppercase tracking-wider transition-all ${!isRegisterPage ? 'text-blue-600 underline decoration-2 underline-offset-4' : 'text-slate-400 opacity-60'}`}>
@@ -320,7 +323,10 @@ export default function LoginPage() {
                                 placeholder="Student/Admin ID"
                                 type="text"
                                 value={loginData.id}
-                                onChange={(e) => setLoginData({ ...loginData, id: e.target.value })}
+                                onChange={(e) => {
+                                    setLoginData({ ...loginData, id: e.target.value });
+                                    if (error) setError('');
+                                }}
                                 required
                             />
                             <input
@@ -328,9 +334,17 @@ export default function LoginPage() {
                                 placeholder="Password"
                                 type="password"
                                 value={loginData.password}
-                                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                                onChange={(e) => {
+                                    setLoginData({ ...loginData, password: e.target.value });
+                                    if (error) setError('');
+                                }}
                                 required
                             />
+                            {error && !isRegisterPage && (
+                                <p className="text-[11px] text-red-600 font-black mt-[-4px] animate-bounce">
+                                    {error}
+                                </p>
+                            )}
                             <div className="w-full text-right">
                                 <button
                                     type="button"
@@ -346,7 +360,10 @@ export default function LoginPage() {
                         </form>
                         <div className="mt-4 text-center">
                             <button
-                                onClick={() => setIsRegisterPage(true)}
+                                onClick={() => {
+                                    setIsRegisterPage(true);
+                                    setError('');
+                                }}
                                 className="text-[10px] text-slate-500 font-bold hover:text-blue-600 transition-colors"
                             >
                                 Don't Have An Account? <span className="text-blue-600 underline">create new</span>
@@ -460,7 +477,10 @@ export default function LoginPage() {
                         </form>
                         <div className="mt-4 text-center">
                             <button
-                                onClick={() => setIsRegisterPage(false)}
+                                onClick={() => {
+                                    setIsRegisterPage(false);
+                                    setError('');
+                                }}
                                 className="text-[10px] text-slate-500 font-bold hover:text-blue-600 transition-colors"
                             >
                                 Already Have An Account? <span className="text-blue-600 underline">login</span>
