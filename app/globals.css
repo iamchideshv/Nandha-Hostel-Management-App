@@ -27,6 +27,11 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.dark body {
+  background: url('/background-dark.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
 /* Theme Toggle Styles */
 .theme-switch {
   display: block;
