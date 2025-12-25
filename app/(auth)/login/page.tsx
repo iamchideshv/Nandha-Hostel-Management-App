@@ -75,8 +75,9 @@ export default function LoginPage() {
             else router.push('/student');
 
         } catch (err: any) {
-            setError(err.message);
-            toast.error(err.message);
+            const msg = "Invalid Credential 😒";
+            setError(msg);
+            toast.error(msg);
         } finally {
             setIsLoading(false);
         }
