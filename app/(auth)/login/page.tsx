@@ -320,7 +320,7 @@ export default function LoginPage() {
                         <form className="flip-card__form" onSubmit={handleLoginSubmit}>
                             <input
                                 className="flip-card__input"
-                                placeholder="Student/Admin ID"
+                                placeholder="Student/Admin/PWS ID"
                                 type="text"
                                 value={loginData.id}
                                 onChange={(e) => {
