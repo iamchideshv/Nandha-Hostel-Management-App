@@ -417,7 +417,7 @@ export default function StudentDashboard() {
                             <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
                         </div>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-black">
+                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
                         <Info className="w-4 h-4 mr-2" />
                         About App
                     </Button>
@@ -471,19 +471,19 @@ export default function StudentDashboard() {
                                     <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex space-x-1 self-start md:self-auto overflow-x-auto max-w-full">
                                         <button
                                             onClick={() => setMessSubTab('menu')}
-                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'menu' ? 'bg-green-600 text-white shadow' : 'bg-white text-black hover:bg-slate-50'}`}
+                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'menu' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                         >
                                             Mess Menu
                                         </button>
                                         <button
                                             onClick={() => setMessSubTab('timings')}
-                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'timings' ? 'bg-green-600 text-white shadow' : 'bg-white text-black hover:bg-slate-50'}`}
+                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'timings' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                         >
                                             Mess Timings
                                         </button>
                                         <button
                                             onClick={() => setMessSubTab('vending')}
-                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'vending' ? 'bg-green-600 text-white shadow' : 'bg-white text-black hover:bg-slate-50'}`}
+                                            className={`px-4 py-1.5 text-sm rounded-md transition-all ${messSubTab === 'vending' ? 'bg-green-600 text-white shadow' : 'bg-white dark:bg-slate-900 text-black dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                                         >
                                             Vending Machine
                                         </button>
@@ -620,7 +620,7 @@ export default function StudentDashboard() {
                                         <div className="space-y-2">
                                             <Label>Issue Type</Label>
                                             <select
-                                                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+                                                className="flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm"
                                                 value={complaintForm.type}
                                                 onChange={(e) => setComplaintForm({ ...complaintForm, type: e.target.value })}
                                             >
@@ -640,7 +640,7 @@ export default function StudentDashboard() {
                                         <div className="space-y-2">
                                             <Label>Description</Label>
                                             <textarea
-                                                className="flex w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm min-h-[100px]"
+                                                className="flex w-full rounded-md border border-slate-300 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm min-h-[100px]"
                                                 placeholder="Details about the issue..."
                                                 value={complaintForm.description}
                                                 onChange={(e) => setComplaintForm({ ...complaintForm, description: e.target.value })}
@@ -660,7 +660,7 @@ export default function StudentDashboard() {
                                     <div className="space-y-3">
                                         {!complaints.length ? <p className="text-sm text-slate-500">No active complaints.</p> :
                                             complaints.map((c) => (
-                                                <div key={c.id} className="p-3 border rounded-lg flex justify-between items-center bg-white">
+                                                <div key={c.id} className="p-3 border rounded-lg flex justify-between items-center bg-white dark:bg-slate-900">
                                                     <div>
                                                         <p className="font-medium text-sm">{c.title}</p>
                                                         <p className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</p>
@@ -691,7 +691,7 @@ export default function StudentDashboard() {
                                         <div className="space-y-2">
                                             <Label>Message</Label>
                                             <textarea
-                                                className="flex w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm min-h-[100px]"
+                                                className="flex w-full rounded-md border border-slate-300 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm min-h-[100px]"
                                                 placeholder="Type your message..."
                                                 value={messageForm}
                                                 onChange={(e) => setMessageForm(e.target.value)}

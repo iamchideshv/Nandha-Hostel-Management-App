@@ -414,7 +414,7 @@ export default function AdminDashboard() {
                             <p className="text-slate-500">Manage hostel operations</p>
                         </div>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-black">
+                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
                         <Info className="w-4 h-4 mr-2" />
                         About App
                     </Button>
@@ -503,11 +503,11 @@ export default function AdminDashboard() {
                                                 <div>
                                                     <CardTitle className="text-lg">{c.title}</CardTitle>
                                                     <div className="flex space-x-2 mt-1">
-                                                        <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${c.type === 'food' ? 'bg-orange-100 text-orange-800' : 'bg-slate-100 text-slate-800'}`}>{c.type}</span>
+                                                        <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
                                                         <CardDescription>{new Date(c.createdAt).toLocaleDateString()} • {c.studentName} ({c.studentId})</CardDescription>
                                                     </div>
                                                 </div>
-                                                <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                                <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
                                                     {c.status}
                                                 </div>
                                             </div>
@@ -566,12 +566,12 @@ export default function AdminDashboard() {
                                                     {o.collegeName} • {o.yearAndDept} • Room {o.roomNumber}
                                                 </CardDescription>
                                             </div>
-                                            <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${o.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                o.status === 'exited' ? 'bg-orange-100 text-orange-700' :
-                                                    o.status === 'entered' ? 'bg-blue-100 text-blue-700' :
-                                                        o.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                            o.status === 'expired' ? 'bg-slate-100 text-slate-700' :
-                                                                'bg-yellow-100 text-yellow-700'
+                                            <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${o.status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                                                o.status === 'exited' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
+                                                    o.status === 'entered' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                        o.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
+                                                            o.status === 'expired' ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' :
+                                                                'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
                                                 }`}>
                                                 {o.status}
                                             </div>
@@ -590,7 +590,7 @@ export default function AdminDashboard() {
                                         </div>
 
                                         {(o.status === 'approved' || o.status === 'exited' || o.status === 'entered') && (
-                                            <div className="mt-4 flex flex-col items-center p-4 bg-white rounded border">
+                                            <div className="mt-4 flex flex-col items-center p-4 bg-white dark:bg-slate-800 rounded border dark:border-slate-700">
                                                 <QRCode
                                                     value={JSON.stringify({
                                                         id: o.id,
@@ -609,7 +609,7 @@ export default function AdminDashboard() {
                                                 <Button
                                                     variant="destructive"
                                                     size="sm"
-                                                    className="mt-4 w-full bg-red-50 hover:bg-red-100 text-red-600 border-red-200"
+                                                    className="mt-4 w-full bg-red-50 hover:bg-red-100 text-red-600 border-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-400 dark:border-red-900/50"
                                                     onClick={() => {
                                                         if (confirm('Are you sure you want to manually expire this outpass QR?')) {
                                                             updateOutpassStatus(o.id, 'expired');
@@ -659,15 +659,15 @@ export default function AdminDashboard() {
                         <div className="grid gap-4">
                             {fees.length === 0 ? <p className="text-center text-slate-500">No fee requests found.</p> :
                                 fees.map(f => (
-                                    <Card key={f.studentId} className="bg-white">
+                                    <Card key={f.studentId}>
                                         <CardContent className="flex justify-between items-center p-6">
                                             <div>
                                                 <h3 className="font-bold text-lg">{f.studentName}</h3>
                                                 <p className="text-sm text-slate-500">Student ID: {f.studentId}</p>
                                                 <div className="flex items-center space-x-2 mt-2">
                                                     <span className={`text-xs px-2 py-1 rounded-full uppercase font-bold
-                                                    ${f.status === 'paid' ? 'bg-green-100 text-green-700' :
-                                                            f.status === 'unpaid' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                                    ${f.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                                                            f.status === 'unpaid' ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
                                                         {f.status === 'pending_request' ? 'Request In Review' : f.status}
                                                     </span>
                                                     <span className="text-xs text-slate-400">Last: {new Date(f.lastUpdated).toLocaleDateString()}</span>
@@ -709,7 +709,7 @@ export default function AdminDashboard() {
                                         <h3 className="text-lg font-medium">Broadcast Message</h3>
                                         <div className="flex gap-2">
                                             <select
-                                                className="flex h-10 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="flex h-10 rounded-md border border-slate-300 bg-white dark:bg-slate-900 dark:border-slate-800 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 value={messageType}
                                                 onChange={(e) => setMessageType(e.target.value as any)}
                                             >
@@ -749,7 +749,7 @@ export default function AdminDashboard() {
                                             </div>
                                         </div>
                                         {messages.filter(m => m.senderRole === 'student').length === 0 ? (
-                                            <div className="text-center py-10 text-slate-500 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                            <div className="text-center py-10 text-slate-500 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
                                                 No messages from students
                                             </div>
                                         ) : (

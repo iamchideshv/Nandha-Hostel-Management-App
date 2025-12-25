@@ -113,7 +113,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
                             <Button
                                 variant="ghost"
-                                className="w-full text-slate-500 hover:text-slate-800"
+                                className="w-full text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
                                 onClick={() => setView('info')}
                             >
                                 Back

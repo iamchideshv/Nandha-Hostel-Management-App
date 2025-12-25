@@ -20,8 +20,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     'inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
                     {
                         'bg-blue-600 text-white hover:bg-blue-700': variant === 'default',
-                        'border border-slate-200 bg-transparent hover:bg-slate-100 text-slate-900': variant === 'outline',
-                        'hover:bg-slate-100 text-slate-900': variant === 'ghost',
+                        'border border-slate-200 bg-transparent hover:bg-slate-100 text-slate-900 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-200': variant === 'outline',
+                        'hover:bg-slate-100 text-slate-900 dark:hover:bg-slate-800 dark:text-slate-200': variant === 'ghost',
                         'bg-red-500 text-white hover:bg-red-600': variant === 'destructive',
                         'h-10 px-4 py-2': size === 'default',
                         'h-9 px-3': size === 'sm',
