@@ -270,11 +270,16 @@ export default function LoginPage() {
                     checked={isRegisterPage}
                     onChange={(e) => setIsRegisterPage(e.target.checked)}
                 />
-                <div className="auth-switch-container">
+                <div className="auth-switch-container flex items-center justify-center gap-8 mb-4">
+                    <span className={`text-sm font-black uppercase tracking-wider transition-all ${!isRegisterPage ? 'text-blue-600 underline decoration-2 underline-offset-4' : 'text-slate-400 opacity-60'}`}>
+                        Log in
+                    </span>
                     <label htmlFor="auth-toggle" className="auth-switch">
                         <span className="auth-slider"></span>
-                        <span className="auth-card-side"></span>
                     </label>
+                    <span className={`text-sm font-black uppercase tracking-wider transition-all ${isRegisterPage ? 'text-blue-600 underline decoration-2 underline-offset-4' : 'text-slate-400 opacity-60'}`}>
+                        Sign up
+                    </span>
                 </div>
 
                 <div className="flip-card__inner">

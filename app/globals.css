@@ -845,32 +845,6 @@ input:checked+.theme-slider:before {
   cursor: pointer;
 }
 
-.auth-card-side::before {
-  position: absolute;
-  content: 'Log in';
-  left: -90px;
-  top: -2px;
-  width: 100px;
-  color: var(--font-color);
-  font-weight: 600;
-  text-align: right;
-  transition: 0.3s;
-  pointer-events: none;
-}
-
-.auth-card-side::after {
-  position: absolute;
-  content: 'Sign up';
-  left: 40px;
-  top: -2px;
-  width: 100px;
-  color: var(--font-color);
-  font-weight: 600;
-  text-align: left;
-  transition: 0.3s;
-  pointer-events: none;
-}
-
 .auth-toggle {
   display: none;
 }
@@ -897,40 +871,23 @@ input:checked+.theme-slider:before {
   height: 22px;
   width: 22px;
   border: 2px solid var(--main-color);
-  border-radius: 50%;
+  border-radius: 6px;
+  /* Neo-brutalist square handle */
   left: -2px;
-  bottom: -3px;
+  bottom: -4px;
   background-color: var(--bg-color);
-  box-shadow: 0 3px 0 var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  /* Shadow like image 2 */
   transition: 0.3s;
 }
 
 .auth-toggle:checked~.auth-switch-container .auth-slider {
   background-color: #3b82f6;
+  /* Blue in checked state */
 }
 
 .auth-toggle:checked~.auth-switch-container .auth-slider:before {
   transform: translateX(30px);
-}
-
-.auth-toggle:checked~.auth-switch-container .auth-card-side:before {
-  text-decoration: none;
-  opacity: 0.6;
-}
-
-.auth-toggle:checked~.auth-switch-container .auth-card-side:after {
-  text-decoration: underline;
-  opacity: 1;
-}
-
-.auth-toggle:not(:checked)~.auth-switch-container .auth-card-side:before {
-  text-decoration: underline;
-  opacity: 1;
-}
-
-.auth-toggle:not(:checked)~.auth-switch-container .auth-card-side:after {
-  text-decoration: none;
-  opacity: 0.6;
 }
 
 .flip-card__inner {
