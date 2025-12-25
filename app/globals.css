@@ -1,3 +1,4 @@
+@import url('https://fonts.cdnfonts.com/css/zenitha-classic-personal-use');
 @import "tailwindcss";
 
 :root {
@@ -800,6 +801,10 @@ input:checked+.theme-slider:before {
   100% {
     transform: scale(1.1);
   }
+}
+
+.font-zenitha {
+  font-family: 'Zenitha Classic PERSONAL USE', serif;
 }
 
 /* Flip Card Authentication Styles - From Uiverse.io by andrew-demchenk0 */

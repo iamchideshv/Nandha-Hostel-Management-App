@@ -28,7 +28,7 @@ export default function Home() {
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-4xl mx-auto space-y-8">
-        <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight transition-colors duration-300">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight transition-colors duration-300 font-zenitha">
           NEI Smart <span className="text-blue-600 dark:text-blue-400">Hostel</span>
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl transition-colors duration-300">
