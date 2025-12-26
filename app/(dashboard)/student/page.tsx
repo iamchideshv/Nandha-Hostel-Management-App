@@ -66,7 +66,8 @@ export default function StudentDashboard() {
         identification: '',
         location: '',
         timeAndDate: '',
-        image: ''
+        image: '',
+        images: [] as string[]
     });
 
 
@@ -308,12 +309,13 @@ export default function StudentDashboard() {
                     studentName: user?.name,
                     hostelName: user?.hostelName,
                     roomNumber: user?.roomNumber,
-                    ...lostFoundForm
+                    ...lostFoundForm,
+                    image: lostFoundForm.images[0] || lostFoundForm.image // Fallback/Priority
                 })
             });
             if (res.ok) {
                 toast.success('Report Submitted');
-                setLostFoundForm({ productName: '', identification: '', location: '', timeAndDate: '', image: '' });
+                setLostFoundForm({ productName: '', identification: '', location: '', timeAndDate: '', image: '', images: [] });
                 setImageUploaded(false);
                 fetchData();
             } else {
@@ -327,34 +329,58 @@ export default function StudentDashboard() {
     };
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setImageUploaded(true);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 800;
-                    if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                    } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx?.drawImage(img, 0, 0, width, height);
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                    setLostFoundForm({ ...lostFoundForm, image: compressedBase64 });
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            if (lostFoundForm.images.length + files.length > 5) {
+                toast.error('You can only upload up to 5 images');
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const MAX_WIDTH = 800;
+                        const MAX_HEIGHT = 800;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx?.drawImage(img, 0, 0, width, height);
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+
+                        setLostFoundForm(prev => ({
+                            ...prev,
+                            images: [...prev.images, compressedBase64],
+                            image: prev.images.length === 0 ? compressedBase64 : prev.image // Set first image as main
+                        }));
+                        setImageUploaded(true);
+                    };
+                    img.src = reader.result as string;
                 };
-                img.src = reader.result as string;
-            };
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+            });
         }
+    };
+
+    const removeImage = (index: number) => {
+        setLostFoundForm(prev => {
+            const newImages = prev.images.filter((_, i) => i !== index);
+            return {
+                ...prev,
+                images: newImages,
+                image: newImages.length > 0 ? newImages[0] : ''
+            };
+        });
+        if (lostFoundForm.images.length <= 1) setImageUploaded(false);
     };
 
     return (

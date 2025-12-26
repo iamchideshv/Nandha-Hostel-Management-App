@@ -112,6 +112,7 @@ export interface LostFound {
     location: string; // where and when
     timeAndDate: string;
     image?: string; // Base64 string
+    images?: string[]; // Array of Base64 strings
     status: 'pending' | 'found' | 'returned' | 'not-found';
     adminMessage?: string;
     createdAt: string;

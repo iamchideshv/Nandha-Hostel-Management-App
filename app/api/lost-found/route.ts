@@ -18,7 +18,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { studentId, studentName, hostelName, roomNumber, productName, identification, location, timeAndDate, image } = body;
+        const { studentId, studentName, hostelName, roomNumber, productName, identification, location, timeAndDate, image, images } = body;
 
         const newItem = {
             id: uuidv4(),
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
             location,
             timeAndDate,
             image, // Expecting Base64 string
+            images: images || [], // Array of Base64 strings
             status: 'pending',
             createdAt: new Date().toISOString(),
         };

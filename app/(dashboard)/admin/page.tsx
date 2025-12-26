@@ -1093,9 +1093,14 @@ export default function AdminDashboard() {
                                 ) : (
                                     lostItems.map((item) => (
                                         <div key={item.id} className="group relative border rounded-xl overflow-hidden bg-white dark:bg-black shadow-sm hover:shadow-md transition-all">
-                                            {item.image ? (
-                                                <div className="aspect-video w-full overflow-hidden bg-slate-100 cursor-pointer" onClick={() => item.image && setSelectedImage(item.image)}>
-                                                    <img src={item.image} alt={item.productName} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                            {(item.images && item.images.length > 0) || item.image ? (
+                                                <div className="aspect-video w-full overflow-hidden bg-slate-100 cursor-pointer" onClick={() => setSelectedImage((item.images && item.images.length > 0) ? item.images[0] : item.image || '')}>
+                                                    <img src={(item.images && item.images.length > 0) ? item.images[0] : item.image} alt={item.productName} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                                    {item.images && item.images.length > 1 && (
+                                                        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full flex items-center">
+                                                            <span className="font-bold">+{item.images.length - 1}</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
@@ -1301,9 +1306,21 @@ export default function AdminDashboard() {
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {selectedLostItem.image && (
-                                    <div className="aspect-video w-full rounded-lg border overflow-hidden bg-slate-50 cursor-pointer" onClick={() => selectedLostItem.image && setSelectedImage(selectedLostItem.image)}>
-                                        <img src={selectedLostItem.image} alt={selectedLostItem.productName} className="w-full h-full object-contain" />
+                                {((selectedLostItem.images && selectedLostItem.images.length > 0) || selectedLostItem.image) && (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {(selectedLostItem.images && selectedLostItem.images.length > 0) ? (
+                                            selectedLostItem.images.map((img, idx) => (
+                                                <div key={idx} className="aspect-video w-full rounded-lg border overflow-hidden bg-slate-50 cursor-pointer" onClick={() => setSelectedImage(img)}>
+                                                    <img src={img} alt={`${selectedLostItem.productName} ${idx + 1}`} className="w-full h-full object-contain" />
+                                                </div>
+                                            ))
+                                        ) : (
+                                            selectedLostItem.image && (
+                                                <div className="col-span-2 aspect-video w-full rounded-lg border overflow-hidden bg-slate-50 cursor-pointer" onClick={() => selectedLostItem.image && setSelectedImage(selectedLostItem.image)}>
+                                                    <img src={selectedLostItem.image} alt={selectedLostItem.productName} className="w-full h-full object-contain" />
+                                                </div>
+                                            )
+                                        )}
                                     </div>
                                 )}
                                 <div className="grid grid-cols-2 gap-4 text-sm">
