@@ -1196,7 +1196,7 @@ export default function AdminDashboard() {
                                                                 variant="outline"
                                                                 size="sm"
                                                                 className="flex-1 text-[10px] sm:text-xs h-8 border-red-200 text-red-700 hover:bg-red-50"
-                                                                onClick={() => handleLostFoundStatusUpdate(item.id, 'not-found')}
+                                                                onClick={() => handleLostFoundStatusUpdate(item.id, 'not-found', 'Contact Respective Warden')}
                                                                 disabled={submittingStatusId === item.id}
                                                             >
                                                                 {submittingStatusId === item.id ? '...' : 'Not Found'}
