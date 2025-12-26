@@ -404,10 +404,10 @@ export default function AdminDashboard() {
                             <Menu className="w-5 h-5" />
                         </Button>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-                                Admin Dashboard
+                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                                <span>Admin Dashboard</span>
                                 {user?.hostelName && (
-                                    <span className="ml-3 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full align-middle">
+                                    <span className="text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full w-fit">
                                         {user.hostelName}
                                     </span>
                                 )}
@@ -503,9 +503,9 @@ export default function AdminDashboard() {
                                             <div className="flex justify-between items-start">
                                                 <div>
                                                     <CardTitle className="text-lg">{c.title}</CardTitle>
-                                                    <div className="flex space-x-2 mt-1">
-                                                        <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
-                                                        <CardDescription>{new Date(c.createdAt).toLocaleDateString()} • {c.studentName} ({c.studentId})</CardDescription>
+                                                    <div className="flex items-start space-x-2 mt-1">
+                                                        <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
+                                                        <CardDescription className="line-clamp-1">{new Date(c.createdAt).toLocaleDateString()} • {c.studentName}</CardDescription>
                                                     </div>
                                                 </div>
                                                 <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
