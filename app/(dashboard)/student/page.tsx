@@ -1056,6 +1056,17 @@ export default function StudentDashboard() {
                                                         <span className="text-slate-500 dark:text-slate-400">Amount Paid</span>
                                                         <span className="font-medium text-green-600">₹{(75000 - (feeStatus.amountDue || 0)).toLocaleString()}</span>
                                                     </div>
+                                                    {(feeStatus.fineAmount || 0) > 0 && (
+                                                        <div className="flex justify-between text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/10 p-2 rounded">
+                                                            <span>Fine / Penalty</span>
+                                                            <div className="text-right">
+                                                                <span className="font-bold">₹{feeStatus.fineAmount?.toLocaleString()}</span>
+                                                                {feeStatus.fineReason && (
+                                                                    <p className="text-[10px] opacity-80">{feeStatus.fineReason}</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                     <div className="flex justify-between pt-2 border-t dark:border-slate-800">
                                                         <span className="text-slate-900 dark:text-white font-medium">Balance / Remaining</span>
                                                         <span className="font-bold text-red-600">₹{feeStatus.amountDue}</span>
