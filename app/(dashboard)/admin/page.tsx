@@ -1118,39 +1118,47 @@ export default function AdminDashboard() {
                                                         <Clock className="w-3 h-3 inline mr-1" /> {item.timeAndDate}
                                                     </p>
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="text-xs h-8 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100"
-                                                        onClick={() => setSelectedLostItem(item)}
-                                                    >
-                                                        <Eye className="w-3 h-3 mr-1" /> View
-                                                    </Button>
-                                                    <div className="flex gap-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="flex-1 text-[10px] sm:text-xs h-8 border-green-200 text-green-700 hover:bg-green-50"
-                                                            onClick={() => {
-                                                                setUpdatingItemId(item.id);
-                                                                setShowFoundModal(true);
-                                                            }}
-                                                            disabled={submittingStatusId === item.id}
-                                                        >
-                                                            {submittingStatusId === item.id ? '...' : 'Found'}
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="flex-1 text-[10px] sm:text-xs h-8 border-red-200 text-red-700 hover:bg-red-50"
-                                                            onClick={() => handleLostFoundStatusUpdate(item.id, 'not-found')}
-                                                            disabled={submittingStatusId === item.id}
-                                                        >
-                                                            {submittingStatusId === item.id ? '...' : 'Not Found'}
-                                                        </Button>
+                                                {(item.status === 'found' || item.status === 'not-found') ? (
+                                                    <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none bg-white/10 dark:bg-black/10 backdrop-blur-[0.5px]">
+                                                        <div className={`border-[6px] border-double px-8 py-2 transform -rotate-12 rounded-xl font-black text-3xl uppercase tracking-widest opacity-90 shadow-sm ${item.status === 'found' ? 'border-green-600 text-green-600' : 'border-red-600 text-red-600'}`}>
+                                                            {item.status === 'found' ? 'FOUNDED' : 'UNFOUNDED'}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="text-xs h-8 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100"
+                                                            onClick={() => setSelectedLostItem(item)}
+                                                        >
+                                                            <Eye className="w-3 h-3 mr-1" /> View
+                                                        </Button>
+                                                        <div className="flex gap-2">
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="flex-1 text-[10px] sm:text-xs h-8 border-green-200 text-green-700 hover:bg-green-50"
+                                                                onClick={() => {
+                                                                    setUpdatingItemId(item.id);
+                                                                    setShowFoundModal(true);
+                                                                }}
+                                                                disabled={submittingStatusId === item.id}
+                                                            >
+                                                                {submittingStatusId === item.id ? '...' : 'Found'}
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="flex-1 text-[10px] sm:text-xs h-8 border-red-200 text-red-700 hover:bg-red-50"
+                                                                onClick={() => handleLostFoundStatusUpdate(item.id, 'not-found')}
+                                                                disabled={submittingStatusId === item.id}
+                                                            >
+                                                                {submittingStatusId === item.id ? '...' : 'Not Found'}
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     ))
