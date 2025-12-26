@@ -22,7 +22,12 @@ export default function Home() {
             <Button variant="ghost" size="sm" className="dark:text-slate-300 dark:hover:text-white text-xs md:text-sm px-2 md:px-4">Login</Button>
           </Link>
           <Link href="/login?mode=register">
-            <Button size="sm" className="text-xs md:text-sm px-2 md:px-4">Get Started <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4" /></Button>
+            <button className="uiverse-getthrough-button text-xs md:text-sm">
+              Get Started
+              <div className="hoverEffect">
+                <div></div>
+              </div>
+            </button>
           </Link>
         </div>
       </header>
