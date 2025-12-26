@@ -1133,47 +1133,69 @@ export default function StudentDashboard() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Upload Image</Label>
-                                            <div className="uiverse-upload-container">
-                                                <input
-                                                    type="checkbox"
-                                                    id="check"
-                                                    checked={imageUploaded}
-                                                    readOnly
-                                                />
-                                                <label htmlFor="file-upload" id="upload">
-                                                    <div id="app-upload">
-                                                        <div id="arrow"></div>
-                                                        <div id="success">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                                                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
-                                                            </svg>
-                                                        </div>
+                                            <Label>Upload Images (Max 5)</Label>
+                                            <div className="space-y-4">
+                                                {/* Image Previews */}
+                                                {lostFoundForm.images.length > 0 && (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        {lostFoundForm.images.map((img, index) => (
+                                                            <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group">
+                                                                <img src={img} alt={`Uploaded ${index + 1}`} className="w-full h-full object-cover" />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeImage(index)}
+                                                                    className="absolute top-2 right-2 bg-red-500/90 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                                                                >
+                                                                    <XCircle className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                </label>
-                                                <input
-                                                    id="file-upload"
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={handleImageUpload}
-                                                    className="hidden"
-                                                />
+                                                )}
+
+                                                {/* Upload Button */}
+                                                {lostFoundForm.images.length < 5 && (
+                                                    <div className="relative">
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            multiple
+                                                            onChange={handleImageUpload}
+                                                            className="hidden"
+                                                            id="multi-image-upload"
+                                                        />
+                                                        <label
+                                                            htmlFor="multi-image-upload"
+                                                            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-all
+                                                                ${lostFoundForm.images.length > 0
+                                                                    ? 'h-32 border-slate-300 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                                                                    : 'h-48 border-blue-200 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                                                                }`}
+                                                        >
+                                                            <div className="flex flex-col items-center gap-2 p-4 text-center">
+                                                                {lostFoundForm.images.length > 0 ? (
+                                                                    <>
+                                                                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                                            <span className="text-2xl font-light">+</span>
+                                                                        </div>
+                                                                        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Add Image</span>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <div className="w-16 h-16 mb-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                                            </svg>
+                                                                        </div>
+                                                                        <span className="text-base font-semibold text-blue-900 dark:text-blue-200">Upload Image</span>
+                                                                        <span className="text-xs text-slate-500">Supports JPG, PNG (Max 5)</span>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                )}
                                             </div>
-                                            {lostFoundForm.image && (
-                                                <div className="mt-2 relative w-20 h-20 border rounded-lg overflow-hidden capitalize text-[10px] text-center flex flex-col items-center justify-center bg-slate-50">
-                                                    <img src={lostFoundForm.image} alt="Preview" className="w-full h-full object-cover" />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setLostFoundForm({ ...lostFoundForm, image: '' });
-                                                            setImageUploaded(false);
-                                                        }}
-                                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5"
-                                                    >
-                                                        <XCircle className="w-3 h-3" />
-                                                    </button>
-                                                </div>
-                                            )}
                                         </div>
                                         <Button type="submit" disabled={submitting} className="w-full">
                                             <Send className="w-4 h-4 mr-2" />
