@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ContactModal } from '@/components/contact-modal';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { ArrowRight, Building, ShieldCheck, User, Users } from 'lucide-react';
+import { Building, ShieldCheck, User, Users } from 'lucide-react';
 
 export default function Home() {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -22,12 +22,12 @@ export default function Home() {
             <Button variant="ghost" size="sm" className="dark:text-slate-300 dark:hover:text-white text-xs md:text-sm px-2 md:px-4">Login</Button>
           </Link>
           <Link href="/login?mode=register">
-            <button className="uiverse-getthrough-button text-xs md:text-sm">
+            <div className="uiverse-getthrough-button text-xs md:text-sm">
               Get Started
               <div className="hoverEffect">
                 <div></div>
               </div>
-            </button>
+            </div>
           </Link>
         </div>
       </header>
