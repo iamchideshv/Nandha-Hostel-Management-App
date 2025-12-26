@@ -40,6 +40,7 @@ export default function AdminDashboard() {
     const [foundMessage, setFoundMessage] = useState('Come and collect it on office room');
     const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
     const [submittingStatusId, setSubmittingStatusId] = useState<string | null>(null);
+    const [imageIndices, setImageIndices] = useState<Record<string, number>>({}); // Track active image per item
 
     // Mess Menu State
     const [messMenu, setMessMenu] = useState({
@@ -1093,20 +1094,59 @@ export default function AdminDashboard() {
                                 ) : (
                                     lostItems.map((item) => (
                                         <div key={item.id} className="group relative border rounded-xl overflow-hidden bg-white dark:bg-black shadow-sm hover:shadow-md transition-all">
-                                            {(item.images && item.images.length > 0) || item.image ? (
-                                                <div className="aspect-video w-full overflow-hidden bg-slate-100 cursor-pointer" onClick={() => setSelectedImage((item.images && item.images.length > 0) ? item.images[0] : item.image || '')}>
-                                                    <img src={(item.images && item.images.length > 0) ? item.images[0] : item.image} alt={item.productName} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                                                    {item.images && item.images.length > 1 && (
-                                                        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full flex items-center">
-                                                            <span className="font-bold">+{item.images.length - 1}</span>
-                                                        </div>
-                                                    )}
+                                            <div className="relative aspect-video w-full overflow-hidden bg-slate-100 group/image">
+                                                {/* Image Display */}
+                                                <div
+                                                    className="w-full h-full cursor-pointer"
+                                                    onClick={() => setSelectedImage((item.images && item.images.length > 0) ? item.images[imageIndices[item.id] || 0] : item.image || '')}
+                                                >
+                                                    <img
+                                                        src={(item.images && item.images.length > 0) ? item.images[imageIndices[item.id] || 0] : item.image}
+                                                        alt={item.productName}
+                                                        className="w-full h-full object-cover transition-transform group-hover/image:scale-105"
+                                                    />
                                                 </div>
-                                            ) : (
-                                                <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                                                    <Search className="w-10 h-10" />
-                                                </div>
-                                            )}
+
+                                                {/* Image Counter Badge */}
+                                                {item.images && item.images.length > 1 && (
+                                                    <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full flex items-center font-bold z-10 backdrop-blur-sm pointer-events-none">
+                                                        {(imageIndices[item.id] || 0) + 1} / {item.images.length}
+                                                    </div>
+                                                )}
+
+                                                {/* Navigation Buttons */}
+                                                {item.images && item.images.length > 1 && (
+                                                    <>
+                                                        {/* Next Button (> Right Center) */}
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                e.preventDefault();
+                                                                const currentIndex = imageIndices[item.id] || 0;
+                                                                const nextIndex = (currentIndex + 1) % item.images!.length;
+                                                                setImageIndices(prev => ({ ...prev, [item.id]: nextIndex }));
+                                                            }}
+                                                            className="absolute top-1/2 right-2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 p-1.5 rounded-full shadow-lg opacity-0 group-hover/image:opacity-100 transition-all transform hover:scale-110 z-20"
+                                                        >
+                                                            <ChevronRight className="w-5 h-5" />
+                                                        </button>
+
+                                                        {/* Prev Button (< Left Center - Optional but good UX) */}
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                e.preventDefault();
+                                                                const currentIndex = imageIndices[item.id] || 0;
+                                                                const prevIndex = (currentIndex - 1 + item.images!.length) % item.images!.length;
+                                                                setImageIndices(prev => ({ ...prev, [item.id]: prevIndex }));
+                                                            }}
+                                                            className="absolute top-1/2 left-2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 p-1.5 rounded-full shadow-lg opacity-0 group-hover/image:opacity-100 transition-all transform hover:scale-110 z-20"
+                                                        >
+                                                            <ChevronLeft className="w-5 h-5" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
                                             <div className="p-4">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div>
