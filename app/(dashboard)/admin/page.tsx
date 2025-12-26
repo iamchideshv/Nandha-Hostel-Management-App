@@ -1165,7 +1165,7 @@ export default function AdminDashboard() {
                                                 </div>
                                                 {(item.status === 'found' || item.status === 'not-found') ? (
                                                     <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none bg-white/10 dark:bg-black/10 backdrop-blur-[0.5px]">
-                                                        <div className={`border-[6px] border-double px-8 py-2 transform -rotate-12 rounded-xl font-black text-3xl uppercase tracking-widest opacity-90 shadow-sm ${item.status === 'found' ? 'border-green-600 text-green-600' : 'border-red-600 text-red-600'}`}>
+                                                        <div className={`border-[6px] border-double px-8 py-2 transform -rotate-12 -translate-y-8 rounded-xl font-black text-3xl uppercase tracking-widest opacity-90 shadow-sm ${item.status === 'found' ? 'border-green-600 text-green-600' : 'border-red-600 text-red-600'}`}>
                                                             {item.status === 'found' ? 'FOUNDED' : 'UNFOUNDED'}
                                                         </div>
                                                     </div>
