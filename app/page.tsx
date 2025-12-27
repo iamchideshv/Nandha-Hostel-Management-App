@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ContactModal } from '@/components/contact-modal';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Building, ShieldCheck, User, Users } from 'lucide-react';
+import { InstallPrompt } from '@/components/InstallPrompt';
 
 export default function Home() {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-1 md:gap-4 flex-shrink-0">
           <ThemeToggle />
+          <InstallPrompt />
           <Link href="/login">
             <Button variant="ghost" size="sm" className="dark:text-slate-300 dark:hover:text-white text-xs md:text-sm px-2 md:px-4">Login</Button>
           </Link>
