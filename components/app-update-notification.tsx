@@ -29,6 +29,12 @@ export default function AppUpdateNotification() {
         // Check stored version
         const storedVersion = localStorage.getItem(STORAGE_KEY);
 
+        if (!storedVersion) {
+            // First time install or fresh reinstall - they have the latest version
+            localStorage.setItem(STORAGE_KEY, APP_VERSION);
+            return;
+        }
+
         if (storedVersion !== APP_VERSION) {
             setIsOpen(true);
         }
