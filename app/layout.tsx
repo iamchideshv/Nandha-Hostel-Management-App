@@ -51,19 +51,36 @@ export default function RootLayout({
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js').then(
-                    (registration) => {
-                      console.log('Service Worker registered:', registration);
-                      // Check for updates every hour
+                  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then((registration) => {
+                      console.log('[PWA] Service Worker registered successfully:', registration.scope);
+                      
+                      // Check for updates on page load
+                      registration.update();
+                      
+                      // Check for updates every 30 minutes
                       setInterval(() => {
                         registration.update();
-                      }, 3600000);
-                    },
-                    (error) => {
-                      console.log('Service Worker registration failed:', error);
-                    }
-                  );
+                      }, 1800000);
+                      
+                      // Handle service worker updates
+                      registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                          newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                              console.log('[PWA] New service worker available, will update on next visit');
+                            }
+                          });
+                        }
+                      });
+                    })
+                    .catch((error) => {
+                      console.error('[PWA] Service Worker registration failed:', error);
+                    });
                 });
+              } else {
+                console.warn('[PWA] Service Workers are not supported in this browser');
               }
             `,
           }}
