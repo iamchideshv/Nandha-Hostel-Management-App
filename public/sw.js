@@ -1,11 +1,10 @@
 // Service Worker for NEI Smart Hostel PWA
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_NAME = `nei-hostel-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `nei-hostel-runtime-${CACHE_VERSION}`;
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
-    '/',
     '/manifest.json',
     '/icon-192.png',
     '/icon-512.png',
@@ -53,7 +52,7 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch event - network first, then cache
+// Fetch event - network first for navigation, others cache first
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
@@ -68,12 +67,34 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // API routes - network first, cache fallback
+    // Navigation requests (HTML) - Network First, then Cache
+    // This ensures the user always gets the latest version of the page
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request)
+                .then((response) => {
+                    // Cache the fresh version
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(request, responseClone);
+                    });
+                    return response;
+                })
+                .catch(() => {
+                    // Network failed, fall back to cache
+                    return caches.match(request).then((cachedResponse) => {
+                        return cachedResponse || new Response('Offline', { status: 503 });
+                    });
+                })
+        );
+        return;
+    }
+
+    // API routes - Network First, cache fallback
     if (url.pathname.startsWith('/api/')) {
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    // Clone and cache successful responses
                     if (response && response.status === 200) {
                         const responseClone = response.clone();
                         caches.open(RUNTIME_CACHE).then((cache) => {
@@ -83,7 +104,6 @@ self.addEventListener('fetch', (event) => {
                     return response;
                 })
                 .catch(() => {
-                    // Fallback to cache if network fails
                     return caches.match(request).then((cachedResponse) => {
                         return cachedResponse || new Response('Offline', { status: 503 });
                     });
@@ -92,7 +112,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Static assets - cache first, network fallback
+    // Static assets - Cache First, Network Fallback
     event.respondWith(
         caches.match(request)
             .then((cachedResponse) => {
@@ -101,12 +121,10 @@ self.addEventListener('fetch', (event) => {
                 }
 
                 return fetch(request).then((response) => {
-                    // Don't cache non-successful responses
                     if (!response || response.status !== 200 || response.type === 'error') {
                         return response;
                     }
 
-                    // Clone and cache the response
                     const responseClone = response.clone();
                     caches.open(RUNTIME_CACHE).then((cache) => {
                         cache.put(request, responseClone);
@@ -115,7 +133,6 @@ self.addEventListener('fetch', (event) => {
                     return response;
                 }).catch((error) => {
                     console.error('[SW] Fetch failed:', error);
-                    // Return cached response or offline page
                     return caches.match(request).then((cachedResponse) => {
                         return cachedResponse || new Response('Offline', { status: 503 });
                     });
