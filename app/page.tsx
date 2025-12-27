@@ -19,7 +19,6 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-1 md:gap-4 flex-shrink-0">
           <ThemeToggle />
-          <InstallPrompt />
           <Link href="/login">
             <Button variant="ghost" size="sm" className="dark:text-slate-300 dark:hover:text-white text-xs md:text-sm px-2 md:px-4">Login</Button>
           </Link>
@@ -43,12 +42,13 @@ export default function Home() {
           A unified portal for students, admins, and wardens to manage mess, complaints, fees, and outpasses seamlessly.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+        <div className="flex flex-col gap-4 w-full justify-center items-center">
           <Link href="/login">
             <button className="uiverse-login-button w-full sm:w-auto">
               Student/Admin/Send-Off Login
             </button>
           </Link>
+          <InstallPrompt />
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mt-16 w-full text-left">
