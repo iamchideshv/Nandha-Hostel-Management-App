@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/lib/auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ export default function DashboardLayout({
 }) {
     const { user, isLoading, logout } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showHomeConfirm, setShowHomeConfirm] = useState(false);
 
@@ -24,6 +25,28 @@ export default function DashboardLayout({
             router.push('/login');
         }
     }, [user, isLoading, router]);
+
+    useEffect(() => {
+        const protectedRoutes = ['/student', '/admin', '/send-off'];
+        const isProtectedRoute = protectedRoutes.some(route => pathname?.startsWith(route));
+
+        if (isProtectedRoute) {
+            // Push state to prevent immediate back navigation
+            window.history.pushState(null, '', window.location.href);
+
+            const handlePopState = (event: PopStateEvent) => {
+                // Prevent back navigation and show confirmation
+                window.history.pushState(null, '', window.location.href);
+                setShowHomeConfirm(true);
+            };
+
+            window.addEventListener('popstate', handlePopState);
+
+            return () => {
+                window.removeEventListener('popstate', handlePopState);
+            };
+        }
+    }, [pathname]);
 
     // if (isLoading) {
     //     return <div className="flex h-screen items-center justify-center p-4 text-slate-500">Loading...</div>;
