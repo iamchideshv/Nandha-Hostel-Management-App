@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { X, RefreshCw, Smartphone } from 'lucide-react';
 
-const APP_VERSION = '1.2.0'; // Increment this when you make changes
+const APP_VERSION = '1.4.2'; // Increment this when you make changes
 const STORAGE_KEY = 'nei-hostel-app-version';
 
 export default function AppUpdateNotification() {
