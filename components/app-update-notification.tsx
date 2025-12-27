@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { X, RefreshCw, Smartphone } from 'lucide-react';
 
-const APP_VERSION = '1.1.0'; // Increment this when you make changes
+const APP_VERSION = '1.2.0'; // Increment this when you make changes
 const STORAGE_KEY = 'nei-hostel-app-version';
 
 export default function AppUpdateNotification() {
@@ -51,7 +51,7 @@ export default function AppUpdateNotification() {
                             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                                 <RefreshCw size={24} />
                             </div>
-                            <h2 className="text-xl font-bold">App Name Updated!</h2>
+                            <h2 className="text-xl font-bold">New App Icon!</h2>
                         </div>
                         <button
                             onClick={handleClose}
@@ -62,7 +62,7 @@ export default function AppUpdateNotification() {
                         </button>
                     </div>
                     <p className="text-white/90 text-sm">
-                        We've renamed our app to <strong>"NEI Smart Hostel"</strong>
+                        We've updated our app icon to a fresh new look!
                     </p>
                 </div>
 
