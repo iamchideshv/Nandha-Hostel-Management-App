@@ -1,6 +1,6 @@
 {
     "name": "NEI Smart Hostel",
-    "short_name": "NEIHostelApp",
+    "short_name": "NEI Smart Hostel",
     "description": "NEI Smart Hostel - Hostel Management System",
     "start_url": "/",
     "scope": "/",

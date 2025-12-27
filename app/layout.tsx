@@ -4,6 +4,8 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/lib/theme-context';
 import { Toaster } from 'sonner';
+import AppUpdateNotification from '@/components/app-update-notification';
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -46,6 +48,7 @@ export default function RootLayout({
           </AuthProvider>
         </ThemeProvider>
         <Toaster position="top-center" richColors />
+        <AppUpdateNotification />
         <script
           dangerouslySetInnerHTML={{
             __html: `
