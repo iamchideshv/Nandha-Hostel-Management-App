@@ -420,7 +420,14 @@ export default function LoginPage() {
                                 placeholder={registerRole === 'student' ? "Unique User ID" : "Login ID"}
                                 type="text"
                                 value={registerData.id}
-                                onChange={(e) => setRegisterData({ ...registerData, id: e.target.value })}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (/^[a-z0-9]*$/.test(val)) {
+                                        setRegisterData({ ...registerData, id: val });
+                                    } else {
+                                        toast.error("Only lowercase letters and numbers are permitted");
+                                    }
+                                }}
                                 required
                             />
 
