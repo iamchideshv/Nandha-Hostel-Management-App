@@ -406,6 +406,15 @@ export default function LoginPage() {
                             </button>
                         </div>
 
+                        {/* Inline Error Message for Sign Up */}
+                        {error && isRegisterPage && (
+                            <div className="mb-2 px-2 py-1 bg-red-100 border border-red-200 rounded text-center">
+                                <p className="text-[10px] text-red-600 font-bold animate-pulse">
+                                    {error}
+                                </p>
+                            </div>
+                        )}
+
                         <form className="flip-card__form" onSubmit={handleRegisterSubmit}>
                             <input
                                 className="flip-card__input"
@@ -424,8 +433,9 @@ export default function LoginPage() {
                                     const val = e.target.value;
                                     if (/^[a-z0-9]*$/.test(val)) {
                                         setRegisterData({ ...registerData, id: val });
+                                        if (error) setError('');
                                     } else {
-                                        toast.error("Only lowercase letters and numbers are permitted");
+                                        setError("Only lowercase letters and numbers are permitted");
                                     }
                                 }}
                                 required
@@ -460,7 +470,15 @@ export default function LoginPage() {
                                     placeholder="Room Number"
                                     type="text"
                                     value={registerData.roomNumber}
-                                    onChange={(e) => setRegisterData({ ...registerData, roomNumber: e.target.value })}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (/^\d*$/.test(val)) {
+                                            setRegisterData({ ...registerData, roomNumber: val });
+                                            if (error) setError('');
+                                        } else {
+                                            setError("Only numbers are permitted in Room Number");
+                                        }
+                                    }}
                                     required
                                 />
                             )}
