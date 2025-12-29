@@ -92,6 +92,15 @@ export interface PasswordResetRequest {
     status: 'pending' | 'completed';
 }
 
+export interface ProfileUpdateRequest {
+    id: string;
+    studentId: string;
+    studentName: string;
+    fieldName: string;
+    requestDate: string;
+    status: 'pending' | 'completed';
+}
+
 
 export interface Message {
     id: string;

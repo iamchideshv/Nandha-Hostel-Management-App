@@ -389,4 +389,19 @@ export const db = {
     await setDoc(doc(firestore, FEEDBACK_COL, feedback.id), feedback);
   },
 
+  // --- PROFILE UPDATE REQUESTS ---
+  getProfileUpdateRequests: async (): Promise<any[]> => {
+    const snapshot = await getDocs(collection(firestore, 'profileUpdateRequests'));
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a: any, b: any) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime());
+  },
+
+  addProfileUpdateRequest: async (request: any): Promise<void> => {
+    await setDoc(doc(firestore, 'profileUpdateRequests', request.id), request);
+  },
+
+  deleteProfileUpdateRequest: async (id: string): Promise<void> => {
+    await deleteDoc(doc(firestore, 'profileUpdateRequests', id));
+  },
 };

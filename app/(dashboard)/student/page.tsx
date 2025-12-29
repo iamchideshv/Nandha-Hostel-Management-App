@@ -664,18 +664,37 @@ export default function StudentDashboard() {
                                             <Label className="text-blue-600 dark:text-blue-400 font-bold">Modify Your details</Label>
                                             <select
                                                 className="w-full p-2 text-sm border rounded-lg bg-white dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                onChange={(e) => {
+                                                onChange={async (e) => {
                                                     const val = e.target.value;
                                                     if (val) {
+                                                        const fieldName = val === 'department' ? 'Year & Department' :
+                                                            val === 'roomNumber' ? 'Room Number' :
+                                                                val === 'phoneNumber' ? 'Phone Number' :
+                                                                    val === 'email' ? 'Email Address' : 'Name';
+
+                                                        // Notify user
+                                                        toast.success("Modify Message raised");
+                                                        toast.info("Give The Modification Detail in nandhahostel@nandhaengg.org", { duration: 5000 });
+                                                        toast.warning("If not Updated AFTER 2-3 WORKING DAYS THEN CONTACT ADMIN", { duration: 6000 });
+
+                                                        // Send request to DevOps
+                                                        try {
+                                                            await fetch('/api/profile-update-request', {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({
+                                                                    studentId: user?.id,
+                                                                    studentName: user?.name,
+                                                                    fieldName: fieldName
+                                                                })
+                                                            });
+                                                        } catch (err) {
+                                                            console.error('Failed to send modification request:', err);
+                                                        }
+
                                                         if (!unlockedFields.includes(val)) {
                                                             setUnlockedFields([...unlockedFields, val]);
-                                                            const fieldName = val === 'department' ? 'Year & Department' :
-                                                                val === 'roomNumber' ? 'Room Number' :
-                                                                    val === 'phoneNumber' ? 'Phone Number' :
-                                                                        val === 'email' ? 'Email Address' : 'Name';
                                                             toast.success(`${fieldName} field unlocked!`);
-                                                        } else {
-                                                            toast.info("This field is already unlocked!");
                                                         }
                                                     }
                                                     e.target.value = ""; // Reset dropdown

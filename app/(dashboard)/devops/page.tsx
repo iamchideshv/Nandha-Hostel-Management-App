@@ -26,12 +26,14 @@ export default function DevOpsDashboard() {
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [roleFilter, setRoleFilter] = useState('all');
     const [hostelFilter, setHostelFilter] = useState('all');
-    const [activeTab, setActiveTab] = useState<'accounts' | 'feedback'>('accounts');
+    const [activeTab, setActiveTab] = useState<'accounts' | 'feedback' | 'profile-mods'>('accounts');
     const [feedback, setFeedback] = useState<any[]>([]);
     const [feedbackLoading, setFeedbackLoading] = useState(false);
+    const [profileRequests, setProfileRequests] = useState<any[]>([]);
+    const [profileLoading, setProfileLoading] = useState(false);
 
     const fetchRequests = async () => {
-        // setLoading(true);
+        setLoading(true);
         try {
             const res = await fetch('/api/password-reset');
             const data = await res.json();
@@ -44,7 +46,7 @@ export default function DevOpsDashboard() {
     };
 
     const fetchUsers = async () => {
-        // setUsersLoading(true);
+        setUsersLoading(true);
         try {
             const res = await fetch('/api/users');
             const data = await res.json();
@@ -69,10 +71,24 @@ export default function DevOpsDashboard() {
         }
     };
 
+    const fetchProfileRequests = async () => {
+        setProfileLoading(true);
+        try {
+            const res = await fetch('/api/profile-update-request');
+            const data = await res.json();
+            setProfileRequests(data);
+        } catch (error) {
+            toast.error('Failed to load profile requests');
+        } finally {
+            setProfileLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchRequests();
         fetchUsers();
         fetchFeedback();
+        fetchProfileRequests();
     }, []);
 
     const handleResetPassword = async () => {
@@ -102,7 +118,7 @@ export default function DevOpsDashboard() {
                 toast.success('Password reset successfully!');
                 setSelectedRequest(null);
                 setNewPassword('');
-                fetchRequests(); // Refresh the list
+                fetchRequests();
             } else {
                 toast.error('Failed to reset password');
             }
@@ -190,6 +206,23 @@ export default function DevOpsDashboard() {
         }
     };
 
+    const handleDeleteProfileRequest = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this modification request?')) return;
+        try {
+            const res = await fetch(`/api/profile-update-request?id=${id}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                toast.success('Request deleted');
+                fetchProfileRequests();
+            } else {
+                toast.error('Failed to delete request');
+            }
+        } catch (error) {
+            toast.error('Error deleting request');
+        }
+    };
+
     const filteredUsers = users.filter(u => {
         const matchesSearch = u.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -207,7 +240,9 @@ export default function DevOpsDashboard() {
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">DevOps Dashboard</h1>
                     <p className="text-slate-600 dark:text-slate-400 mt-1">
-                        {activeTab === 'accounts' ? 'Manage password reset requests and users' : 'Review user feedback and suggestions'}
+                        {activeTab === 'accounts' ? 'Manage password reset requests and users' :
+                            activeTab === 'feedback' ? 'Review user feedback and suggestions' :
+                                'Review profile modification requests'}
                     </p>
                 </div>
                 <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
@@ -229,12 +264,20 @@ export default function DevOpsDashboard() {
                     >
                         Feedback Submitted
                     </button>
+                    <button
+                        onClick={() => setActiveTab('profile-mods')}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'profile-mods'
+                            ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                            }`}
+                    >
+                        Profile Mod Requests
+                    </button>
                 </div>
             </div>
 
             {activeTab === 'accounts' ? (
                 <>
-
                     <Card>
                         <CardHeader>
                             <div className="flex justify-between items-center">
@@ -242,19 +285,17 @@ export default function DevOpsDashboard() {
                                     <CardTitle>Password Reset Requests</CardTitle>
                                     <CardDescription>Review and process user password reset requests</CardDescription>
                                 </div>
-                                <Button onClick={fetchRequests} variant="outline" size="sm">
-                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                <Button onClick={fetchRequests} variant="outline" size="sm" disabled={loading}>
+                                    <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                                     Refresh
                                 </Button>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            {false ? (
-                                <div className="text-center py-8 text-slate-500">Loading...</div>
+                            {loading ? (
+                                <div className="text-center py-8 text-slate-500">Loading requests...</div>
                             ) : requests.length === 0 ? (
-                                <div className="text-center py-8 text-slate-500">
-                                    No pending password reset requests
-                                </div>
+                                <div className="text-center py-8 text-slate-500">No pending password reset requests</div>
                             ) : (
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-sm">
@@ -264,59 +305,36 @@ export default function DevOpsDashboard() {
                                                 <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Name</th>
                                                 <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Email</th>
                                                 <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Request Date</th>
-                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Action</th>
+                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 text-right">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {requests.map((req) => (
-                                                <tr key={req.id} className="border-b last:border-0">
+                                                <tr key={req.id} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                                     <td className="py-3 font-medium text-slate-900 dark:text-white">{req.userId}</td>
                                                     <td className="py-3 text-slate-600 dark:text-slate-400">{req.userName}</td>
                                                     <td className="py-3 text-slate-600 dark:text-slate-400">{req.userEmail || 'N/A'}</td>
                                                     <td className="py-3 text-slate-600 dark:text-slate-400">
                                                         {new Date(req.requestDate).toLocaleString()}
                                                     </td>
-                                                    <td className="py-3">
-                                                        <div className="flex items-center gap-2">
+                                                    <td className="py-3 text-right">
+                                                        <div className="flex items-center justify-end gap-2">
                                                             <Button
                                                                 size="sm"
                                                                 onClick={() => setSelectedRequest(req)}
                                                                 className="bg-blue-600 hover:bg-blue-700"
                                                             >
                                                                 <Key className="w-4 h-4 mr-1" />
-                                                                Reset Password
+                                                                Reset
                                                             </Button>
-
-                                                            <div className="relative">
-                                                                <Button
-                                                                    size="sm"
-                                                                    variant="ghost"
-                                                                    className="p-1 h-8 w-8"
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        setOpenMenuId(openMenuId === req.id ? null : req.id);
-                                                                    }}
-                                                                >
-                                                                    <MoreVertical className="w-4 h-4" />
-                                                                </Button>
-
-                                                                {openMenuId === req.id && (
-                                                                    <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-slate-800 border rounded-md shadow-lg z-50 overflow-hidden">
-                                                                        <button
-                                                                            className="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
-                                                                            disabled={deletingRequestId === req.id}
-                                                                            onClick={() => handleDeleteRequest(req.id)}
-                                                                        >
-                                                                            {deletingRequestId === req.id ? (
-                                                                                <Loader2 className="w-3 h-3 animate-spin" />
-                                                                            ) : (
-                                                                                <Trash2 className="w-3 h-3" />
-                                                                            )}
-                                                                            Delete Request
-                                                                        </button>
-                                                                    </div>
-                                                                )}
-                                                            </div>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="ghost"
+                                                                onClick={() => handleDeleteRequest(req.id)}
+                                                                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -329,19 +347,19 @@ export default function DevOpsDashboard() {
                     </Card>
 
                     <Card className="mt-8 border-red-200">
-                        <CardHeader className="bg-red-50/50">
+                        <CardHeader className="bg-red-50/50 dark:bg-red-950/10">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <CardTitle className="text-red-900">All User Logins (Master Access)</CardTitle>
-                                    <CardDescription className="text-red-700">View all registered users and their plain-text passwords</CardDescription>
+                                    <CardTitle className="text-red-900 dark:text-red-400">All User Logins (Master Access)</CardTitle>
+                                    <CardDescription className="text-red-700 dark:text-red-500">View all registered users and their plain-text passwords</CardDescription>
                                 </div>
-                                <Button onClick={fetchUsers} variant="outline" size="sm" className="border-red-200 hover:bg-red-100 text-red-700">
-                                    <RefreshCw className="w-4 h-4 mr-2" />
-                                    Refresh User List
+                                <Button onClick={fetchUsers} variant="outline" size="sm" className="border-red-200 hover:bg-red-100 text-red-700" disabled={usersLoading}>
+                                    <RefreshCw className={`w-4 h-4 mr-2 ${usersLoading ? 'animate-spin' : ''}`} />
+                                    Refresh Users
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-4 pt-6">
                             <div className="flex flex-col md:flex-row gap-4">
                                 <div className="relative flex-1">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -352,23 +370,21 @@ export default function DevOpsDashboard() {
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
-                                <div className="w-full md:w-48">
+                                <div className="flex gap-2">
                                     <select
-                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                        className="h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={roleFilter}
                                         onChange={(e) => setRoleFilter(e.target.value)}
                                     >
                                         <option value="all">All Roles</option>
-                                        <option value="student">Students</option>
-                                        <option value="admin">Admins</option>
+                                        <option value="student">Student</option>
+                                        <option value="admin">Admin</option>
                                         <option value="send-off">Send-off</option>
                                         <option value="authority">Authority</option>
                                         <option value="devops">DevOps</option>
                                     </select>
-                                </div>
-                                <div className="w-full md:w-48">
                                     <select
-                                        className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                        className="h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={hostelFilter}
                                         onChange={(e) => setHostelFilter(e.target.value)}
                                     >
@@ -385,75 +401,64 @@ export default function DevOpsDashboard() {
                                 </div>
                             </div>
 
-                            {false ? (
+                            {usersLoading ? (
                                 <div className="text-center py-8 text-slate-500">Loading master user list...</div>
-                            ) : users.length === 0 ? (
-                                <div className="text-center py-8 text-slate-500">
-                                    No users found in the database
-                                </div>
+                            ) : filteredUsers.length === 0 ? (
+                                <div className="text-center py-8 text-slate-500">No users found</div>
                             ) : (
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-sm">
                                         <thead className="border-b">
                                             <tr className="text-left">
-                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Login ID / Username</th>
-                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Full Name</th>
-                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Role</th>
-                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Hostel</th>
-                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 font-mono text-red-600">Password</th>
-                                                <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300 text-right">Actions</th>
+                                                <th className="pb-3 font-semibold">Login ID</th>
+                                                <th className="pb-3 font-semibold">Name</th>
+                                                <th className="pb-3 font-semibold">Role</th>
+                                                <th className="pb-3 font-semibold">Hostel</th>
+                                                <th className="pb-3 font-semibold text-red-600">Password</th>
+                                                <th className="pb-3 font-semibold text-right">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {filteredUsers.map((u) => (
-                                                <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                                    <td className="py-3 font-medium text-slate-900 dark:text-white">{u.id}</td>
-                                                    <td className="py-3 text-slate-600 dark:text-slate-400">{u.name}</td>
+                                                <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                                    <td className="py-3 font-medium">{u.id}</td>
+                                                    <td className="py-3">{u.name}</td>
                                                     <td className="py-3">
-                                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                                            u.role === 'devops' ? 'bg-red-100 text-red-700' :
-                                                                u.role === 'authority' ? 'bg-amber-100 text-amber-700' :
-                                                                    'bg-blue-100 text-blue-700'
+                                                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                                                                u.role === 'devops' ? 'bg-red-100 text-red-700' :
+                                                                    u.role === 'authority' ? 'bg-amber-100 text-amber-700' :
+                                                                        'bg-blue-100 text-blue-700'
                                                             }`}>
                                                             {u.role}
                                                         </span>
                                                     </td>
-                                                    <td className="py-3 text-slate-600 dark:text-slate-400">{u.hostelName || 'N/A'}</td>
+                                                    <td className="py-3">{u.hostelName || 'N/A'}</td>
                                                     <td className="py-3">
-                                                        <code className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-red-700 dark:text-red-400 rounded font-bold border border-yellow-200 dark:border-yellow-700/50">
-                                                            {u.password || 'SECRET'}
+                                                        <code className="px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/30 text-red-600 dark:text-red-400 rounded border border-amber-100 dark:border-amber-900/50 font-bold">
+                                                            {u.password || '******'}
                                                         </code>
                                                     </td>
-                                                    <td className="py-3">
-                                                        <div className="flex justify-end gap-2">
+                                                    <td className="py-3 text-right">
+                                                        <div className="flex justify-end gap-1">
                                                             <Button
                                                                 size="sm"
-                                                                variant="outline"
+                                                                variant="ghost"
                                                                 onClick={() => {
                                                                     setSelectedUser(u);
-                                                                    setEditData({
-                                                                        id: u.id,
-                                                                        name: u.name,
-                                                                        password: u.password || '',
-                                                                        role: u.role
-                                                                    });
+                                                                    setEditData({ id: u.id, name: u.name, password: u.password || '', role: u.role });
                                                                 }}
-                                                                className="hover:text-blue-600 hover:border-blue-600"
+                                                                className="h-8 w-8 p-0"
                                                             >
                                                                 <UserCog className="w-4 h-4" />
                                                             </Button>
                                                             <Button
                                                                 size="sm"
-                                                                variant="outline"
+                                                                variant="ghost"
                                                                 disabled={deletingId === u.id}
                                                                 onClick={() => handleDeleteUser(u.id)}
-                                                                className="hover:text-red-600 hover:border-red-600"
+                                                                className="h-8 w-8 p-0 text-red-500"
                                                             >
-                                                                {deletingId === u.id ? (
-                                                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                                                ) : (
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                )}
+                                                                {deletingId === u.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                                                             </Button>
                                                         </div>
                                                     </td>
@@ -465,126 +470,8 @@ export default function DevOpsDashboard() {
                             )}
                         </CardContent>
                     </Card>
-
-                    {/* Edit User Modal */}
-                    {selectedUser && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                            <Card className="w-full max-w-md shadow-2xl">
-                                <CardHeader>
-                                    <CardTitle>Edit User: {selectedUser.name}</CardTitle>
-                                    <CardDescription>Update Login ID, Full Name, or Password</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="editId">Login ID / Username</Label>
-                                        <Input
-                                            id="editId"
-                                            value={editData.id}
-                                            onChange={(e) => setEditData({ ...editData, id: e.target.value })}
-                                            placeholder="Enter new login ID"
-                                        />
-                                        <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Warning: Changing this will change their login username.</p>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="editName">Full Name</Label>
-                                        <Input
-                                            id="editName"
-                                            value={editData.name}
-                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                                            placeholder="Enter full name"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="editPassword">Password</Label>
-                                        <Input
-                                            id="editPassword"
-                                            value={editData.password}
-                                            onChange={(e) => setEditData({ ...editData, password: e.target.value })}
-                                            placeholder="Enter new password"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="editRole">User Role</Label>
-                                        <select
-                                            id="editRole"
-                                            className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
-                                            value={editData.role}
-                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
-                                        >
-                                            <option value="student">Student</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="send-off">Send-off</option>
-                                            <option value="authority">Authority</option>
-                                            <option value="devops">DevOps</option>
-                                        </select>
-                                    </div>
-                                </CardContent>
-                                <div className="flex gap-2 p-6 pt-0">
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => setSelectedUser(null)}
-                                        className="flex-1"
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        onClick={handleUpdateUser}
-                                        disabled={resetting}
-                                        className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                                    >
-                                        {resetting ? 'Updating...' : 'Save Changes'}
-                                    </Button>
-                                </div>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* Password Reset Modal */}
-                    {selectedRequest && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                            <Card className="w-full max-w-md shadow-2xl">
-                                <CardHeader>
-                                    <CardTitle>Reset Password</CardTitle>
-                                    <CardDescription>
-                                        Setting new password for <strong>{selectedRequest.userName}</strong> ({selectedRequest.userId})
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="newPassword">New Password</Label>
-                                        <Input
-                                            id="newPassword"
-                                            type="password"
-                                            placeholder="Enter new password (min 6 characters)"
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                        />
-                                    </div>
-                                </CardContent>
-                                <div className="flex gap-2 p-6 pt-0">
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => {
-                                            setSelectedRequest(null);
-                                            setNewPassword('');
-                                        }}
-                                        className="flex-1"
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        onClick={handleResetPassword}
-                                        disabled={resetting}
-                                        className="flex-1 bg-blue-600 hover:bg-blue-700"
-                                    >
-                                        {resetting ? 'Resetting...' : 'Reset Password'}
-                                    </Button>
-                                </div>
-                            </Card>
-                        </div>
-                    )}
                 </>
-            ) : (
+            ) : activeTab === 'feedback' ? (
                 <Card>
                     <CardHeader>
                         <div className="flex justify-between items-center">
@@ -600,64 +487,109 @@ export default function DevOpsDashboard() {
                     </CardHeader>
                     <CardContent>
                         {feedbackLoading ? (
-                            <div className="text-center py-12">
-                                <p className="text-slate-500">Loading feedback...</p>
-                            </div>
+                            <div className="text-center py-12 text-slate-500">Loading feedback...</div>
                         ) : feedback.length === 0 ? (
-                            <div className="text-center py-12 border-2 border-dashed rounded-xl bg-slate-50/50 dark:bg-black/50">
+                            <div className="text-center py-12 border-2 border-dashed rounded-xl">
                                 <MessageSquare className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">No Feedback Yet</h3>
-                                <p className="text-slate-500 max-w-xs mx-auto">Feedback submitted by students will appear here.</p>
+                                <h3 className="text-lg font-semibold">No Feedback Yet</h3>
+                                <p className="text-slate-500">Feedback submitted by students will appear here.</p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead className="border-b">
                                         <tr className="text-left">
-                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">User</th>
-                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Rating</th>
-                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Query & Suggestions</th>
-                                            <th className="pb-3 font-semibold text-slate-700 dark:text-slate-300">Submitted At</th>
+                                            <th className="pb-3 font-semibold">User</th>
+                                            <th className="pb-3 font-semibold">Rating</th>
+                                            <th className="pb-3 font-semibold">Message</th>
+                                            <th className="pb-3 font-semibold text-right">Date</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y">
+                                    <tbody className="divide-y text-slate-600 dark:text-slate-300">
                                         {feedback.map((item) => (
-                                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                                <td className="py-4 align-top">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                                                            <User className="w-4 h-4" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="font-semibold text-slate-900 dark:text-white">{item.studentName}</p>
-                                                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">{item.studentId}</p>
-                                                        </div>
+                                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                                <td className="py-4">
+                                                    <div>
+                                                        <p className="font-semibold text-slate-900 dark:text-white">{item.studentName}</p>
+                                                        <p className="text-[10px] uppercase tracking-wider text-slate-500">{item.studentId}</p>
                                                     </div>
                                                 </td>
-                                                <td className="py-4 align-top">
-                                                    <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded w-fit border border-amber-100 dark:border-amber-800/50">
-                                                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                                                <td className="py-4">
+                                                    <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded border border-amber-100 dark:border-amber-900/50 w-fit">
+                                                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                                                         <span className="font-bold text-amber-700 dark:text-amber-400">{item.rating}</span>
                                                     </div>
                                                 </td>
-                                                <td className="py-4 align-top">
-                                                    <div className="max-w-md">
-                                                        {item.message ? (
-                                                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed italic">
-                                                                "{item.message}"
-                                                            </p>
-                                                        ) : (
-                                                            <span className="text-slate-400 italic">No comments provided</span>
-                                                        )}
+                                                <td className="py-4">
+                                                    <p className="max-w-md italic">"{item.message || 'No comments'}"</p>
+                                                </td>
+                                                <td className="py-4 text-right">
+                                                    <p className="text-xs">{new Date(item.createdAt).toLocaleDateString()}</p>
+                                                    <p className="text-[10px] text-slate-400">{new Date(item.createdAt).toLocaleTimeString()}</p>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            ) : (
+                <Card>
+                    <CardHeader>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <CardTitle>Profile Modification Requests</CardTitle>
+                                <CardDescription>Students requesting to change their profile details</CardDescription>
+                            </div>
+                            <Button onClick={fetchProfileRequests} variant="outline" size="sm" disabled={profileLoading}>
+                                <RefreshCw className={`w-4 h-4 mr-2 ${profileLoading ? 'animate-spin' : ''}`} />
+                                Refresh Requests
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {profileLoading ? (
+                            <div className="text-center py-12 text-slate-500">Loading requests...</div>
+                        ) : profileRequests.length === 0 ? (
+                            <div className="text-center py-12 border-2 border-dashed rounded-xl">
+                                <UserCog className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                                <h3 className="text-lg font-semibold">No Requests</h3>
+                                <p className="text-slate-500">Modification requests will appear here.</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead className="border-b">
+                                        <tr className="text-left">
+                                            <th className="pb-3 font-semibold">Student</th>
+                                            <th className="pb-3 font-semibold">Field to Modify</th>
+                                            <th className="pb-3 font-semibold">Requested At</th>
+                                            <th className="pb-3 font-semibold text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y text-slate-600 dark:text-slate-300">
+                                        {profileRequests.map((item) => (
+                                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                                <td className="py-4">
+                                                    <div>
+                                                        <p className="font-semibold text-slate-900 dark:text-white">{item.studentName}</p>
+                                                        <p className="text-[10px] uppercase text-slate-500">{item.studentId}</p>
                                                     </div>
                                                 </td>
-                                                <td className="py-4 align-top whitespace-nowrap">
-                                                    <p className="text-slate-500 dark:text-slate-400 text-xs text-right">
-                                                        {new Date(item.createdAt).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}
-                                                    </p>
-                                                    <p className="text-slate-400 dark:text-slate-500 text-[10px] text-right">
-                                                        {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                    </p>
+                                                <td className="py-4">
+                                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded text-xs font-bold">
+                                                        {item.fieldName}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 font-mono text-xs">
+                                                    {new Date(item.requestDate).toLocaleString()}
+                                                </td>
+                                                <td className="py-4 text-right">
+                                                    <Button variant="ghost" size="sm" onClick={() => handleDeleteProfileRequest(item.id)} className="text-red-500 hover:text-red-600">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -669,48 +601,31 @@ export default function DevOpsDashboard() {
                 </Card>
             )}
 
-            {/* Edit User Modal */}
+            {/* Modals */}
             {selectedUser && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <Card className="w-full max-w-md shadow-2xl">
                         <CardHeader>
                             <CardTitle>Edit User: {selectedUser.name}</CardTitle>
-                            <CardDescription>Update Login ID, Full Name, or Password</CardDescription>
+                            <CardDescription>Update Login ID, Name, or Password</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="editId">Login ID / Username</Label>
-                                <Input
-                                    id="editId"
-                                    value={editData.id}
-                                    onChange={(e) => setEditData({ ...editData, id: e.target.value })}
-                                    placeholder="Enter new login ID"
-                                />
-                                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Warning: Changing this will change their login username.</p>
+                                <Label htmlFor="editId">Login ID</Label>
+                                <Input id="editId" value={editData.id} onChange={(e) => setEditData({ ...editData, id: e.target.value })} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="editName">Full Name</Label>
-                                <Input
-                                    id="editName"
-                                    value={editData.name}
-                                    onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                                    placeholder="Enter full name"
-                                />
+                                <Input id="editName" value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="editPassword">Password</Label>
-                                <Input
-                                    id="editPassword"
-                                    value={editData.password}
-                                    onChange={(e) => setEditData({ ...editData, password: e.target.value })}
-                                    placeholder="Enter new password"
-                                />
+                                <Input id="editPassword" value={editData.password} onChange={(e) => setEditData({ ...editData, password: e.target.value })} />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="editRole">User Role</Label>
+                                <Label htmlFor="editRole">Role</Label>
                                 <select
-                                    id="editRole"
-                                    className="w-full h-10 px-3 py-2 bg-white dark:bg-black border border-slate-200 dark:border-slate-800 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500 text-slate-900 dark:text-white"
+                                    className="w-full h-10 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-sm"
                                     value={editData.role}
                                     onChange={(e) => setEditData({ ...editData, role: e.target.value })}
                                 >
@@ -723,34 +638,19 @@ export default function DevOpsDashboard() {
                             </div>
                         </CardContent>
                         <div className="flex gap-2 p-6 pt-0">
-                            <Button
-                                variant="outline"
-                                onClick={() => setSelectedUser(null)}
-                                className="flex-1"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleUpdateUser}
-                                disabled={resetting}
-                                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                            >
-                                {resetting ? 'Updating...' : 'Save Changes'}
-                            </Button>
+                            <Button variant="outline" onClick={() => setSelectedUser(null)} className="flex-1">Cancel</Button>
+                            <Button onClick={handleUpdateUser} disabled={resetting} className="flex-1 bg-blue-600 hover:bg-blue-700">{resetting ? 'Updating...' : 'Save Changes'}</Button>
                         </div>
                     </Card>
                 </div>
             )}
 
-            {/* Password Reset Modal */}
             {selectedRequest && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <Card className="w-full max-w-md shadow-2xl">
                         <CardHeader>
                             <CardTitle>Reset Password</CardTitle>
-                            <CardDescription>
-                                Setting new password for <strong>{selectedRequest.userName}</strong> ({selectedRequest.userId})
-                            </CardDescription>
+                            <CardDescription>Resetting for {selectedRequest.userName}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
@@ -758,30 +658,15 @@ export default function DevOpsDashboard() {
                                 <Input
                                     id="newPassword"
                                     type="password"
-                                    placeholder="Enter new password (min 6 characters)"
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="Enter at least 6 characters"
                                 />
                             </div>
                         </CardContent>
                         <div className="flex gap-2 p-6 pt-0">
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setSelectedRequest(null);
-                                    setNewPassword('');
-                                }}
-                                className="flex-1"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleResetPassword}
-                                disabled={resetting}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700"
-                            >
-                                {resetting ? 'Resetting...' : 'Reset Password'}
-                            </Button>
+                            <Button variant="outline" onClick={() => setSelectedRequest(null)} className="flex-1">Cancel</Button>
+                            <Button onClick={handleResetPassword} disabled={resetting} className="flex-1 bg-blue-600 hover:bg-blue-700">{resetting ? 'Resetting...' : 'Reset Password'}</Button>
                         </div>
                     </Card>
                 </div>
