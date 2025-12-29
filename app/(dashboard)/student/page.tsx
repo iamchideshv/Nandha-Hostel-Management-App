@@ -673,7 +673,7 @@ export default function StudentDashboard() {
                                                                     val === 'email' ? 'Email Address' : 'Name';
 
                                                         // Notify user
-                                                        toast.success("Modify Message raised");
+                                                        toast.success("Modify Request Raised To Admin");
                                                         toast.info("Give The Modification Detail in nandhahostel@nandhaengg.org", { duration: 5000 });
                                                         toast.warning("If not Updated AFTER 2-3 WORKING DAYS THEN CONTACT ADMIN", { duration: 6000 });
 
@@ -692,10 +692,6 @@ export default function StudentDashboard() {
                                                             console.error('Failed to send modification request:', err);
                                                         }
 
-                                                        if (!unlockedFields.includes(val)) {
-                                                            setUnlockedFields([...unlockedFields, val]);
-                                                            toast.success(`${fieldName} field unlocked!`);
-                                                        }
                                                     }
                                                     e.target.value = ""; // Reset dropdown
                                                 }}
