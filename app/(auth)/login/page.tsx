@@ -14,7 +14,6 @@ import { toast } from 'sonner';
 import { auth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import confetti from 'canvas-confetti';
-
 export default function LoginPage() {
     const router = useRouter();
     const { login } = useAuth();
@@ -64,10 +63,10 @@ export default function LoginPage() {
 
     useEffect(() => {
         // Initialize Recaptcha only if on register page
-        if (!isRegisterPage || window.recaptchaVerifier) return;
+        if (!isRegisterPage || (window as any).recaptchaVerifier) return;
 
         try {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                 'size': 'invisible',
                 'callback': (response: any) => {
                     // reCAPTCHA solved, allow signInWithPhoneNumber.
@@ -88,7 +87,7 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const appVerifier = window.recaptchaVerifier;
+            const appVerifier = (window as any).recaptchaVerifier;
             // Assuming Indian numbers for now, append +91 if missing
             const formattedNumber = mobileNumber.startsWith('+') ? mobileNumber : `+91${mobileNumber}`;
 
