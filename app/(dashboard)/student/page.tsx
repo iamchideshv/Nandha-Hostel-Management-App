@@ -13,7 +13,7 @@ import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
-import { Mail } from 'lucide-react';
+import { Mail, UserCircle, Upload, Camera } from 'lucide-react';
 
 interface ComplaintData {
     id: string;
@@ -79,6 +79,15 @@ export default function StudentDashboard() {
     const [selectedItemDetail, setSelectedItemDetail] = useState<LostFound | null>(null);
     const [showAbout, setShowAbout] = useState(false);
     const [uploadedMenu, setUploadedMenu] = useState<any>(null);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [profileForm, setProfileForm] = useState({
+        name: '',
+        department: '',
+        roomNumber: '',
+        email: '',
+        phoneNumber: '',
+        profileImage: ''
+    });
 
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
@@ -127,6 +136,16 @@ export default function StudentDashboard() {
 
     useEffect(() => {
         fetchData();
+        if (user) {
+            setProfileForm({
+                name: user.name || '',
+                department: user.department || '',
+                roomNumber: user.roomNumber || '',
+                email: user.email || '',
+                phoneNumber: user.phoneNumber || '',
+                profileImage: user.profileImage || ''
+            });
+        }
     }, [user, messHostelType]);
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
@@ -384,6 +403,64 @@ export default function StudentDashboard() {
         if (lostFoundForm.images.length <= 1) setImageUploaded(false);
     };
 
+    const handleProfileUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/user/profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: user?.id,
+                    ...profileForm
+                })
+            });
+
+            if (res.ok) {
+                toast.success('Profile Updated');
+                setShowProfileModal(false);
+                window.location.reload();
+            } else {
+                toast.error('Failed to update profile');
+            }
+        } catch (e) {
+            toast.error('Error updating profile');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const MAX_WIDTH = 300;
+                    const MAX_HEIGHT = 300;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx?.drawImage(img, 0, 0, width, height);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    setProfileForm(prev => ({ ...prev, profileImage: compressedBase64 }));
+                }
+                img.src = reader.result as string;
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <>
             {/* Mobile Navigation Overlay */}
@@ -441,7 +518,16 @@ export default function StudentDashboard() {
                         </Button>
                         <div>
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Welcome, {user?.name}</h1>
-                            <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
+                            <div className="flex flex-col items-start gap-1">
+                                <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
+                                <button
+                                    onClick={() => setShowProfileModal(true)}
+                                    className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium mt-1"
+                                >
+                                    <UserCircle className="w-4 h-4" />
+                                    View / Edit Profile
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
@@ -479,6 +565,97 @@ export default function StudentDashboard() {
                             {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                         </p>
                     </div>
+
+                    {/* Profile Modal */}
+                    {showProfileModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowProfileModal(false)}>
+                            <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                                <div className="p-6 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                                    <h3 className="text-lg font-bold">My Profile</h3>
+                                    <button onClick={() => setShowProfileModal(false)} className="text-slate-500 hover:text-red-500">
+                                        <XCircle className="w-6 h-6" />
+                                    </button>
+                                </div>
+                                <div className="p-6 overflow-y-auto">
+                                    <form onSubmit={handleProfileUpdate} className="space-y-6">
+                                        {/* Image Upload */}
+                                        <div className="flex flex-col items-center justify-center gap-4">
+                                            <div className="relative group">
+                                                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                                    {profileForm.profileImage ? (
+                                                        <img src={profileForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <UserCircle className="w-20 h-20 text-slate-300" />
+                                                    )}
+                                                </div>
+                                                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                                                    <Camera className="w-4 h-4" />
+                                                    <input type="file" accept="image/*" className="hidden" onChange={handleProfileImageUpload} />
+                                                </label>
+                                            </div>
+                                            <p className="text-xs text-slate-500">Click camera icon to change photo</p>
+                                        </div>
+
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label>Name</Label>
+                                                <Input
+                                                    value={profileForm.name}
+                                                    onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
+                                                    placeholder="Full Name"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Department</Label>
+                                                <Input
+                                                    value={profileForm.department}
+                                                    onChange={e => setProfileForm({ ...profileForm, department: e.target.value })}
+                                                    placeholder="e.g. CSE - A"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Room Number</Label>
+                                                <Input
+                                                    value={profileForm.roomNumber}
+                                                    onChange={e => setProfileForm({ ...profileForm, roomNumber: e.target.value })}
+                                                    placeholder="Room 101"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Phone Number</Label>
+                                                <Input
+                                                    value={profileForm.phoneNumber}
+                                                    onChange={e => setProfileForm({ ...profileForm, phoneNumber: e.target.value })}
+                                                    placeholder="+91 9876543210"
+                                                />
+                                            </div>
+                                            <div className="col-span-2 space-y-2">
+                                                <Label>Email Address</Label>
+                                                <Input
+                                                    type="email"
+                                                    value={profileForm.email}
+                                                    onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
+                                                    placeholder="student@example.com"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <Button type="submit" className="w-full" disabled={submitting}>
+                                            {submitting ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                    Updating Profile...
+                                                </>
+                                            ) : (
+                                                'Update Profile'
+                                            )}
+                                        </Button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <button onClick={() => setActiveTab('lost-found')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'lost-found' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Search className="h-6 w-6 text-amber-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Lost & Found</h3>

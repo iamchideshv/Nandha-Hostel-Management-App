@@ -10,6 +10,10 @@ export interface User {
     // Student specific fields
     roomNumber?: string;
     feesPaid?: boolean;
+    // Profile fields
+    profileImage?: string; // Base64 or URL
+    department?: string;
+    phoneNumber?: string;
 }
 
 export type ComplaintType = 'food' | 'misc';
