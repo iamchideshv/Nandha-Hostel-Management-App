@@ -79,8 +79,6 @@ export default function StudentDashboard() {
     const [selectedItemDetail, setSelectedItemDetail] = useState<LostFound | null>(null);
     const [showAbout, setShowAbout] = useState(false);
     const [uploadedMenu, setUploadedMenu] = useState<any>(null);
-    const [showMessageModal, setShowMessageModal] = useState(false);
-    const [lastReadTime, setLastReadTime] = useState<string | null>(null);
 
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
@@ -128,17 +126,8 @@ export default function StudentDashboard() {
     };
 
     useEffect(() => {
-        const stored = localStorage.getItem('student-msg-last-read');
-        if (stored) setLastReadTime(stored);
         fetchData();
     }, [user, messHostelType]);
-
-    const handleOpenMessages = () => {
-        setShowMessageModal(true);
-        const now = new Date().toISOString();
-        setLastReadTime(now);
-        localStorage.setItem('student-msg-last-read', now);
-    };
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -451,18 +440,7 @@ export default function StudentDashboard() {
                             <Menu className="w-5 h-5" />
                         </Button>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                Welcome, {user?.name}
-                                <button
-                                    onClick={handleOpenMessages}
-                                    className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                >
-                                    <Mail className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                                    {messages.filter(m => m.targetStudentId === user?.id && (!lastReadTime || new Date(m.timestamp) > new Date(lastReadTime))).length > 0 && (
-                                        <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white dark:ring-black animate-pulse"></span>
-                                    )}
-                                </button>
-                            </h1>
+                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Welcome, {user?.name}</h1>
                             <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
                         </div>
                     </div>
@@ -472,39 +450,7 @@ export default function StudentDashboard() {
                     </Button>
                 </header>
 
-                {/* Private Messages Modal/Popover - Simple overlay implementation */}
-                {showMessageModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowMessageModal(false)}>
-                        <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-xl shadow-2xl p-6" onClick={e => e.stopPropagation()}>
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-bold">Admin Messages</h3>
-                                <button onClick={() => setShowMessageModal(false)} className="text-slate-500 hover:text-red-500">
-                                    <XCircle className="w-6 h-6" />
-                                </button>
-                            </div>
-                            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-                                {messages.filter(m => m.targetStudentId === user?.id).length === 0 ? (
-                                    <div className="text-center py-8 text-slate-500">
-                                        No private messages from admin
-                                    </div>
-                                ) : (
-                                    messages
-                                        .filter(m => m.targetStudentId === user?.id)
-                                        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-                                        .map(m => (
-                                            <div key={m.id} className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30">
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <span className="text-xs font-bold text-blue-700 dark:text-blue-300">Admin</span>
-                                                    <span className="text-xs text-slate-500">{new Date(m.timestamp).toLocaleDateString()}</span>
-                                                </div>
-                                                <p className="text-sm text-slate-800 dark:text-slate-200">{m.message}</p>
-                                            </div>
-                                        ))
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
+
 
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
@@ -796,10 +742,10 @@ export default function StudentDashboard() {
                                                 <CardTitle>Inbox</CardTitle>
                                                 <CardDescription>Messages from Admin</CardDescription>
                                             </div>
-                                            {messages.filter(m => m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))).length > 0 && (
+                                            {messages.filter(m => m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id)).length > 0 && (
                                                 <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
                                                     if (!confirm('Are you sure you want to clear your inbox? This action cannot be undone.')) return;
-                                                    setMessages(prev => prev.filter(m => !(m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))));
+                                                    setMessages(prev => prev.filter(m => !(m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id))));
                                                     toast.success('Inbox Cleared');
                                                 }}>
                                                     <XCircle className="w-3 h-3 mr-1" /> Clear
@@ -809,11 +755,11 @@ export default function StudentDashboard() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                                            {messages.filter(m => m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))).length === 0 ? (
+                                            {messages.filter(m => m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id)).length === 0 ? (
                                                 <p className="text-sm text-slate-500 text-center py-4">No messages from admin.</p>
                                             ) : (
                                                 messages
-                                                    .filter(m => m.senderRole === 'admin' && (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))
+                                                    .filter(m => m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id))
                                                     .map((m) => (
                                                         <div key={m.id} className="p-3 rounded-lg border bg-blue-50 border-blue-100 dark:bg-blue-900/20">
                                                             <div className="flex justify-between items-start mb-1">
