@@ -816,33 +816,18 @@ export default function AdminDashboard() {
                                                                             Reply
                                                                         </Button>
 
-                                                                        <div className="relative">
-                                                                            <button
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    setOpenMenuId(openMenuId === student.id ? null : student.id);
-                                                                                }}
-                                                                                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                                                                            >
-                                                                                <MoreVertical className="w-4 h-4 text-slate-500" />
-                                                                            </button>
-
-                                                                            {openMenuId === student.id && (
-                                                                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 py-1 z-50">
-                                                                                    <button
-                                                                                        onClick={(e) => {
-                                                                                            e.stopPropagation();
-                                                                                            setViewingStudent(student);
-                                                                                            setOpenMenuId(null);
-                                                                                        }}
-                                                                                        className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2"
-                                                                                    >
-                                                                                        <UserCircle className="w-4 h-4" />
-                                                                                        See Profile
-                                                                                    </button>
-                                                                                </div>
-                                                                            )}
-                                                                        </div>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="h-6 px-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setViewingStudent(student);
+                                                                            }}
+                                                                        >
+                                                                            <UserCircle className="w-3 h-3 mr-1" />
+                                                                            See Profile
+                                                                        </Button>
                                                                     </div>
                                                                 </div>
                                                             </div>
