@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { User as UserIcon, Shield, KeyRound, Loader2, ArrowLeft } from 'lucide-react';
+import { User as UserIcon, Shield, KeyRound, Loader2, ArrowLeft, Phone, CheckCircle, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { auth } from '@/lib/firebase';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import confetti from 'canvas-confetti';
 
 export default function LoginPage() {
@@ -47,12 +47,87 @@ export default function LoginPage() {
     });
     const [hostelType, setHostelType] = useState<'boys' | 'girls'>('boys');
 
+    // OTP Verification State
+    const [mobileNumber, setMobileNumber] = useState('');
+    const [otp, setOtp] = useState('');
+    const [isOtpSent, setIsOtpSent] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+    const [verificationResult, setVerificationResult] = useState<ConfirmationResult | null>(null);
+    const [otpLoading, setOtpLoading] = useState(false);
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         if (params.get('mode') === 'register') {
             setIsRegisterPage(true);
         }
     }, []);
+
+    useEffect(() => {
+        // Initialize Recaptcha only if on register page
+        if (!isRegisterPage || window.recaptchaVerifier) return;
+
+        try {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+                'callback': (response: any) => {
+                    // reCAPTCHA solved, allow signInWithPhoneNumber.
+                }
+            });
+        } catch (e) {
+            console.error('Recaptcha init error', e);
+        }
+    }, [isRegisterPage]);
+
+    const handleSendOtp = async () => {
+        if (!mobileNumber || mobileNumber.length < 10) {
+            setError('Please enter a valid mobile number');
+            return;
+        }
+
+        setOtpLoading(true);
+        setError('');
+
+        try {
+            const appVerifier = window.recaptchaVerifier;
+            // Assuming Indian numbers for now, append +91 if missing
+            const formattedNumber = mobileNumber.startsWith('+') ? mobileNumber : `+91${mobileNumber}`;
+
+            const confirmationResult = await signInWithPhoneNumber(auth, formattedNumber, appVerifier);
+            setVerificationResult(confirmationResult);
+            setIsOtpSent(true);
+            toast.success('OTP Sent Successfully');
+        } catch (error: any) {
+            console.error('OTP Error:', error);
+            setError(error.message || 'Failed to send OTP');
+            toast.error('Failed to send OTP');
+            // Reset recaptcha on error
+            if (window.recaptchaVerifier) {
+                try {
+                    window.recaptchaVerifier.clear();
+                    window.recaptchaVerifier = undefined; // Force re-init
+                } catch (e) { }
+            }
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async () => {
+        if (!otp || !verificationResult) return;
+
+        setOtpLoading(true);
+        try {
+            await verificationResult.confirm(otp);
+            setIsVerified(true);
+            setIsOtpSent(false); // Hide OTP input
+            toast.success('Mobile Verified');
+        } catch (error) {
+            setError('Invalid OTP');
+            toast.error('Invalid OTP');
+        } finally {
+            setOtpLoading(false);
+        }
+    };
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -99,7 +174,7 @@ export default function LoginPage() {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...registerData, role: registerRole }),
+                body: JSON.stringify({ ...registerData, role: registerRole, phoneNumber: mobileNumber }),
             });
 
             const data = await res.json();
@@ -483,6 +558,66 @@ export default function LoginPage() {
                                 />
                             )}
 
+                            {/* Mobile OTP Verification Section */}
+                            <div className="space-y-2 mb-2 w-full">
+                                {!isVerified ? (
+                                    <>
+                                        <div className="flex gap-2">
+                                            <div className="relative flex-1">
+                                                <Phone className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+                                                <input
+                                                    className="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="Mobile Number"
+                                                    type="tel"
+                                                    value={mobileNumber}
+                                                    onChange={(e) => setMobileNumber(e.target.value)}
+                                                    disabled={isOtpSent}
+                                                />
+                                            </div>
+                                            {!isOtpSent && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleSendOtp}
+                                                    disabled={otpLoading || !mobileNumber}
+                                                    className="px-3 py-2 bg-slate-800 text-white text-[10px] font-bold rounded-lg hover:bg-black disabled:opacity-50 whitespace-nowrap"
+                                                >
+                                                    {otpLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Send OTP'}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Invisible Recaptcha */}
+                                        <div id="recaptcha-container"></div>
+
+                                        {isOtpSent && (
+                                            <div className="flex gap-2 animate-in slide-in-from-top-2">
+                                                <input
+                                                    className="flex-1 px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center tracking-widest"
+                                                    placeholder="Enter 6-digit OTP"
+                                                    type="text"
+                                                    value={otp}
+                                                    onChange={(e) => setOtp(e.target.value)}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleVerifyOtp}
+                                                    disabled={otpLoading || otp.length < 6}
+                                                    className="px-3 py-2 bg-green-600 text-white text-[10px] font-bold rounded-lg hover:bg-green-700 disabled:opacity-50 whitespace-nowrap"
+                                                >
+                                                    {otpLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Verify'}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="flex items-center justify-center gap-2 p-2 bg-green-50 border border-green-200 rounded-lg text-green-700 text-xs font-bold">
+                                        <ShieldCheck className="h-4 w-4" />
+                                        <span>Mobile Verified</span>
+                                    </div>
+                                )}
+                            </div>
+
+
                             <input
                                 className="flip-card__input"
                                 placeholder="Set Password"
@@ -503,8 +638,8 @@ export default function LoginPage() {
                                 />
                             )}
 
-                            <button className="flip-card__btn" disabled={isRegisterLoading}>
-                                {isRegisterLoading ? 'Registering...' : 'Confirm!'}
+                            <button className="flip-card__btn" disabled={isRegisterLoading || !isVerified} title={!isVerified ? "Please verify mobile number first" : ""}>
+                                {!isVerified ? 'Verify Mobile First' : isRegisterLoading ? 'Registering...' : 'Confirm!'}
                             </button>
                         </form>
                         <div className="mt-4 text-center">
