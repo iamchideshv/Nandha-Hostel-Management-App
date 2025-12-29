@@ -88,17 +88,21 @@ export default function LoginPage() {
 
         try {
             const appVerifier = (window as any).recaptchaVerifier;
+            // Strip any spaces or non-digit chars (except +)
+            const sanitizedNumber = mobileNumber.replace(/[^\d+]/g, '');
             // Assuming Indian numbers for now, append +91 if missing
-            const formattedNumber = mobileNumber.startsWith('+') ? mobileNumber : `+91${mobileNumber}`;
+            const formattedNumber = sanitizedNumber.startsWith('+') ? sanitizedNumber : `+91${sanitizedNumber}`;
 
+            console.log('Sending OTP to:', formattedNumber);
             const confirmationResult = await signInWithPhoneNumber(auth, formattedNumber, appVerifier);
             setVerificationResult(confirmationResult);
             setIsOtpSent(true);
             toast.success('OTP Sent Successfully');
         } catch (error: any) {
             console.error('OTP Error:', error);
-            setError(error.message || 'Failed to send OTP');
-            toast.error('Failed to send OTP');
+            const errorMessage = error.code || error.message || 'Failed to send OTP';
+            setError(errorMessage);
+            toast.error(`OTP Error: ${errorMessage}`);
             // Reset recaptcha on error
             if ((window as any).recaptchaVerifier) {
                 try {
