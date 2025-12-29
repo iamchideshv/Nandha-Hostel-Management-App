@@ -89,6 +89,7 @@ export default function StudentDashboard() {
         profileImage: ''
     });
     const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false);
+    const [unlockedFields, setUnlockedFields] = useState<string[]>([]);
 
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
@@ -612,18 +613,18 @@ export default function StudentDashboard() {
                                                     onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
                                                     placeholder="Full Name"
                                                     required
-                                                    readOnly={!!user?.name}
-                                                    className={user?.name ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                    readOnly={!!user?.name && !unlockedFields.includes('name')}
+                                                    className={user?.name && !unlockedFields.includes('name') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Department</Label>
+                                                <Label>Year & Department</Label>
                                                 <Input
                                                     value={profileForm.department}
                                                     onChange={e => setProfileForm({ ...profileForm, department: e.target.value })}
                                                     placeholder="e.g. CSE - A"
-                                                    readOnly={!!user?.department}
-                                                    className={user?.department ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                    readOnly={!!user?.department && !unlockedFields.includes('department')}
+                                                    className={user?.department && !unlockedFields.includes('department') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -632,8 +633,8 @@ export default function StudentDashboard() {
                                                     value={profileForm.roomNumber}
                                                     onChange={e => setProfileForm({ ...profileForm, roomNumber: e.target.value })}
                                                     placeholder="Room 101"
-                                                    readOnly={!!user?.roomNumber}
-                                                    className={user?.roomNumber ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                    readOnly={!!user?.roomNumber && !unlockedFields.includes('roomNumber')}
+                                                    className={user?.roomNumber && !unlockedFields.includes('roomNumber') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -642,8 +643,8 @@ export default function StudentDashboard() {
                                                     value={profileForm.phoneNumber}
                                                     onChange={e => setProfileForm({ ...profileForm, phoneNumber: e.target.value })}
                                                     placeholder="+91 9876543210"
-                                                    readOnly={!!user?.phoneNumber}
-                                                    className={user?.phoneNumber ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                    readOnly={!!user?.phoneNumber && !unlockedFields.includes('phoneNumber')}
+                                                    className={user?.phoneNumber && !unlockedFields.includes('phoneNumber') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="col-span-2 space-y-2">
@@ -653,10 +654,40 @@ export default function StudentDashboard() {
                                                     value={profileForm.email}
                                                     onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
                                                     placeholder="student@example.com"
-                                                    readOnly={!!user?.email}
-                                                    className={user?.email ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                    readOnly={!!user?.email && !unlockedFields.includes('email')}
+                                                    className={user?.email && !unlockedFields.includes('email') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label className="text-blue-600 dark:text-blue-400 font-bold">Modify Your details</Label>
+                                            <select
+                                                className="w-full p-2 text-sm border rounded-lg bg-white dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (val) {
+                                                        if (!unlockedFields.includes(val)) {
+                                                            setUnlockedFields([...unlockedFields, val]);
+                                                            const fieldName = val === 'department' ? 'Year & Department' :
+                                                                val === 'roomNumber' ? 'Room Number' :
+                                                                    val === 'phoneNumber' ? 'Phone Number' :
+                                                                        val === 'email' ? 'Email Address' : 'Name';
+                                                            toast.success(`${fieldName} field unlocked!`);
+                                                        } else {
+                                                            toast.info("This field is already unlocked!");
+                                                        }
+                                                    }
+                                                    e.target.value = ""; // Reset dropdown
+                                                }}
+                                            >
+                                                <option value="">Choose a field to modify...</option>
+                                                <option value="name">Name</option>
+                                                <option value="roomNumber">Room Number</option>
+                                                <option value="email">Email Address</option>
+                                                <option value="phoneNumber">Phone Number</option>
+                                                <option value="department">Year & Department</option>
+                                            </select>
                                         </div>
 
                                         <Button type="submit" className="w-full" disabled={submitting}>
