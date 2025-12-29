@@ -1031,8 +1031,8 @@ export default function StudentDashboard() {
                                                         <div key={m.id} className="p-3 rounded-lg border bg-blue-50 border-blue-100 dark:bg-blue-900/20">
                                                             <div className="flex justify-between items-start mb-1">
                                                                 <div className="flex gap-2 items-center flex-wrap">
-                                                                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${m.targetStudentId ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                                                                        {m.targetStudentId ? 'Private' : 'Admin Notice'}
+                                                                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                                                                        Admin Notice
                                                                     </span>
                                                                     {m.type && (
                                                                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${m.type === 'urgent' ? 'bg-red-100 text-red-700' :
