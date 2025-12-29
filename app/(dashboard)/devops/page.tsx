@@ -30,8 +30,9 @@ export default function DevOpsDashboard() {
     const [feedback, setFeedback] = useState<any[]>([]);
     const [feedbackLoading, setFeedbackLoading] = useState(false);
     const [profileRequests, setProfileRequests] = useState<any[]>([]);
-    const [profileLoading, setProfileLoading] = useState(false);
     const [selectedProfileRequest, setSelectedProfileRequest] = useState<any>(null);
+    const [isManualProfileEdit, setIsManualProfileEdit] = useState(false);
+    const [profileLoading, setProfileLoading] = useState(false);
     const [profileEditForm, setProfileEditForm] = useState({
         id: '',
         name: '',
@@ -254,6 +255,7 @@ export default function DevOpsDashboard() {
                     });
                 }
                 setSelectedProfileRequest(null);
+                setIsManualProfileEdit(false);
                 fetchProfileRequests();
                 fetchUsers();
             } else {
@@ -494,6 +496,28 @@ export default function DevOpsDashboard() {
                                                             >
                                                                 <UserCog className="w-4 h-4" />
                                                             </Button>
+                                                            {u.role === 'student' && (
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    onClick={() => {
+                                                                        setIsManualProfileEdit(true);
+                                                                        setProfileEditForm({
+                                                                            id: u.id,
+                                                                            name: u.name,
+                                                                            department: u.department || '',
+                                                                            roomNumber: u.roomNumber || '',
+                                                                            phoneNumber: u.phoneNumber || '',
+                                                                            email: u.email || '',
+                                                                            profileImage: u.profileImage || ''
+                                                                        });
+                                                                    }}
+                                                                    className="h-8 w-8 p-0 text-blue-500"
+                                                                    title="Update Profile"
+                                                                >
+                                                                    <User className="w-4 h-4" />
+                                                                </Button>
+                                                            )}
                                                             <Button
                                                                 size="sm"
                                                                 variant="ghost"
@@ -739,16 +763,22 @@ export default function DevOpsDashboard() {
                     </Card>
                 </div>
             )}
-            {selectedProfileRequest && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSelectedProfileRequest(null)}>
+            {(selectedProfileRequest || isManualProfileEdit) && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => { setSelectedProfileRequest(null); setIsManualProfileEdit(false); }}>
                     <Card className="w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
                         <CardHeader className="bg-slate-50 dark:bg-slate-950">
                             <div className="flex justify-between items-center">
                                 <div>
                                     <CardTitle>Update Profile: {profileEditForm.name}</CardTitle>
-                                    <CardDescription>Requested Modify: <span className="text-blue-600 font-bold">{selectedProfileRequest.fieldName}</span></CardDescription>
+                                    <CardDescription>
+                                        {selectedProfileRequest ? (
+                                            <>Requested Modify: <span className="text-blue-600 font-bold">{selectedProfileRequest.fieldName}</span></>
+                                        ) : (
+                                            "Manual Profile Update"
+                                        )}
+                                    </CardDescription>
                                 </div>
-                                <button onClick={() => setSelectedProfileRequest(null)} className="text-slate-500 hover:text-red-500">
+                                <button onClick={() => { setSelectedProfileRequest(null); setIsManualProfileEdit(false); }} className="text-slate-500 hover:text-red-500">
                                     <Trash2 className="w-5 h-5" />
                                 </button>
                             </div>
@@ -788,10 +818,10 @@ export default function DevOpsDashboard() {
                             </div>
                         </CardContent>
                         <div className="flex gap-2 p-6 bg-slate-50 dark:bg-slate-950 border-t items-center shrink-0">
-                            <Button variant="outline" onClick={() => setSelectedProfileRequest(null)} className="flex-1">Cancel</Button>
+                            <Button variant="outline" onClick={() => { setSelectedProfileRequest(null); setIsManualProfileEdit(false); }} className="flex-1">Cancel</Button>
                             <Button onClick={handleUpdateProfileFromRequest} disabled={resetting} className="flex-1 bg-blue-600 hover:bg-blue-700">
                                 {resetting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                Update & Clear Request
+                                {selectedProfileRequest ? 'Update & Clear Request' : 'Save Changes'}
                             </Button>
                         </div>
                     </Card>
