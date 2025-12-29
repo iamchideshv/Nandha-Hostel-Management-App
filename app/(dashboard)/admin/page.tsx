@@ -7,17 +7,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/types';
-import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found'>('complaints');
+    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details'>('complaints');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
 
     // Data
+    const [users, setUsers] = useState<User[]>([]);
     const [complaints, setComplaints] = useState<Complaint[]>([]);
     const [outpasses, setOutpasses] = useState<Outpass[]>([]);
     const [fees, setFees] = useState<FeeStatus[]>([]);
@@ -129,14 +130,15 @@ export default function AdminDashboard() {
         setLoading(true);
         try {
             const hostelQuery = user?.hostelName ? `?hostelName=${user.hostelName}` : '';
-            const [compRes, outRes, feeRes, messRes, timingsRes, lostRes, msgRes] = await Promise.all([
+            const [compRes, outRes, feeRes, messRes, timingsRes, lostRes, msgRes, usersRes] = await Promise.all([
                 fetch(`/api/complaints${hostelQuery}`, { cache: 'no-store' }),
                 fetch(`/api/outpass${hostelQuery}`, { cache: 'no-store' }),
                 fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`, { cache: 'no-store' }),
                 fetch(`/api/mess-menu?type=${messHostelType}`, { cache: 'no-store' }),
                 fetch(`/api/mess-timings?type=${messHostelType}`, { cache: 'no-store' }),
                 fetch(`/api/lost-found${hostelQuery}`, { cache: 'no-store' }),
-                fetch(`/api/messages${hostelQuery}`, { cache: 'no-store' })
+                fetch(`/api/messages${hostelQuery}`, { cache: 'no-store' }),
+                fetch(`/api/users`, { cache: 'no-store' })
             ]);
             const cData = await compRes.json();
             const oData = await outRes.json();
@@ -146,6 +148,8 @@ export default function AdminDashboard() {
             const lData = await lostRes.json();
             const msgData = await msgRes.json();
 
+            const usersData = await usersRes.json();
+
             setComplaints(cData.complaints || cData);
             setOutpasses(oData);
             setFees(fData);
@@ -153,6 +157,7 @@ export default function AdminDashboard() {
             if (tData && !tData.error) setMessTimings(tData);
             setLostItems(lData);
             setMessages(msgData);
+            setUsers(usersData);
         } catch (e) {
             toast.error('Failed to load dashboard data');
         } finally {
@@ -382,6 +387,10 @@ export default function AdminDashboard() {
                                 <Search className="w-5 h-5" />
                                 <span>Lost & Found</span>
                             </button>
+                            <button onClick={() => { setActiveTab('student-details'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'student-details' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                                <Users className="w-5 h-5" />
+                                <span>Student Details</span>
+                            </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
                             <button onClick={() => { if (confirm('Go to home page?')) window.location.href = '/'; setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
@@ -464,6 +473,13 @@ export default function AdminDashboard() {
                     >
                         <Search className="w-4 h-4 mr-2" />
                         Lost & Found
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('student-details')}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'student-details' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                    >
+                        <Users className="w-4 h-4 mr-2" />
+                        Student Details
                     </button>
                 </div>
 
@@ -694,8 +710,56 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
+                {activeTab === 'student-details' && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Student Details</CardTitle>
+                            <CardDescription>All registered students {user?.hostelName ? `in ${user.hostelName}` : ''}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="rounded-md border dark:border-slate-800">
+                                <div className="grid grid-cols-12 gap-4 p-4 border-b dark:border-slate-800 bg-slate-50 dark:bg-slate-900 font-medium text-sm text-slate-500 dark:text-slate-400">
+                                    <div className="col-span-3 md:col-span-2">User ID</div>
+                                    <div className="col-span-4 md:col-span-3">Name</div>
+                                    <div className="col-span-5 md:col-span-7">Latest Message</div>
+                                </div>
+                                <div className="divide-y dark:divide-slate-800">
+                                    {users
+                                        .filter(u => u.role === 'student')
+                                        .filter(u => !user?.hostelName || u.hostelName === user.hostelName)
+                                        .length === 0 ? (
+                                        <div className="p-4 text-center text-slate-500">No students found</div>
+                                    ) : (
+                                        users
+                                            .filter(u => u.role === 'student')
+                                            .filter(u => !user?.hostelName || u.hostelName === user.hostelName)
+                                            .map(student => {
+                                                const latestMsg = messages
+                                                    .filter(m => m.senderId === student.id)
+                                                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
 
-
+                                                return (
+                                                    <div key={student.id} className="grid grid-cols-12 gap-4 p-4 items-center text-sm">
+                                                        <div className="col-span-3 md:col-span-2 font-mono text-xs">{student.id}</div>
+                                                        <div className="col-span-4 md:col-span-3 font-medium">{student.name}</div>
+                                                        <div className="col-span-5 md:col-span-7 text-slate-600 dark:text-slate-400 truncate">
+                                                            {latestMsg ? (
+                                                                <span title={latestMsg.message}>
+                                                                    {latestMsg.message} <span className="text-xs text-slate-400 ml-1">({new Date(latestMsg.timestamp).toLocaleDateString()})</span>
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-slate-400 italic">No messages</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                    )}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
                 {
                     activeTab === 'messages' && (
                         <Card>
