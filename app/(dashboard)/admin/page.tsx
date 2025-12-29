@@ -43,6 +43,10 @@ export default function AdminDashboard() {
     const [submittingStatusId, setSubmittingStatusId] = useState<string | null>(null);
     const [imageIndices, setImageIndices] = useState<Record<string, number>>({}); // Track active image per item
 
+    // Private Message State
+    const [replyingTo, setReplyingTo] = useState<string | null>(null);
+    const [replyMessage, setReplyMessage] = useState('');
+
     // Mess Menu State
     const [messMenu, setMessMenu] = useState({
         breakfast: Array(7).fill('Idli, Vada, Sambar'),
@@ -348,6 +352,36 @@ export default function AdminDashboard() {
                 toast.error('Failed to send message');
             }
         } catch (e) { toast.error('Error sending message'); }
+    };
+
+    const handleSendPrivateMessage = async (studentId: string) => {
+        if (!replyMessage.trim()) return;
+        try {
+            const messageData: any = {
+                message: replyMessage,
+                type: 'important',
+                senderId: user?.id || 'admin',
+                senderName: user?.name || 'Admin',
+                senderRole: 'admin',
+                targetStudentId: studentId,
+                timestamp: new Date().toISOString()
+            };
+
+            const res = await fetch('/api/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(messageData)
+            });
+
+            if (res.ok) {
+                toast.success('Private message sent');
+                setReplyMessage('');
+                setReplyingTo(null);
+                fetchData(); // Refresh to show new message in list or just rely on manual refresh
+            } else {
+                toast.error('Failed to send message');
+            }
+        } catch (e) { toast.error('Error sending private message'); }
     };
 
 
@@ -719,9 +753,9 @@ export default function AdminDashboard() {
                         <CardContent>
                             <div className="rounded-md border dark:border-slate-800">
                                 <div className="grid grid-cols-12 gap-4 p-4 border-b dark:border-slate-800 bg-slate-50 dark:bg-slate-900 font-medium text-sm text-slate-500 dark:text-slate-400">
-                                    <div className="col-span-3 md:col-span-2">User ID</div>
-                                    <div className="col-span-4 md:col-span-3">Name</div>
-                                    <div className="col-span-5 md:col-span-7">Latest Message</div>
+                                    <div className="col-span-3">User ID</div>
+                                    <div className="col-span-3">Name</div>
+                                    <div className="col-span-6">Messages</div>
                                 </div>
                                 <div className="divide-y dark:divide-slate-800">
                                     {users
@@ -734,23 +768,69 @@ export default function AdminDashboard() {
                                             .filter(u => u.role === 'student')
                                             .filter(u => !user?.hostelName || u.hostelName === user.hostelName)
                                             .map(student => {
-                                                const latestMsg = messages
-                                                    .filter(m => m.senderId === student.id)
-                                                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+                                                const studentMessages = messages
+                                                    .filter(m => m.senderId === student.id || m.targetStudentId === student.id)
+                                                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+                                                const latestMsg = studentMessages[0];
 
                                                 return (
-                                                    <div key={student.id} className="grid grid-cols-12 gap-4 p-4 items-center text-sm">
-                                                        <div className="col-span-3 md:col-span-2 font-mono text-xs">{student.id}</div>
-                                                        <div className="col-span-4 md:col-span-3 font-medium">{student.name}</div>
-                                                        <div className="col-span-5 md:col-span-7 text-slate-600 dark:text-slate-400 truncate">
-                                                            {latestMsg ? (
-                                                                <span title={latestMsg.message}>
-                                                                    {latestMsg.message} <span className="text-xs text-slate-400 ml-1">({new Date(latestMsg.timestamp).toLocaleDateString()})</span>
-                                                                </span>
-                                                            ) : (
-                                                                <span className="text-slate-400 italic">No messages</span>
-                                                            )}
+                                                    <div key={student.id} className="p-4 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                        <div className="grid grid-cols-12 gap-4 items-center mb-2">
+                                                            <div className="col-span-3 font-mono text-xs">{student.id}</div>
+                                                            <div className="col-span-3 font-medium">{student.name}</div>
+                                                            <div className="col-span-6">
+                                                                <div className="flex justify-between items-start gap-2">
+                                                                    <div className="flex-1 min-w-0">
+                                                                        {latestMsg ? (
+                                                                            <p className="truncate text-slate-600 dark:text-slate-400">
+                                                                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 ${latestMsg.senderRole === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                                                                                    {latestMsg.senderRole === 'admin' ? 'You' : 'Student'}
+                                                                                </span>
+                                                                                {latestMsg.message}
+                                                                            </p>
+                                                                        ) : <span className="text-slate-400 italic">No history</span>}
+                                                                    </div>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                                        onClick={() => {
+                                                                            if (replyingTo === student.id) {
+                                                                                setReplyingTo(null);
+                                                                            } else {
+                                                                                setReplyingTo(student.id);
+                                                                                setReplyMessage('');
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <Send className="w-3 h-3 mr-1" />
+                                                                        Reply
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
                                                         </div>
+
+                                                        {replyingTo === student.id && (
+                                                            <div className="mt-3 pl-0 md:pl-[50%] animate-in slide-in-from-top-2 duration-200">
+                                                                <div className="flex gap-2">
+                                                                    <Input
+                                                                        autoFocus
+                                                                        placeholder={`Message to ${student.name}...`}
+                                                                        value={replyMessage}
+                                                                        onChange={(e) => setReplyMessage(e.target.value)}
+                                                                        className="h-9"
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                                                e.preventDefault();
+                                                                                handleSendPrivateMessage(student.id);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    <Button size="sm" onClick={() => handleSendPrivateMessage(student.id)}>Send</Button>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 );
                                             })

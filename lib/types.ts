@@ -97,6 +97,7 @@ export interface Message {
     senderName: string;
     senderRole: UserRole;
     targetHostels?: string[]; // If empty/undefined -> Generic/Admin message
+    targetStudentId?: string; // Private message to specific student
     hostelName?: string; // If sent by student
     timestamp: string;
 }
