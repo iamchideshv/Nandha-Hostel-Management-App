@@ -1602,9 +1602,9 @@ export default function AdminDashboard() {
                                 <div className="flex flex-col items-center pt-4">
                                     <div className="relative group">
                                         <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-slate-900 shadow-xl flex items-center justify-center">
-                                            {viewingStudent.image ? (
+                                            {viewingStudent.profileImage ? (
                                                 <img
-                                                    src={viewingStudent.image}
+                                                    src={viewingStudent.profileImage}
                                                     alt={viewingStudent.name}
                                                     className="w-full h-full object-cover"
                                                 />
@@ -1626,9 +1626,9 @@ export default function AdminDashboard() {
                                             <Home className="w-3 h-3" /> Hostel Details
                                         </p>
                                         <p className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                                            {viewingStudent.hostelName || viewingStudent.hostel || 'Not Assigned'}
+                                            {viewingStudent.hostelName || 'Not Assigned'}
                                             <span className="h-1 w-1 rounded-full bg-slate-300" />
-                                            Room {viewingStudent.roomNo || 'N/A'}
+                                            Room {viewingStudent.roomNumber || 'N/A'}
                                         </p>
                                     </div>
 
@@ -1646,7 +1646,7 @@ export default function AdminDashboard() {
                                             <Phone className="w-3 h-3" /> Contact Number
                                         </p>
                                         <p className="font-semibold text-slate-900 dark:text-slate-100">
-                                            {viewingStudent.phone || 'No phone added'}
+                                            {viewingStudent.phoneNumber || 'No phone added'}
                                         </p>
                                     </div>
 
