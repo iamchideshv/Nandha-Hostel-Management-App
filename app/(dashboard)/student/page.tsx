@@ -80,6 +80,7 @@ export default function StudentDashboard() {
     const [showAbout, setShowAbout] = useState(false);
     const [uploadedMenu, setUploadedMenu] = useState<any>(null);
     const [showMessageModal, setShowMessageModal] = useState(false);
+    const [lastReadTime, setLastReadTime] = useState<string | null>(null);
 
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
@@ -127,8 +128,17 @@ export default function StudentDashboard() {
     };
 
     useEffect(() => {
+        const stored = localStorage.getItem('student-msg-last-read');
+        if (stored) setLastReadTime(stored);
         fetchData();
     }, [user, messHostelType]);
+
+    const handleOpenMessages = () => {
+        setShowMessageModal(true);
+        const now = new Date().toISOString();
+        setLastReadTime(now);
+        localStorage.setItem('student-msg-last-read', now);
+    };
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -444,12 +454,12 @@ export default function StudentDashboard() {
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 Welcome, {user?.name}
                                 <button
-                                    onClick={() => setShowMessageModal(true)}
+                                    onClick={handleOpenMessages}
                                     className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                 >
                                     <Mail className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                                    {messages.filter(m => m.targetStudentId === user?.id).length > 0 && (
-                                        <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white dark:ring-black"></span>
+                                    {messages.filter(m => m.targetStudentId === user?.id && (!lastReadTime || new Date(m.timestamp) > new Date(lastReadTime))).length > 0 && (
+                                        <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white dark:ring-black animate-pulse"></span>
                                     )}
                                 </button>
                             </h1>
