@@ -100,10 +100,10 @@ export default function LoginPage() {
             setError(error.message || 'Failed to send OTP');
             toast.error('Failed to send OTP');
             // Reset recaptcha on error
-            if (window.recaptchaVerifier) {
+            if ((window as any).recaptchaVerifier) {
                 try {
-                    window.recaptchaVerifier.clear();
-                    window.recaptchaVerifier = undefined; // Force re-init
+                    (window as any).recaptchaVerifier.clear();
+                    (window as any).recaptchaVerifier = undefined; // Force re-init
                 } catch (e) { }
             }
         } finally {
