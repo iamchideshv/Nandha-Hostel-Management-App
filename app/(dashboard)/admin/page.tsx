@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/types';
-import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 
@@ -26,6 +26,8 @@ export default function AdminDashboard() {
     const [lostItems, setLostItems] = useState<LostFound[]>([]);
     const [loading, setLoading] = useState(false);
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const [viewingStudent, setViewingStudent] = useState<User | null>(null);
 
     // Filter for complaints
     // Filter for complaints
@@ -191,6 +193,11 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         fetchData();
+
+        // Close dropdown when clicking outside
+        const handleClickOutside = () => setOpenMenuId(null);
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
     }, []);
 
     useEffect(() => {
@@ -791,22 +798,52 @@ export default function AdminDashboard() {
                                                                             </p>
                                                                         ) : <span className="text-slate-400 italic">No history</span>}
                                                                     </div>
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                                                        onClick={() => {
-                                                                            if (replyingTo === student.id) {
-                                                                                setReplyingTo(null);
-                                                                            } else {
-                                                                                setReplyingTo(student.id);
-                                                                                setReplyMessage('');
-                                                                            }
-                                                                        }}
-                                                                    >
-                                                                        <Send className="w-3 h-3 mr-1" />
-                                                                        Reply
-                                                                    </Button>
+                                                                    <div className="flex items-center gap-1">
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                                            onClick={() => {
+                                                                                if (replyingTo === student.id) {
+                                                                                    setReplyingTo(null);
+                                                                                } else {
+                                                                                    setReplyingTo(student.id);
+                                                                                    setReplyMessage('');
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            <Send className="w-3 h-3 mr-1" />
+                                                                            Reply
+                                                                        </Button>
+
+                                                                        <div className="relative">
+                                                                            <button
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setOpenMenuId(openMenuId === student.id ? null : student.id);
+                                                                                }}
+                                                                                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                                                                            >
+                                                                                <MoreVertical className="w-4 h-4 text-slate-500" />
+                                                                            </button>
+
+                                                                            {openMenuId === student.id && (
+                                                                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 py-1 z-50">
+                                                                                    <button
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            setViewingStudent(student);
+                                                                                            setOpenMenuId(null);
+                                                                                        }}
+                                                                                        className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2"
+                                                                                    >
+                                                                                        <UserCircle className="w-4 h-4" />
+                                                                                        See Profile
+                                                                                    </button>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1547,6 +1584,92 @@ export default function AdminDashboard() {
                         <button className="absolute top-6 right-6 text-white hover:scale-110 transition-transform" onClick={() => setSelectedImage(null)}>
                             <XCircle className="w-10 h-10 shadow-lg" />
                         </button>
+                    </div>
+                )}
+                {/* Student Profile View Modal */}
+                {viewingStudent && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto" onClick={() => setViewingStudent(null)}>
+                        <Card className="w-full max-w-lg shadow-2xl border-none animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                            <CardHeader className="relative pb-0">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute right-4 top-4 rounded-full h-8 w-8 p-0"
+                                    onClick={() => setViewingStudent(null)}
+                                >
+                                    <XCircle className="w-5 h-5 text-slate-400" />
+                                </Button>
+                                <div className="flex flex-col items-center pt-4">
+                                    <div className="relative group">
+                                        <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-slate-900 shadow-xl flex items-center justify-center">
+                                            {viewingStudent.image ? (
+                                                <img
+                                                    src={viewingStudent.image}
+                                                    alt={viewingStudent.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <UserIcon className="w-12 h-12 text-slate-300" />
+                                            )}
+                                        </div>
+                                    </div>
+                                    <h2 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">{viewingStudent.name}</h2>
+                                    <p className="text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full mt-2">
+                                        Student ID: {viewingStudent.id}
+                                    </p>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-8 pb-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400 flex items-center gap-1.5 leading-none">
+                                            <Home className="w-3 h-3" /> Hostel Details
+                                        </p>
+                                        <p className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                                            {viewingStudent.hostelName || viewingStudent.hostel || 'Not Assigned'}
+                                            <span className="h-1 w-1 rounded-full bg-slate-300" />
+                                            Room {viewingStudent.roomNo || 'N/A'}
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400 flex items-center gap-1.5 leading-none">
+                                            <BadgeCheck className="w-3 h-3" /> Department
+                                        </p>
+                                        <p className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                                            {viewingStudent.department || 'Not Specified'}
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400 flex items-center gap-1.5 leading-none">
+                                            <Phone className="w-3 h-3" /> Contact Number
+                                        </p>
+                                        <p className="font-semibold text-slate-900 dark:text-slate-100">
+                                            {viewingStudent.phone || 'No phone added'}
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400 flex items-center gap-1.5 leading-none">
+                                            <Mail className="w-3 h-3" /> Email Address
+                                        </p>
+                                        <p className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                                            {viewingStudent.email || 'No email added'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="mt-8 pt-6 border-t dark:border-slate-800">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-center"
+                                        onClick={() => setViewingStudent(null)}
+                                    >
+                                        Close Profile
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </div >
