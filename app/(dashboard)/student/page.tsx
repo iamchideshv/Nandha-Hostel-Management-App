@@ -1009,10 +1009,10 @@ export default function StudentDashboard() {
                                                 <CardTitle>Inbox</CardTitle>
                                                 <CardDescription>Messages from Admin</CardDescription>
                                             </div>
-                                            {messages.filter(m => m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id)).length > 0 && (
+                                            {messages.filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))).length > 0 && (
                                                 <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
                                                     if (!confirm('Are you sure you want to clear your inbox? This action cannot be undone.')) return;
-                                                    setMessages(prev => prev.filter(m => !(m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id))));
+                                                    setMessages(prev => prev.filter(m => !(m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))))));
                                                     toast.success('Inbox Cleared');
                                                 }}>
                                                     <XCircle className="w-3 h-3 mr-1" /> Clear
@@ -1022,17 +1022,17 @@ export default function StudentDashboard() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                                            {messages.filter(m => m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id)).length === 0 ? (
+                                            {messages.filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))).length === 0 ? (
                                                 <p className="text-sm text-slate-500 text-center py-4">No messages from admin.</p>
                                             ) : (
                                                 messages
-                                                    .filter(m => m.senderRole === 'admin' && ((!m.targetHostels || m.targetHostels.length === 0) || (user?.hostelName && m.targetHostels.includes(user.hostelName)) || m.targetStudentId === user?.id))
+                                                    .filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))))
                                                     .map((m) => (
                                                         <div key={m.id} className="p-3 rounded-lg border bg-blue-50 border-blue-100 dark:bg-blue-900/20">
                                                             <div className="flex justify-between items-start mb-1">
                                                                 <div className="flex gap-2 items-center flex-wrap">
-                                                                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
-                                                                        Admin Notice
+                                                                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${m.targetStudentId ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                                                                        {m.targetStudentId ? 'Private' : 'Admin Notice'}
                                                                     </span>
                                                                     {m.type && (
                                                                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${m.type === 'urgent' ? 'bg-red-100 text-red-700' :

@@ -813,7 +813,7 @@ export default function AdminDashboard() {
                                                                             }}
                                                                         >
                                                                             <Send className="w-3 h-3 mr-1" />
-                                                                            Reply
+                                                                            Send Private
                                                                         </Button>
 
                                                                         <Button
@@ -963,7 +963,7 @@ export default function AdminDashboard() {
                                                     <div key={msg.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50 dark:bg-slate-800/50 dark:border-slate-800">
                                                         <div className="flex justify-between items-start mb-1">
                                                             <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                                                                To: {msg.targetHostels && msg.targetHostels.length > 0 ? msg.targetHostels.join(', ') : 'All Students'}
+                                                                To: {msg.targetStudentId ? `Private (ID: ${msg.targetStudentId})` : (msg.targetHostels && msg.targetHostels.length > 0 ? msg.targetHostels.join(', ') : 'All Students')}
                                                             </span>
                                                             <span className="text-[10px] text-slate-400">
                                                                 {new Date(msg.timestamp).toLocaleString()}
