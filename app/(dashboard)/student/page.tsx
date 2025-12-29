@@ -35,7 +35,7 @@ interface OutpassData {
 }
 
 export default function StudentDashboard() {
-    const { user } = useAuth();
+    const { user, login } = useAuth();
     const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
@@ -421,10 +421,17 @@ export default function StudentDashboard() {
 
             if (res.ok) {
                 toast.success('Profile Updated Successfully');
-                // Don't reload immediately, let the user see the toast
+
+                // Update local user state without reloading
+                if (user) {
+                    const updatedUser = { ...user, ...profileForm };
+                    login(updatedUser);
+                }
+
+                // Close modal smoothly
                 setTimeout(() => {
                     setShowProfileModal(false);
-                    window.location.reload();
+                    setShowModifyInfo(false);
                 }, 1500);
             } else {
                 toast.error('Failed to update profile');
