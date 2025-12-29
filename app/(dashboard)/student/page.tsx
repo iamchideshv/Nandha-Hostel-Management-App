@@ -88,6 +88,7 @@ export default function StudentDashboard() {
         phoneNumber: '',
         profileImage: ''
     });
+    const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false);
 
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
@@ -517,7 +518,14 @@ export default function StudentDashboard() {
                             <Menu className="w-5 h-5" />
                         </Button>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Welcome, {user?.name}</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                                {user?.profileImage ? (
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
+                                        <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : null}
+                                <span>Welcome, {user?.name}</span>
+                            </h1>
                             <div className="flex flex-col items-start gap-1">
                                 <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
                                 <button
