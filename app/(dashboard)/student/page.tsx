@@ -612,6 +612,8 @@ export default function StudentDashboard() {
                                                     onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
                                                     placeholder="Full Name"
                                                     required
+                                                    readOnly={!!user?.name}
+                                                    className={user?.name ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -620,6 +622,8 @@ export default function StudentDashboard() {
                                                     value={profileForm.department}
                                                     onChange={e => setProfileForm({ ...profileForm, department: e.target.value })}
                                                     placeholder="e.g. CSE - A"
+                                                    readOnly={!!user?.department}
+                                                    className={user?.department ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -628,6 +632,8 @@ export default function StudentDashboard() {
                                                     value={profileForm.roomNumber}
                                                     onChange={e => setProfileForm({ ...profileForm, roomNumber: e.target.value })}
                                                     placeholder="Room 101"
+                                                    readOnly={!!user?.roomNumber}
+                                                    className={user?.roomNumber ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="space-y-2">
@@ -636,6 +642,8 @@ export default function StudentDashboard() {
                                                     value={profileForm.phoneNumber}
                                                     onChange={e => setProfileForm({ ...profileForm, phoneNumber: e.target.value })}
                                                     placeholder="+91 9876543210"
+                                                    readOnly={!!user?.phoneNumber}
+                                                    className={user?.phoneNumber ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                             <div className="col-span-2 space-y-2">
@@ -645,6 +653,8 @@ export default function StudentDashboard() {
                                                     value={profileForm.email}
                                                     onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
                                                     placeholder="student@example.com"
+                                                    readOnly={!!user?.email}
+                                                    className={user?.email ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                         </div>
