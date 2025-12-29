@@ -90,6 +90,7 @@ export default function StudentDashboard() {
     });
     const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false);
     const [unlockedFields, setUnlockedFields] = useState<string[]>([]);
+    const [showModifyInfo, setShowModifyInfo] = useState(false);
 
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
@@ -419,9 +420,12 @@ export default function StudentDashboard() {
             });
 
             if (res.ok) {
-                toast.success('Profile Updated');
-                setShowProfileModal(false);
-                window.location.reload();
+                toast.success('Profile Updated Successfully');
+                // Don't reload immediately, let the user see the toast
+                setTimeout(() => {
+                    setShowProfileModal(false);
+                    window.location.reload();
+                }, 1500);
             } else {
                 toast.error('Failed to update profile');
             }
@@ -577,15 +581,31 @@ export default function StudentDashboard() {
 
                     {/* Profile Modal */}
                     {showProfileModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowProfileModal(false)}>
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }}>
                             <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
                                 <div className="p-6 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
                                     <h3 className="text-lg font-bold">My Profile</h3>
-                                    <button onClick={() => setShowProfileModal(false)} className="text-slate-500 hover:text-red-500">
+                                    <button onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }} className="text-slate-500 hover:text-red-500">
                                         <XCircle className="w-6 h-6" />
                                     </button>
                                 </div>
                                 <div className="p-6 overflow-y-auto">
+                                    {showModifyInfo && (
+                                        <div className="mb-6 space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
+                                            <div className="p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-3">
+                                                <BadgeCheck className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                                                <p className="text-sm font-medium text-green-800 dark:text-green-200">Modify Request Raised To Admin</p>
+                                            </div>
+                                            <div className="p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
+                                                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                                                <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Give The Modification Detail in nandhahostel@nandhaengg.org</p>
+                                            </div>
+                                            <div className="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3">
+                                                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                                                <p className="text-sm font-medium text-amber-800 dark:text-amber-200">If not Updated AFTER 2-3 WORKING DAYS THEN CONTACT ADMIN</p>
+                                            </div>
+                                        </div>
+                                    )}
                                     <form onSubmit={handleProfileUpdate} className="space-y-6">
                                         {/* Image Upload */}
                                         <div className="flex flex-col items-center justify-center gap-4">
@@ -661,23 +681,13 @@ export default function StudentDashboard() {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label className="text-blue-600 dark:text-blue-400 font-bold">Modify Your details</Label>
-                                            <select
-                                                className="w-full p-2 text-sm border rounded-lg bg-white dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                onChange={async (e) => {
-                                                    const val = e.target.value;
-                                                    if (val) {
-                                                        const fieldName = val === 'department' ? 'Year & Department' :
-                                                            val === 'roomNumber' ? 'Room Number' :
-                                                                val === 'phoneNumber' ? 'Phone Number' :
-                                                                    val === 'email' ? 'Email Address' : 'Name';
-
-                                                        // Notify user
-                                                        toast.success("Modify Request Raised To Admin");
-                                                        toast.info("Give The Modification Detail in nandhahostel@nandhaengg.org", { duration: 5000 });
-                                                        toast.warning("If not Updated AFTER 2-3 WORKING DAYS THEN CONTACT ADMIN", { duration: 6000 });
-
-                                                        // Send request to DevOps
+                                            <div className="flex justify-between items-center">
+                                                <Label className="text-blue-600 dark:text-blue-400 font-bold">Modify Your details</Label>
+                                                <button
+                                                    type="button"
+                                                    onClick={async () => {
+                                                        setShowModifyInfo(true);
+                                                        // Send request to DevOps for general profile modification
                                                         try {
                                                             await fetch('/api/profile-update-request', {
                                                                 method: 'POST',
@@ -685,24 +695,18 @@ export default function StudentDashboard() {
                                                                 body: JSON.stringify({
                                                                     studentId: user?.id,
                                                                     studentName: user?.name,
-                                                                    fieldName: fieldName
+                                                                    fieldName: 'Profile Details (General)'
                                                                 })
                                                             });
                                                         } catch (err) {
                                                             console.error('Failed to send modification request:', err);
                                                         }
-
-                                                    }
-                                                    e.target.value = ""; // Reset dropdown
-                                                }}
-                                            >
-                                                <option value="">Choose a field to modify...</option>
-                                                <option value="name">Name</option>
-                                                <option value="roomNumber">Room Number</option>
-                                                <option value="email">Email Address</option>
-                                                <option value="phoneNumber">Phone Number</option>
-                                                <option value="department">Year & Department</option>
-                                            </select>
+                                                    }}
+                                                    className="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full transition-colors"
+                                                >
+                                                    Modify
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <Button type="submit" className="w-full" disabled={submitting}>
