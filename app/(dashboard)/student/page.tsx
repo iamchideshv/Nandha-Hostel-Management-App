@@ -408,6 +408,14 @@ export default function StudentDashboard() {
 
     const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate phone number
+        const phoneDigits = profileForm.phoneNumber.replace(/\D/g, '');
+        if (phoneDigits.length !== 10) {
+            toast.error('Phone number must be exactly 10 digits');
+            return;
+        }
+
         setSubmitting(true);
         try {
             const res = await fetch('/api/user/profile', {
@@ -667,11 +675,18 @@ export default function StudentDashboard() {
                                             <div className="space-y-2">
                                                 <Label>Phone Number</Label>
                                                 <Input
+                                                    type="tel"
                                                     value={profileForm.phoneNumber}
-                                                    onChange={e => setProfileForm({ ...profileForm, phoneNumber: e.target.value })}
-                                                    placeholder="+91 9876543210"
+                                                    onChange={e => {
+                                                        const val = e.target.value.replace(/\D/g, '');
+                                                        if (val.length <= 10) {
+                                                            setProfileForm({ ...profileForm, phoneNumber: val });
+                                                        }
+                                                    }}
+                                                    placeholder="10 digit number"
                                                     readOnly={!!user?.phoneNumber && !unlockedFields.includes('phoneNumber')}
                                                     className={user?.phoneNumber && !unlockedFields.includes('phoneNumber') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                    maxLength={10}
                                                 />
                                             </div>
                                             <div className="col-span-2 space-y-2">
