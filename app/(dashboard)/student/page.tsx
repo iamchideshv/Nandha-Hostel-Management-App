@@ -1036,11 +1036,11 @@ export default function StudentDashboard() {
                                                                     </span>
                                                                     {m.type && (
                                                                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${m.type === 'urgent' ? 'bg-red-100 text-red-700' :
-                                                                            m.type === 'important' ? 'bg-orange-100 text-orange-700' :
+                                                                            m.type === 'important' ? (m.targetStudentId ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700') :
                                                                                 m.type === 'Mess' ? 'bg-green-100 text-green-700' :
                                                                                     'bg-slate-100 text-slate-700'
                                                                             }`}>
-                                                                            {m.type}
+                                                                            {m.type === 'important' && m.targetStudentId ? 'Private' : m.type}
                                                                         </span>
                                                                     )}
                                                                 </div>
