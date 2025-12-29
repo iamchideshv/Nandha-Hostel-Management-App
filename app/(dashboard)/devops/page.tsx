@@ -31,6 +31,16 @@ export default function DevOpsDashboard() {
     const [feedbackLoading, setFeedbackLoading] = useState(false);
     const [profileRequests, setProfileRequests] = useState<any[]>([]);
     const [profileLoading, setProfileLoading] = useState(false);
+    const [selectedProfileRequest, setSelectedProfileRequest] = useState<any>(null);
+    const [profileEditForm, setProfileEditForm] = useState({
+        id: '',
+        name: '',
+        department: '',
+        roomNumber: '',
+        phoneNumber: '',
+        email: '',
+        profileImage: ''
+    });
 
     const fetchRequests = async () => {
         setLoading(true);
@@ -220,6 +230,39 @@ export default function DevOpsDashboard() {
             }
         } catch (error) {
             toast.error('Error deleting request');
+        }
+    };
+
+    const handleUpdateProfileFromRequest = async () => {
+        if (!profileEditForm.id) return;
+        setResetting(true);
+        try {
+            const res = await fetch('/api/users', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: profileEditForm.id,
+                    updates: profileEditForm
+                })
+            });
+
+            if (res.ok) {
+                toast.success('Profile updated successfully!');
+                if (selectedProfileRequest) {
+                    await fetch(`/api/profile-update-request?id=${selectedProfileRequest.id}`, {
+                        method: 'DELETE'
+                    });
+                }
+                setSelectedProfileRequest(null);
+                fetchProfileRequests();
+                fetchUsers();
+            } else {
+                toast.error('Failed to update profile');
+            }
+        } catch (error) {
+            toast.error('Error updating profile');
+        } finally {
+            setResetting(false);
         }
     };
 
@@ -425,9 +468,9 @@ export default function DevOpsDashboard() {
                                                     <td className="py-3">{u.name}</td>
                                                     <td className="py-3">
                                                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                                                u.role === 'devops' ? 'bg-red-100 text-red-700' :
-                                                                    u.role === 'authority' ? 'bg-amber-100 text-amber-700' :
-                                                                        'bg-blue-100 text-blue-700'
+                                                            u.role === 'devops' ? 'bg-red-100 text-red-700' :
+                                                                u.role === 'authority' ? 'bg-amber-100 text-amber-700' :
+                                                                    'bg-blue-100 text-blue-700'
                                                             }`}>
                                                             {u.role}
                                                         </span>
@@ -587,9 +630,34 @@ export default function DevOpsDashboard() {
                                                     {new Date(item.requestDate).toLocaleString()}
                                                 </td>
                                                 <td className="py-4 text-right">
-                                                    <Button variant="ghost" size="sm" onClick={() => handleDeleteProfileRequest(item.id)} className="text-red-500 hover:text-red-600">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button
+                                                            size="sm"
+                                                            onClick={() => {
+                                                                const student = users.find(u => u.id === item.studentId);
+                                                                if (student) {
+                                                                    setSelectedProfileRequest(item);
+                                                                    setProfileEditForm({
+                                                                        id: student.id,
+                                                                        name: student.name,
+                                                                        department: student.department || '',
+                                                                        roomNumber: student.roomNumber || '',
+                                                                        phoneNumber: student.phoneNumber || '',
+                                                                        email: student.email || '',
+                                                                        profileImage: student.profileImage || ''
+                                                                    });
+                                                                } else {
+                                                                    toast.error('Student data not found');
+                                                                }
+                                                            }}
+                                                            className="bg-blue-600 hover:bg-blue-700 h-8"
+                                                        >
+                                                            Update
+                                                        </Button>
+                                                        <Button variant="ghost" size="sm" onClick={() => handleDeleteProfileRequest(item.id)} className="text-red-500 hover:text-red-600 h-8">
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -667,6 +735,64 @@ export default function DevOpsDashboard() {
                         <div className="flex gap-2 p-6 pt-0">
                             <Button variant="outline" onClick={() => setSelectedRequest(null)} className="flex-1">Cancel</Button>
                             <Button onClick={handleResetPassword} disabled={resetting} className="flex-1 bg-blue-600 hover:bg-blue-700">{resetting ? 'Resetting...' : 'Reset Password'}</Button>
+                        </div>
+                    </Card>
+                </div>
+            )}
+            {selectedProfileRequest && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSelectedProfileRequest(null)}>
+                    <Card className="w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+                        <CardHeader className="bg-slate-50 dark:bg-slate-950">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <CardTitle>Update Profile: {profileEditForm.name}</CardTitle>
+                                    <CardDescription>Requested Modify: <span className="text-blue-600 font-bold">{selectedProfileRequest.fieldName}</span></CardDescription>
+                                </div>
+                                <button onClick={() => setSelectedProfileRequest(null)} className="text-slate-500 hover:text-red-500">
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4 pt-6 max-h-[70vh] overflow-y-auto">
+                            <div className="flex justify-center mb-6">
+                                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 bg-slate-100">
+                                    {profileEditForm.profileImage ? (
+                                        <img src={profileEditForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User className="w-full h-full p-4 text-slate-300" />
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Full Name</Label>
+                                    <Input value={profileEditForm.name} onChange={e => setProfileEditForm({ ...profileEditForm, name: e.target.value })} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Year & Department</Label>
+                                    <Input value={profileEditForm.department} onChange={e => setProfileEditForm({ ...profileEditForm, department: e.target.value })} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Room Number</Label>
+                                    <Input value={profileEditForm.roomNumber} onChange={e => setProfileEditForm({ ...profileEditForm, roomNumber: e.target.value })} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Phone Number</Label>
+                                    <Input value={profileEditForm.phoneNumber} onChange={e => setProfileEditForm({ ...profileEditForm, phoneNumber: e.target.value })} />
+                                </div>
+                                <div className="col-span-2 space-y-2">
+                                    <Label>Email Address</Label>
+                                    <Input value={profileEditForm.email} onChange={e => setProfileEditForm({ ...profileEditForm, email: e.target.value })} />
+                                </div>
+                            </div>
+                        </CardContent>
+                        <div className="flex gap-2 p-6 bg-slate-50 dark:bg-slate-950 border-t items-center shrink-0">
+                            <Button variant="outline" onClick={() => setSelectedProfileRequest(null)} className="flex-1">Cancel</Button>
+                            <Button onClick={handleUpdateProfileFromRequest} disabled={resetting} className="flex-1 bg-blue-600 hover:bg-blue-700">
+                                {resetting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                Update & Clear Request
+                            </Button>
                         </div>
                     </Card>
                 </div>
