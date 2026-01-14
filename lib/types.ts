@@ -13,6 +13,7 @@ export interface User {
     // Profile fields
     profileImage?: string; // Base64 or URL
     department?: string;
+    college?: string;
     phoneNumber?: string;
 }
 

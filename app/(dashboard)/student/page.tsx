@@ -87,6 +87,7 @@ export default function StudentDashboard() {
         roomNumber: '',
         email: '',
         phoneNumber: '',
+        college: '',
         profileImage: ''
     });
     const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false);
@@ -153,6 +154,7 @@ export default function StudentDashboard() {
             user.roomNumber,
             user.phoneNumber,
             user.email,
+            user.college,
             user.profileImage
         ];
         const completed = fields.filter(f => f && f.length > 0).length;
@@ -170,6 +172,7 @@ export default function StudentDashboard() {
                 roomNumber: user.roomNumber || '',
                 email: user.email || '',
                 phoneNumber: user.phoneNumber || '',
+                college: user.college || '',
                 profileImage: user.profileImage || ''
             });
         }
@@ -755,6 +758,16 @@ export default function StudentDashboard() {
                                                     placeholder="student@example.com"
                                                     readOnly={!!user?.email && !unlockedFields.includes('email')}
                                                     className={user?.email && !unlockedFields.includes('email') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                />
+                                            </div>
+                                            <div className="col-span-2 space-y-2">
+                                                <Label>College</Label>
+                                                <Input
+                                                    value={profileForm.college}
+                                                    onChange={e => setProfileForm({ ...profileForm, college: e.target.value })}
+                                                    placeholder="Your College Name"
+                                                    readOnly={!!user?.college && !unlockedFields.includes('college')}
+                                                    className={user?.college && !unlockedFields.includes('college') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
                                             </div>
                                         </div>

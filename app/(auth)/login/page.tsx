@@ -43,6 +43,7 @@ export default function LoginPage() {
         name: '',
         hostelName: 'NRI-1',
         roomNumber: '',
+        college: '',
         secretCode: ''
     });
     const [hostelType, setHostelType] = useState<'boys' | 'girls'>('boys');
@@ -461,6 +462,33 @@ export default function LoginPage() {
                                     <option value="AKSHAYA-2">AKSHAYA-2</option>
                                     <option value="AKSHAYA-3">AKSHAYA-3</option>
                                     <option value="AKSHAYA-4">AKSHAYA-4</option>
+                                </select>
+                            )}
+
+                            {registerRole === 'student' && (
+                                <select
+                                    className="flip-card__input"
+                                    value={registerData.college}
+                                    onChange={(e) => setRegisterData({ ...registerData, college: e.target.value })}
+                                    required
+                                >
+                                    <option value="" disabled>Select your College</option>
+                                    <option value="Nandha Engineering College">Nandha Engineering College</option>
+                                    <option value="Nandha College of Technology">Nandha College of Technology</option>
+                                    <option value="Nandha Polytechnic College">Nandha Polytechnic College</option>
+                                    <option value="Nandha Arts & Science College">Nandha Arts & Science College</option>
+                                    <option value="Nandha College of Education">Nandha College of Education</option>
+                                    <option value="Nandha Medical College And Hospital">Nandha Medical College And Hospital</option>
+                                    <option value="Nandha Ayurveda Medical College and Hospital">Nandha Ayurveda Medical College and Hospital</option>
+                                    <option value="Nandha Siddha Medical College and Hospital">Nandha Siddha Medical College and Hospital</option>
+                                    <option value="Nandha Naturopathy and Yoga Medical College">Nandha Naturopathy and Yoga Medical College</option>
+                                    <option value="Nandha College of Pharmacy">Nandha College of Pharmacy</option>
+                                    <option value="Nandha College of Physiotheraphy">Nandha College of Physiotheraphy</option>
+                                    <option value="Nandha College of Nursing">Nandha College of Nursing</option>
+                                    <option value="Nandha School of Nursing">Nandha School of Nursing</option>
+                                    <option value="Nandha College of Allied Health Sciences">Nandha College of Allied Health Sciences</option>
+                                    <option value="Nandha Acedemy of Allied Health Sciences">Nandha Acedemy of Allied Health Sciences</option>
+                                    <option value="Nandha Institute of Health Science">Nandha Institute of Health Science</option>
                                 </select>
                             )}
 
