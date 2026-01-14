@@ -13,7 +13,7 @@ import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
-import { Mail, UserCircle, Upload, Camera } from 'lucide-react';
+import { Mail, UserCircle, Upload, Camera, Crop } from 'lucide-react';
 import Cropper from 'react-easy-crop';
 
 interface ComplaintData {
@@ -93,13 +93,6 @@ export default function StudentDashboard() {
     const [unlockedFields, setUnlockedFields] = useState<string[]>([]);
     const [showModifyInfo, setShowModifyInfo] = useState(false);
 
-    // Cropping State
-    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-    const [crop, setCrop] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-    const [showCropModal, setShowCropModal] = useState(false);
-
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
         breakfast: '7:30 AM - 9:00 AM',
@@ -110,6 +103,13 @@ export default function StudentDashboard() {
 
     const [submitting, setSubmitting] = useState(false);
     const [imageUploaded, setImageUploaded] = useState(false);
+
+    // Cropping State
+    const [showCropModal, setShowCropModal] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
     const fetchData = async () => {
         if (!user) return;
@@ -172,16 +172,8 @@ export default function StudentDashboard() {
                 phoneNumber: user.phoneNumber || '',
                 profileImage: user.profileImage || ''
             });
-
-            // Auto-popup for new users (if profile is less than 50% complete)
-            const hasSeenPopup = sessionStorage.getItem('profilePopupSeen');
-            if (!hasSeenPopup && completion < 50) {
-                setShowProfileModal(true);
-                sessionStorage.setItem('profilePopupSeen', 'true');
-                toast.info('Please complete your profile to access all features');
-            }
         }
-    }, [user, messHostelType, completion]);
+    }, [user, messHostelType]);
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -483,49 +475,6 @@ export default function StudentDashboard() {
         }
     };
 
-    const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
-        setCroppedAreaPixels(croppedAreaPixels);
-    };
-
-    const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<string | null> => {
-        const image = new Image();
-        image.src = imageSrc;
-        await new Promise((resolve) => (image.onload = resolve));
-
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        if (!ctx) return null;
-
-        canvas.width = pixelCrop.width;
-        canvas.height = pixelCrop.height;
-
-        ctx.drawImage(
-            image,
-            pixelCrop.x,
-            pixelCrop.y,
-            pixelCrop.width,
-            pixelCrop.height,
-            0,
-            0,
-            pixelCrop.width,
-            pixelCrop.height
-        );
-
-        return canvas.toDataURL('image/jpeg', 0.8);
-    };
-
-    const handleApplyCrop = async () => {
-        if (imageToCrop && croppedAreaPixels) {
-            const croppedImage = await getCroppedImg(imageToCrop, croppedAreaPixels);
-            if (croppedImage) {
-                setProfileForm(prev => ({ ...prev, profileImage: croppedImage }));
-                setShowCropModal(false);
-                setImageToCrop(null);
-            }
-        }
-    };
-
     const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -535,6 +484,44 @@ export default function StudentDashboard() {
                 setShowCropModal(true);
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const getCroppedImg = async () => {
+        if (!imageToCrop || !croppedAreaPixels) return;
+
+        try {
+            const image = new Image();
+            image.src = imageToCrop;
+            await new Promise((resolve) => (image.onload = resolve));
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const size = Math.min(croppedAreaPixels.width, croppedAreaPixels.height);
+            canvas.width = size;
+            canvas.height = size;
+
+            ctx?.drawImage(
+                image,
+                croppedAreaPixels.x,
+                croppedAreaPixels.y,
+                croppedAreaPixels.width,
+                croppedAreaPixels.height,
+                0,
+                0,
+                size,
+                size
+            );
+
+            const base64 = canvas.toDataURL('image/jpeg', 0.8);
+            setProfileForm(prev => ({ ...prev, profileImage: base64 }));
+            setShowCropModal(false);
+            setImageToCrop(null);
+            toast.success('Image cropped successfully');
+        } catch (e) {
+            console.error(e);
+            toast.error('Failed to crop image');
         }
     };
 
@@ -587,51 +574,6 @@ export default function StudentDashboard() {
                 </div>
             )}
 
-            {/* Crop Modal */}
-            {showCropModal && imageToCrop && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-                    <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-                        <div className="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-                            <h3 className="font-bold">Crop Profile Image</h3>
-                            <button onClick={() => setShowCropModal(false)} className="text-slate-500 hover:text-red-500">
-                                <XCircle className="w-6 h-6" />
-                            </button>
-                        </div>
-                        <div className="relative h-80 bg-slate-100 dark:bg-slate-800">
-                            <Cropper
-                                image={imageToCrop}
-                                crop={crop}
-                                zoom={zoom}
-                                aspect={1}
-                                onCropChange={setCrop}
-                                onCropComplete={onCropComplete}
-                                onZoomChange={setZoom}
-                                cropShape="round"
-                                showGrid={false}
-                            />
-                        </div>
-                        <div className="p-4 space-y-4">
-                            <div className="space-y-1">
-                                <Label className="text-[10px] uppercase tracking-wider text-slate-500">Zoom Level</Label>
-                                <input
-                                    type="range"
-                                    value={zoom}
-                                    min={1}
-                                    max={3}
-                                    step={0.1}
-                                    aria-labelledby="Zoom"
-                                    onChange={(e) => setZoom(Number(e.target.value))}
-                                    className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                                />
-                            </div>
-                            <Button onClick={handleApplyCrop} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all active:scale-95">
-                                Set Profile Picture
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <div className="space-y-6 max-w-5xl mx-auto">
                 <header className="mb-8 flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -648,8 +590,8 @@ export default function StudentDashboard() {
                                 <span>Welcome, {user?.name}</span>
                             </h1>
                             <div className="flex flex-col items-start gap-1">
-                                <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
-                                <div className="flex flex-col gap-2 mt-1">
+                                <p className="text-slate-500 text-sm">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
+                                <div className="flex items-center gap-3 mt-1">
                                     <button
                                         onClick={() => setShowProfileModal(true)}
                                         className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
@@ -657,22 +599,12 @@ export default function StudentDashboard() {
                                         <UserCircle className="w-4 h-4" />
                                         View / Edit Profile
                                     </button>
-                                    <div className="progress-container">
-                                        <div
-                                            className={`progress-bar ${completion === 100 ? 'progress-bar-green' : completion >= 50 ? 'progress-bar-yellow' : 'progress-bar-red'}`}
-                                            style={{ width: `${completion}%` }}
-                                        ></div>
-                                        <div className={`progress-text ${completion === 100 ? 'progress-text-green' : completion >= 50 ? 'progress-text-yellow' : 'progress-text-red'}`}>
-                                            {completion < 50 ? 'Complete Your profile' : `Profile ${completion}%`}
-                                        </div>
-                                        <div className="particles">
-                                            <div className="particle"></div>
-                                            <div className="particle"></div>
-                                            <div className="particle"></div>
-                                            <div className="particle"></div>
-                                            <div className="particle"></div>
-                                        </div>
-                                    </div>
+                                    {completion < 100 && (
+                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${completion < 60 ? 'text-red-600 border-red-200 bg-red-50' : 'text-purple-600 border-purple-200 bg-purple-50'
+                                            }`}>
+                                            {completion}% Complete
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -746,12 +678,7 @@ export default function StudentDashboard() {
                                     <form onSubmit={handleProfileUpdate} className="space-y-6">
                                         {/* Image Upload */}
                                         <div className="flex flex-col items-center justify-center gap-4">
-                                            <div className="relative group cursor-pointer" onClick={() => {
-                                                if (profileForm.profileImage) {
-                                                    setImageToCrop(profileForm.profileImage);
-                                                    setShowCropModal(true);
-                                                }
-                                            }}>
+                                            <div className="relative group">
                                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                                                     {profileForm.profileImage ? (
                                                         <img src={profileForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
@@ -759,12 +686,12 @@ export default function StudentDashboard() {
                                                         <UserCircle className="w-20 h-20 text-slate-300" />
                                                     )}
                                                 </div>
-                                                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95" onClick={e => e.stopPropagation()}>
+                                                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95">
                                                     <Camera className="w-4 h-4" />
                                                     <input type="file" accept="image/*" className="hidden" onChange={handleProfileImageUpload} />
                                                 </label>
                                             </div>
-                                            <p className="text-xs text-slate-500">Click photo to adjust or camera icon to change</p>
+                                            <p className="text-xs text-slate-500">Click camera icon to change photo</p>
                                         </div>
 
                                         <div className="grid md:grid-cols-2 gap-4">
@@ -1854,6 +1781,71 @@ export default function StudentDashboard() {
 
                 <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
             </div >
+            {/* Cropping Modal */}
+            {showCropModal && imageToCrop && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                    <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-xl shadow-2xl overflow-hidden flex flex-col">
+                        <div className="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                            <h3 className="font-bold flex items-center gap-2 italic">
+                                <Crop className="w-4 h-4 text-blue-600" />
+                                Adjust Profile Photo
+                            </h3>
+                            <button onClick={() => { setShowCropModal(false); setImageToCrop(null); }} className="text-slate-500 hover:text-red-500">
+                                <XCircle className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        <div className="relative h-[400px] w-full bg-black">
+                            <Cropper
+                                image={imageToCrop}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={1}
+                                cropShape="round"
+                                showGrid={false}
+                                onCropChange={setCrop}
+                                onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+                                onZoomChange={setZoom}
+                            />
+                        </div>
+
+                        <div className="p-6 space-y-4">
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-xs font-medium">
+                                    <span>Zoom Adjustment</span>
+                                    <span>{zoom.toFixed(1)}x</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    value={zoom}
+                                    min={1}
+                                    max={3}
+                                    step={0.1}
+                                    aria-labelledby="Zoom"
+                                    onChange={(e) => setZoom(Number(e.target.value))}
+                                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                            </div>
+
+                            <div className="flex gap-3">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => { setShowCropModal(false); setImageToCrop(null); }}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                                    onClick={getCroppedImg}
+                                >
+                                    Confirm Crop
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
