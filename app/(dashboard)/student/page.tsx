@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye, ClipboardList, Thermometer, Footprints } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye, ClipboardList, Thermometer, Footprints, ChevronLeft } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
@@ -41,6 +41,7 @@ export default function StudentDashboard() {
     const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
+    const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick'>('main');
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -598,7 +599,7 @@ export default function StudentDashboard() {
                                 <Search className="w-5 h-5" />
                                 <span>Lost & Found</span>
                             </button>
-                            <button onClick={() => { setActiveTab('register'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <ClipboardList className="w-5 h-5" />
                                 <span>Register</span>
                             </button>
@@ -687,7 +688,7 @@ export default function StudentDashboard() {
                             {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                         </p>
                     </div>
-                    <button onClick={() => setActiveTab('register')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <ClipboardList className="h-6 w-6 text-indigo-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Register</h3>
                     </button>
@@ -1829,6 +1830,159 @@ export default function StudentDashboard() {
                     </div>
                 )}
 
+                {activeTab === 'register' && (
+                    <div className="space-y-6">
+                        {registerSubTab === 'main' && (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-500">
+                                    <CardHeader>
+                                        <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
+                                            <LogOut className="w-6 h-6" />
+                                        </div>
+                                        <CardTitle>Leave Register</CardTitle>
+                                        <CardDescription>Apply for long leave or vacation</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                                            Request permission for leave exceeding 24 hours. Requires parental approval.
+                                        </p>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button onClick={() => setRegisterSubTab('leave')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
+                                    </CardFooter>
+                                </Card>
+
+                                <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-blue-500">
+                                    <CardHeader>
+                                        <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                                            <Footprints className="w-6 h-6" />
+                                        </div>
+                                        <CardTitle>Outing Register</CardTitle>
+                                        <CardDescription>Short duration outing entry</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                                            Register for local outings, shopping, or movie trips. Return by curfew time.
+                                        </p>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button onClick={() => setRegisterSubTab('outing')} className="w-full bg-blue-600 hover:bg-blue-700">Open Register</Button>
+                                    </CardFooter>
+                                </Card>
+
+                                <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-red-500">
+                                    <CardHeader>
+                                        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
+                                            <Thermometer className="w-6 h-6" />
+                                        </div>
+                                        <CardTitle>Sick Register</CardTitle>
+                                        <CardDescription>Report sickness or medical emergency</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                                            Log medical issues or requests to visit the hospital/infirmary.
+                                        </p>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
+                                    </CardFooter>
+                                </Card>
+                            </div>
+                        )}
+
+                        {registerSubTab !== 'main' && (
+                            <Card className="animate-in fade-in slide-in-from-right-4 duration-300">
+                                <CardHeader className="flex flex-row items-center gap-4 border-b dark:border-slate-800 pb-4 mb-4">
+                                    <Button variant="ghost" size="sm" onClick={() => setRegisterSubTab('main')} className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center">
+                                        <ChevronLeft className="w-6 h-6" />
+                                    </Button>
+                                    <div>
+                                        <CardTitle className="capitalize text-2xl">{registerSubTab} Register</CardTitle>
+                                        <CardDescription>
+                                            {registerSubTab === 'leave' ? 'Apply and manage your leave requests' :
+                                                registerSubTab === 'outing' ? 'View your outing history' :
+                                                    'Report medical issues'}
+                                        </CardDescription>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    {registerSubTab === 'leave' && (
+                                        <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                                            <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mx-auto mb-4 text-orange-600 dark:text-orange-400">
+                                                <LogOut className="w-8 h-8" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Leave Management</h3>
+                                            <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8">
+                                                To apply for long leave, please use the Outpass form and select the appropriate duration and reason.
+                                            </p>
+                                            <Button onClick={() => setActiveTab('outpass')} className="bg-orange-600 hover:bg-orange-700 h-11 px-8 rounded-lg shadow-lg shadow-orange-100">Go to Outpass Form</Button>
+                                        </div>
+                                    )}
+
+                                    {registerSubTab === 'outing' && (
+                                        <div className="space-y-6">
+                                            <div className="flex flex-col sm:flex-row justify-between items-center bg-blue-50 dark:bg-blue-900/20 p-5 rounded-2xl border border-blue-100 dark:border-blue-800 gap-4">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                                        <Info className="w-6 h-6" />
+                                                    </div>
+                                                    <p className="text-sm font-semibold text-blue-800 dark:text-blue-200">Outings are tracked through your outpass requests.</p>
+                                                </div>
+                                                <Button size="sm" onClick={() => setActiveTab('outpass')} className="bg-blue-600 hover:bg-blue-700 h-10 px-6 rounded-lg shadow-md shadow-blue-100">Apply New Outpass</Button>
+                                            </div>
+
+                                            <div className="grid gap-4">
+                                                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest px-1">Recent History</h4>
+                                                {outpasses.length === 0 ? (
+                                                    <div className="p-12 text-center text-slate-400 font-medium italic bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
+                                                        No outing records found.
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-3">
+                                                        {outpasses.map(o => (
+                                                            <div key={o.id} className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex justify-between items-center hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className={`w-2 h-2 rounded-full ${o.status === 'exited' ? 'bg-orange-500 animate-pulse' : o.status === 'entered' ? 'bg-green-500' : 'bg-slate-300'}`} />
+                                                                    <div>
+                                                                        <p className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{o.reason}</p>
+                                                                        <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
+                                                                            <Clock className="w-3 h-3" />
+                                                                            {o.fromDate} - {o.toDate}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <div className={`text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-wider ${o.status === 'exited' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : o.status === 'entered' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'}`}>
+                                                                    {o.status}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {registerSubTab === 'sick' && (
+                                        <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                                            <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4 text-red-600 dark:text-red-400">
+                                                <Thermometer className="w-8 h-8" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Medical Sick Register</h3>
+                                            <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8">
+                                                Emergency reporting is being integrated. In case of emergency, please contact the warden directly or use the "Complaints" tab for minor health-related issues.
+                                            </p>
+                                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                                <Button onClick={() => setActiveTab('complaints')} className="bg-red-600 hover:bg-red-700 h-11 px-8 rounded-lg shadow-lg shadow-red-100">Report Health Issue</Button>
+                                                <Button variant="outline" onClick={() => window.open('tel:+910000000000')} className="h-11 px-8 border-slate-300">Call Warden Emergency</Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )}
+                    </div>
+                )}
+
                 <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
             </div>
             {/* Cropping Modal */}
@@ -1896,64 +2050,7 @@ export default function StudentDashboard() {
                     </div>
                 </div>
             )}
-            {activeTab === 'register' && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-500">
-                        <CardHeader>
-                            <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
-                                <LogOut className="w-6 h-6" />
-                            </div>
-                            <CardTitle>Leave Register</CardTitle>
-                            <CardDescription>Apply for long leave or vacation</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Request permission for leave exceeding 24 hours. Requires parental approval.
-                            </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
-                        </CardFooter>
-                    </Card>
 
-                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-blue-500">
-                        <CardHeader>
-                            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                                <Footprints className="w-6 h-6" />
-                            </div>
-                            <CardTitle>Outing Register</CardTitle>
-                            <CardDescription>Short duration outing entry</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Register for local outings, shopping, or movie trips. Return by curfew time.
-                            </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button className="w-full bg-blue-600 hover:bg-blue-700">Open Register</Button>
-                        </CardFooter>
-                    </Card>
-
-                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-red-500">
-                        <CardHeader>
-                            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
-                                <Thermometer className="w-6 h-6" />
-                            </div>
-                            <CardTitle>Sick Register</CardTitle>
-                            <CardDescription>Report sickness or medical emergency</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Log medical issues or requests to visit the hospital/infirmary.
-                            </p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
-                        </CardFooter>
-                    </Card>
-                </div>
-            )}
-        </div >
         </>
     );
 }

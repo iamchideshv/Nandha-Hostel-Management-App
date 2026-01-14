@@ -16,6 +16,7 @@ export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register'>('complaints');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
+    const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick'>('main');
 
     // Data
     const [users, setUsers] = useState<User[]>([]);
@@ -450,7 +451,7 @@ export default function AdminDashboard() {
                                 <Users className="w-5 h-5" />
                                 <span>Student Details</span>
                             </button>
-                            <button onClick={() => { setActiveTab('register'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <ClipboardList className="w-5 h-5" />
                                 <span>Register</span>
                             </button>
@@ -545,7 +546,7 @@ export default function AdminDashboard() {
                         Student Details
                     </button>
                     <button
-                        onClick={() => setActiveTab('register')}
+                        onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }}
                         className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                     >
                         <ClipboardList className="w-4 h-4 mr-2" />
@@ -1701,62 +1702,160 @@ export default function AdminDashboard() {
                         </Card>
                     </div>
                 )}
-                
+
+
                 {activeTab === 'register' && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-500">
-                            <CardHeader>
-                                <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
-                                    <LogOut className="w-6 h-6" />
+                    <div className="space-y-6">
+                        {registerSubTab === 'main' && (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="border bg-white dark:bg-slate-950 rounded-lg p-6 hover:shadow-lg transition-all border-l-4 border-l-orange-500">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                                            <LogOut className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="font-bold text-lg">Leave Register</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                        Manage student leave records
+                                    </p>
+                                    <Button onClick={() => setRegisterSubTab('leave')} className="w-full bg-orange-600 hover:bg-orange-700">View Register</Button>
                                 </div>
-                                <CardTitle>Leave Register</CardTitle>
-                                <CardDescription>Manage student leave records</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">
-                                    View and manage all student leave entries and permissions.
-                                </p>
-                            </CardContent>
-                            <CardFooter>
-                                <Button className="w-full bg-orange-600 hover:bg-orange-700">View Register</Button>
-                            </CardFooter>
-                        </Card>
 
-                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-blue-500">
-                            <CardHeader>
-                                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                                    <Footprints className="w-6 h-6" />
+                                <div className="border bg-white dark:bg-slate-950 rounded-lg p-6 hover:shadow-lg transition-all border-l-4 border-l-blue-500">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                            <Footprints className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="font-bold text-lg">Outing Register</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                        Track daily outings
+                                    </p>
+                                    <Button onClick={() => setRegisterSubTab('outing')} className="w-full bg-blue-600 hover:bg-blue-700">View Register</Button>
                                 </div>
-                                <CardTitle>Outing Register</CardTitle>
-                                <CardDescription>Track daily outings</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">
-                                    Monitor student outings, check-out and check-in times.
-                                </p>
-                            </CardContent>
-                            <CardFooter>
-                                <Button className="w-full bg-blue-600 hover:bg-blue-700">View Register</Button>
-                            </CardFooter>
-                        </Card>
 
-                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-red-500">
-                            <CardHeader>
-                                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
-                                    <Thermometer className="w-6 h-6" />
+                                <div className="border bg-white dark:bg-slate-950 rounded-lg p-6 hover:shadow-lg transition-all border-l-4 border-l-red-500">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+                                            <Thermometer className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="font-bold text-lg">Sick Register</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                        Medical emergency logs
+                                    </p>
+                                    <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">View Register</Button>
                                 </div>
-                                <CardTitle>Sick Register</CardTitle>
-                                <CardDescription>Medical emergency logs</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">
-                                    Access records of sick students and hospital visits.
-                                </p>
-                            </CardContent>
-                            <CardFooter>
-                                <Button className="w-full bg-red-600 hover:bg-red-700">View Register</Button>
-                            </CardFooter>
-                        </Card>
+                            </div>
+                        )}
+
+                        {registerSubTab !== 'main' && (
+                            <Card className="animate-in fade-in slide-in-from-right-4 duration-300">
+                                <CardHeader className="flex flex-row items-center gap-4 border-b dark:border-slate-800 pb-4 mb-4">
+                                    <Button variant="ghost" size="sm" onClick={() => setRegisterSubTab('main')} className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center">
+                                        <ChevronLeft className="w-6 h-6" />
+                                    </Button>
+                                    <div>
+                                        <CardTitle className="capitalize text-2xl">{registerSubTab} Register</CardTitle>
+                                        <CardDescription>
+                                            {registerSubTab === 'leave' ? 'Consolidated view of student leave records' :
+                                                registerSubTab === 'outing' ? 'Real-time log of student exits and entries' :
+                                                    'Medical alerts and sick list'}
+                                        </CardDescription>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    {registerSubTab === 'leave' && (
+                                        <div className="space-y-4">
+                                            {outpasses.filter(o => o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')).length === 0 ? (
+                                                <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
+                                                    No leave records found.
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    {outpasses.filter(o => o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')).map(o => (
+                                                        <div key={o.id} className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex justify-between items-center group">
+                                                            <div className="flex items-center gap-4">
+                                                                {getStudentAvatar(o.studentId)}
+                                                                <div>
+                                                                    <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
+                                                                    <p className="text-xs text-slate-500 font-medium">Reason: {o.reason}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{o.fromDate}</p>
+                                                                <p className="text-[10px] text-slate-400">to {o.toDate}</p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {registerSubTab === 'outing' && (
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between items-center px-2">
+                                                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Active Outpasses</h4>
+                                                <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')}>Manage All Outpasses</Button>
+                                            </div>
+                                            {outpasses.filter(o => o.status === 'exited').length === 0 ? (
+                                                <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
+                                                    No students currently outside.
+                                                </div>
+                                            ) : (
+                                                <div className="grid gap-3">
+                                                    {outpasses.filter(o => o.status === 'exited').map(o => (
+                                                        <div key={o.id} className="p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10 flex justify-between items-center">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                                                                <div>
+                                                                    <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
+                                                                    <p className="text-xs text-slate-500">{o.reason}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <p className="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase">Currently Out</p>
+                                                                <p className="text-xs font-medium text-slate-500">Return by: {o.toDate}</p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {registerSubTab === 'sick' && (
+                                        <div className="space-y-4">
+                                            {complaints.filter(c => c.title.toLowerCase().includes('sick') || c.title.toLowerCase().includes('health') || c.title.toLowerCase().includes('medical')).length === 0 ? (
+                                                <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
+                                                    No medical alerts found.
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    {complaints.filter(c => c.title.toLowerCase().includes('sick') || c.title.toLowerCase().includes('health') || c.title.toLowerCase().includes('medical')).map(c => (
+                                                        <div key={c.id} className="p-4 rounded-xl border border-red-100 dark:border-red-900/30 bg-red-50/30 dark:bg-red-900/10 flex justify-between items-center">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600 dark:text-red-400">
+                                                                    <Thermometer className="w-6 h-6" />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="font-bold text-slate-900 dark:text-white">{c.studentName}</p>
+                                                                    <p className="text-xs text-red-600 dark:text-red-400 font-medium">{c.title}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-100" onClick={() => setActiveTab('complaints')}>View Detail</Button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )}
                     </div>
                 )}
             </div>
