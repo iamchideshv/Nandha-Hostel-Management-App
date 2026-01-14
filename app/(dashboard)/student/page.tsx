@@ -42,6 +42,7 @@ export default function StudentDashboard() {
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick'>('main');
+    const [leaveCollegeFilter, setLeaveCollegeFilter] = useState<string | null>(null);
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -1737,15 +1738,87 @@ export default function StudentDashboard() {
                                     </CardHeader>
                                     <CardContent>
                                         {registerSubTab === 'leave' && (
-                                            <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
-                                                <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mx-auto mb-4 text-orange-600 dark:text-orange-400">
-                                                    <LogOut className="w-8 h-8" />
-                                                </div>
-                                                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Leave Management</h3>
-                                                <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8">
-                                                    For long leave or vacation requests, please use the standard Outpass form and select the appropriate dates.
-                                                </p>
-                                                <Button onClick={() => setActiveTab('outpass')} className="bg-orange-600 hover:bg-orange-700 h-11 px-8 rounded-lg shadow-lg shadow-orange-100">Go to Outpass Form</Button>
+                                            <div className="space-y-6">
+                                                {!leaveCollegeFilter ? (
+                                                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                        <div className="text-center space-y-2">
+                                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Select Your College</h3>
+                                                            <p className="text-sm text-slate-500 dark:text-slate-400">Choose your institution to proceed with leave management</p>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                                            {[
+                                                                { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
+                                                                { id: 'NPC', name: 'Nandha Polytechnic College', color: 'orange', icon: '⚙️' },
+                                                                { id: 'NCT', name: 'Nandha College of Technology', color: 'green', icon: '💻' },
+                                                                { id: 'BAMS', name: 'Nandha Ayurveda College', color: 'emerald', icon: '🌿' },
+                                                                { id: 'NMC', name: 'Nandha Medical College', color: 'red', icon: '🏥' },
+                                                                { id: 'NDC', name: 'Nandha Dental College', color: 'purple', icon: '🦷' }
+                                                            ].map((col) => (
+                                                                <button
+                                                                    key={col.id}
+                                                                    onClick={() => setLeaveCollegeFilter(col.id)}
+                                                                    className={`group relative p-6 rounded-2xl border-2 transition-all hover:shadow-xl active:scale-95 flex flex-col items-center text-center gap-3
+                                                                        ${col.color === 'blue' ? 'border-blue-100 hover:border-blue-500 bg-blue-50/50 hover:bg-blue-50' :
+                                                                            col.color === 'orange' ? 'border-orange-100 hover:border-orange-500 bg-orange-50/50 hover:bg-orange-50' :
+                                                                                col.color === 'green' ? 'border-green-100 hover:border-green-500 bg-green-50/50 hover:bg-green-50' :
+                                                                                    col.color === 'emerald' ? 'border-emerald-100 hover:border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50' :
+                                                                                        col.color === 'red' ? 'border-red-100 hover:border-red-500 bg-red-50/50 hover:bg-red-50' :
+                                                                                            'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
+                                                                >
+                                                                    <div className={`text-4xl mb-1 group-hover:scale-110 transition-transform`}>{col.icon}</div>
+                                                                    <div className="space-y-1">
+                                                                        <span className={`text-lg font-black tracking-tighter
+                                                                            ${col.color === 'blue' ? 'text-blue-700' :
+                                                                                col.color === 'orange' ? 'text-orange-700' :
+                                                                                    col.color === 'green' ? 'text-green-700' :
+                                                                                        col.color === 'emerald' ? 'text-emerald-700' :
+                                                                                            col.color === 'red' ? 'text-red-700' :
+                                                                                                'text-purple-700'}`}>{col.id}</span>
+                                                                        <p className="text-[10px] leading-tight font-medium text-slate-500 dark:text-slate-400 line-clamp-1">{col.name}</p>
+                                                                    </div>
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="animate-in fade-in zoom-in-95 duration-300">
+                                                        <div className="flex items-center justify-between mb-6 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow-lg
+                                                                    ${leaveCollegeFilter === 'NEC' ? 'bg-blue-600' :
+                                                                        leaveCollegeFilter === 'NPC' ? 'bg-orange-600' :
+                                                                            leaveCollegeFilter === 'NCT' ? 'bg-green-600' :
+                                                                                leaveCollegeFilter === 'BAMS' ? 'bg-emerald-600' :
+                                                                                    leaveCollegeFilter === 'NMC' ? 'bg-red-600' :
+                                                                                        'bg-purple-600'}`}>
+                                                                    {leaveCollegeFilter}
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Institution</p>
+                                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">
+                                                                        {leaveCollegeFilter === 'NEC' ? 'Nandha Engineering College' :
+                                                                            leaveCollegeFilter === 'NPC' ? 'Nandha Polytechnic College' :
+                                                                                leaveCollegeFilter === 'NCT' ? 'Nandha College of Technology' :
+                                                                                    leaveCollegeFilter === 'BAMS' ? 'Nandha Ayurveda College' :
+                                                                                        leaveCollegeFilter === 'NMC' ? 'Nandha Medical College' :
+                                                                                            'Nandha Dental College'}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Change</Button>
+                                                        </div>
+                                                        <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                                                            <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mx-auto mb-4 text-orange-600 dark:text-orange-400">
+                                                                <LogOut className="w-8 h-8" />
+                                                            </div>
+                                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Leave Management</h3>
+                                                            <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8">
+                                                                For long leave or vacation requests at {leaveCollegeFilter}, please use the standard Outpass form and select the appropriate dates.
+                                                            </p>
+                                                            <Button onClick={() => setActiveTab('outpass')} className="bg-orange-600 hover:bg-orange-700 h-11 px-8 rounded-lg shadow-lg shadow-orange-100">Go to Outpass Form</Button>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
 
