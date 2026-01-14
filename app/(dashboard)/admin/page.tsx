@@ -171,6 +171,24 @@ export default function AdminDashboard() {
         }
     };
 
+    const getStudentAvatar = (studentId: string) => {
+        const student = users.find(u => u.id === studentId);
+        if (student?.profileImage) {
+            return (
+                <img
+                    src={student.profileImage}
+                    alt={student.name}
+                    className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-800 object-cover shrink-0"
+                />
+            );
+        }
+        return (
+            <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 shrink-0">
+                <UserIcon className="w-6 h-6" />
+            </div>
+        );
+    };
+
     const uploadTimings = async () => {
         try {
             const res = await fetch(`/api/mess-timings?type=${messHostelType}`, {
@@ -562,7 +580,10 @@ export default function AdminDashboard() {
                                                     <CardTitle className="text-lg">{c.title}</CardTitle>
                                                     <div className="flex items-start space-x-2 mt-1">
                                                         <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
-                                                        <CardDescription className="line-clamp-1">{new Date(c.createdAt).toLocaleDateString()} • {c.studentName}</CardDescription>
+                                                        <CardDescription className="flex items-center gap-2 mt-1">
+                                                            {getStudentAvatar(c.studentId)}
+                                                            <span>{new Date(c.createdAt).toLocaleDateString()} • {c.studentName}</span>
+                                                        </CardDescription>
                                                     </div>
                                                 </div>
                                                 <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
@@ -618,11 +639,14 @@ export default function AdminDashboard() {
                                 <Card key={o.id} className={o.status === 'pending' ? 'border-l-4 border-l-yellow-400' : ''}>
                                     <CardHeader className="pb-2">
                                         <div className="flex justify-between items-start">
-                                            <div>
-                                                <CardTitle>{o.studentName}</CardTitle>
-                                                <CardDescription>
-                                                    {o.collegeName} • {o.yearAndDept} • Room {o.roomNumber}
-                                                </CardDescription>
+                                            <div className="flex items-start gap-3">
+                                                {getStudentAvatar(o.studentId)}
+                                                <div>
+                                                    <CardTitle>{o.studentName}</CardTitle>
+                                                    <CardDescription>
+                                                        {o.collegeName} • {o.yearAndDept} • Room {o.roomNumber}
+                                                    </CardDescription>
+                                                </div>
                                             </div>
                                             <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${o.status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
                                                 o.status === 'exited' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
@@ -719,16 +743,19 @@ export default function AdminDashboard() {
                                 fees.map(f => (
                                     <Card key={f.studentId}>
                                         <CardContent className="flex justify-between items-center p-6">
-                                            <div>
-                                                <h3 className="font-bold text-lg">{f.studentName}</h3>
-                                                <p className="text-sm text-slate-500">Student ID: {f.studentId}</p>
-                                                <div className="flex items-center space-x-2 mt-2">
-                                                    <span className={`text-xs px-2 py-1 rounded-full uppercase font-bold
-                                                    ${f.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                                            f.status === 'unpaid' ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
-                                                        {f.status === 'pending_request' ? 'Request In Review' : f.status}
-                                                    </span>
-                                                    <span className="text-xs text-slate-400">Last: {new Date(f.lastUpdated).toLocaleDateString()}</span>
+                                            <div className="flex items-center gap-3">
+                                                {getStudentAvatar(f.studentId)}
+                                                <div>
+                                                    <h3 className="font-bold text-lg">{f.studentName}</h3>
+                                                    <p className="text-sm text-slate-500">Student ID: {f.studentId}</p>
+                                                    <div className="flex items-center space-x-2 mt-2">
+                                                        <span className={`text-xs px-2 py-1 rounded-full uppercase font-bold
+                                                        ${f.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                                                                f.status === 'unpaid' ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
+                                                            {f.status === 'pending_request' ? 'Request In Review' : f.status}
+                                                        </span>
+                                                        <span className="text-xs text-slate-400">Last: {new Date(f.lastUpdated).toLocaleDateString()}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <Button onClick={() => {
@@ -785,7 +812,10 @@ export default function AdminDashboard() {
                                                     <div key={student.id} className="p-4 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                                         <div className="grid grid-cols-12 gap-4 items-center mb-2">
                                                             <div className="col-span-3 font-mono text-xs">{student.id}</div>
-                                                            <div className="col-span-3 font-medium">{student.name}</div>
+                                                            <div className="col-span-3 font-medium flex items-center gap-2">
+                                                                {getStudentAvatar(student.id)}
+                                                                <span>{student.name}</span>
+                                                            </div>
                                                             <div className="col-span-6">
                                                                 <div className="flex justify-between items-start gap-2">
                                                                     <div className="flex-1 min-w-0">
@@ -1315,9 +1345,12 @@ export default function AdminDashboard() {
                                             </div>
                                             <div className="p-4">
                                                 <div className="flex justify-between items-start mb-2">
-                                                    <div>
+                                                    <div className="flex flex-col">
                                                         <h3 className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.productName}</h3>
-                                                        <p className="text-[10px] text-slate-500 font-medium">{item.hostelName} • RM {item.roomNumber} • {item.studentName}</p>
+                                                        <div className="flex items-center gap-2 mt-1">
+                                                            {getStudentAvatar(item.studentId)}
+                                                            <p className="text-[10px] text-slate-500 font-medium">{item.hostelName} • RM {item.roomNumber} • {item.studentName}</p>
+                                                        </div>
                                                     </div>
                                                     <BadgeCheck className={`w-4 h-4 ${item.status === 'returned' ? 'text-green-500' : 'text-amber-500'}`} />
                                                 </div>
