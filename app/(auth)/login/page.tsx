@@ -120,7 +120,7 @@ export default function LoginPage() {
             login(data);
             if (data.role === 'admin') router.push('/admin');
             else if (data.role === 'send-off') router.push('/send-off');
-            else router.push('/student');
+            else router.push('/student?editProfile=true');
 
         } catch (err: any) {
             setError(err.message);

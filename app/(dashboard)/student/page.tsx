@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,6 +42,8 @@ export default function StudentDashboard() {
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
     // Data states
     const [complaints, setComplaints] = useState<ComplaintData[]>([]);
@@ -190,6 +193,15 @@ export default function StudentDashboard() {
             }
         }
     }, [user, completion, loadingData]);
+
+    useEffect(() => {
+        if (searchParams.get('editProfile') === 'true') {
+            setShowProfileModal(true);
+            // Clear the param after showing
+            const newPath = window.location.pathname;
+            router.replace(newPath);
+        }
+    }, [searchParams, router]);
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
