@@ -662,7 +662,7 @@ export default function StudentDashboard() {
                                             className={`progress-bar ${completion === 100 ? 'progress-bar-green' : completion >= 50 ? 'progress-bar-yellow' : 'progress-bar-red'}`}
                                             style={{ width: `${completion}%` }}
                                         ></div>
-                                        <div className="progress-text">
+                                        <div className={`progress-text ${completion === 100 ? 'progress-text-green' : completion >= 50 ? 'progress-text-yellow' : 'progress-text-red'}`}>
                                             {completion < 50 ? 'Complete Your profile' : `Profile ${completion}%`}
                                         </div>
                                         <div className="particles">
