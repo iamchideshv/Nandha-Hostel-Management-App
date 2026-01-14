@@ -110,6 +110,11 @@ export default function StudentDashboard() {
 
     const [submitting, setSubmitting] = useState(false);
     const [imageUploaded, setImageUploaded] = useState(false);
+    const [registerEntryForm, setRegisterEntryForm] = useState({
+        date: new Date().toISOString().split('T')[0],
+        outTime: '',
+        inTime: ''
+    });
 
     // Cropping State
     const [showCropModal, setShowCropModal] = useState(false);
@@ -1838,15 +1843,71 @@ export default function StudentDashboard() {
                                                             </div>
                                                             <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Change</Button>
                                                         </div>
-                                                        <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
-                                                            <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mx-auto mb-4 text-orange-600 dark:text-orange-400">
-                                                                <LogOut className="w-8 h-8" />
+                                                        <div className="p-6 bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Student Name</Label>
+                                                                    <Input value={user?.name || ''} readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Institution</Label>
+                                                                    <Input value={
+                                                                        leaveCollegeFilter === 'NEC' ? 'Nandha Engineering College' :
+                                                                            leaveCollegeFilter === 'NPC' ? 'Nandha Polytechnic College' :
+                                                                                leaveCollegeFilter === 'NCT' ? 'Nandha College of Technology' :
+                                                                                    leaveCollegeFilter === 'BAMS' ? 'Nandha Ayurveda College' :
+                                                                                        leaveCollegeFilter === 'NMC' ? 'Nandha Medical College' :
+                                                                                            leaveCollegeFilter === 'NCP' ? 'Nandha College of Pharmacy' :
+                                                                                                leaveCollegeFilter === 'NASC' ? 'Nandha Arts & Science College' :
+                                                                                                    leaveCollegeFilter === 'NCPT' ? 'Nandha College of Physiotherapy' :
+                                                                                                        leaveCollegeFilter === 'NCN' ? 'Nandha College of Nursing' :
+                                                                                                            leaveCollegeFilter === 'NCAHS' ? 'Nandha College of Allied Health Sciences' :
+                                                                                                                leaveCollegeFilter === 'NNYMC' ? 'Nandha Naturopathy and Yoga Medical College' :
+                                                                                                                    'Nandha Dental College'
+                                                                    } readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Room Number</Label>
+                                                                    <Input value={user?.roomNumber || ''} readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Year & Department</Label>
+                                                                    <Input value={user?.department || ''} readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Leave Date</Label>
+                                                                    <Input
+                                                                        type="date"
+                                                                        value={registerEntryForm.date}
+                                                                        onChange={e => setRegisterEntryForm({ ...registerEntryForm, date: e.target.value })}
+                                                                        className="border-blue-100 focus:border-blue-500"
+                                                                    />
+                                                                </div>
+                                                                <div className="grid grid-cols-2 gap-4">
+                                                                    <div className="space-y-2">
+                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Out Time</Label>
+                                                                        <Input
+                                                                            type="time"
+                                                                            value={registerEntryForm.outTime}
+                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, outTime: e.target.value })}
+                                                                            className="border-blue-100 focus:border-blue-500"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="space-y-2">
+                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">In Time</Label>
+                                                                        <Input
+                                                                            type="time"
+                                                                            value={registerEntryForm.inTime}
+                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, inTime: e.target.value })}
+                                                                            className="border-blue-100 focus:border-blue-500"
+                                                                        />
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Leave Management</h3>
-                                                            <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8">
-                                                                For long leave or vacation requests at {leaveCollegeFilter}, please use the standard Outpass form and select the appropriate dates.
-                                                            </p>
-                                                            <Button onClick={() => setActiveTab('outpass')} className="bg-orange-600 hover:bg-orange-700 h-11 px-8 rounded-lg shadow-lg shadow-orange-100">Go to Outpass Form</Button>
+                                                            <div className="pt-4 flex gap-4">
+                                                                <Button onClick={() => setActiveTab('outpass')} className="flex-1 bg-blue-600 hover:bg-blue-700">Apply for Official Pass</Button>
+                                                                <Button variant="outline" onClick={() => toast.success('Entry format verified. Please proceed to Outpass form for official submission.')}>Verify Details</Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 )}
@@ -1953,6 +2014,70 @@ export default function StudentDashboard() {
                                                             </div>
                                                             <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Change</Button>
                                                         </div>
+                                                        <div className="p-6 bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 mb-8">
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Student Name</Label>
+                                                                    <Input value={user?.name || ''} readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Institution</Label>
+                                                                    <Input value={
+                                                                        outingCollegeFilter === 'NEC' ? 'Nandha Engineering College' :
+                                                                            outingCollegeFilter === 'NPC' ? 'Nandha Polytechnic College' :
+                                                                                outingCollegeFilter === 'NCT' ? 'Nandha College of Technology' :
+                                                                                    outingCollegeFilter === 'BAMS' ? 'Nandha Ayurveda College' :
+                                                                                        outingCollegeFilter === 'NMC' ? 'Nandha Medical College' :
+                                                                                            outingCollegeFilter === 'NCP' ? 'Nandha College of Pharmacy' :
+                                                                                                outingCollegeFilter === 'NASC' ? 'Nandha Arts & Science College' :
+                                                                                                    outingCollegeFilter === 'NCPT' ? 'Nandha College of Physiotherapy' :
+                                                                                                        outingCollegeFilter === 'NCN' ? 'Nandha College of Nursing' :
+                                                                                                            outingCollegeFilter === 'NCAHS' ? 'Nandha College of Allied Health Sciences' :
+                                                                                                                outingCollegeFilter === 'NNYMC' ? 'Nandha Naturopathy and Yoga Medical College' :
+                                                                                                                    'Nandha Dental College'
+                                                                    } readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Room Number</Label>
+                                                                    <Input value={user?.roomNumber || ''} readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Year & Department</Label>
+                                                                    <Input value={user?.department || ''} readOnly className="bg-slate-50 dark:bg-slate-900 border-none font-bold" />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Outing Date</Label>
+                                                                    <Input
+                                                                        type="date"
+                                                                        value={registerEntryForm.date}
+                                                                        onChange={e => setRegisterEntryForm({ ...registerEntryForm, date: e.target.value })}
+                                                                        className="border-blue-100 focus:border-blue-500"
+                                                                    />
+                                                                </div>
+                                                                <div className="grid grid-cols-2 gap-4">
+                                                                    <div className="space-y-2">
+                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Out Time</Label>
+                                                                        <Input
+                                                                            type="time"
+                                                                            value={registerEntryForm.outTime}
+                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, outTime: e.target.value })}
+                                                                            className="border-blue-100 focus:border-blue-500"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="space-y-2">
+                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">In Time</Label>
+                                                                        <Input
+                                                                            type="time"
+                                                                            value={registerEntryForm.inTime}
+                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, inTime: e.target.value })}
+                                                                            className="border-blue-100 focus:border-blue-500"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <Button onClick={() => setActiveTab('outpass')} className="w-full bg-blue-600 hover:bg-blue-700">Apply New Outpass</Button>
+                                                        </div>
+
                                                         <div className="space-y-4">
                                                             <div className="flex justify-between items-center px-2">
                                                                 <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{outingCollegeFilter} Outing History</h4>
