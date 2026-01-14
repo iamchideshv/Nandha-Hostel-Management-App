@@ -7,13 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/types';
-import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon } from 'lucide-react';
+import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details'>('complaints');
+    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register'>('complaints');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
 
@@ -450,6 +450,10 @@ export default function AdminDashboard() {
                                 <Users className="w-5 h-5" />
                                 <span>Student Details</span>
                             </button>
+                            <button onClick={() => { setActiveTab('register'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                                <ClipboardList className="w-5 h-5" />
+                                <span>Register</span>
+                            </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
                             <button onClick={() => { if (confirm('Go to home page?')) window.location.href = '/'; setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
@@ -539,6 +543,13 @@ export default function AdminDashboard() {
                     >
                         <Users className="w-4 h-4 mr-2" />
                         Student Details
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('register')}
+                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                    >
+                        <ClipboardList className="w-4 h-4 mr-2" />
+                        Register
                     </button>
                 </div>
 
@@ -1690,6 +1701,65 @@ export default function AdminDashboard() {
                         </Card>
                     </div>
                 )}
-            </div >
-        </>);
+                
+                {activeTab === 'register' && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-500">
+                            <CardHeader>
+                                <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
+                                    <LogOut className="w-6 h-6" />
+                                </div>
+                                <CardTitle>Leave Register</CardTitle>
+                                <CardDescription>Manage student leave records</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                    View and manage all student leave entries and permissions.
+                                </p>
+                            </CardContent>
+                            <CardFooter>
+                                <Button className="w-full bg-orange-600 hover:bg-orange-700">View Register</Button>
+                            </CardFooter>
+                        </Card>
+
+                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-blue-500">
+                            <CardHeader>
+                                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                                    <Footprints className="w-6 h-6" />
+                                </div>
+                                <CardTitle>Outing Register</CardTitle>
+                                <CardDescription>Track daily outings</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                    Monitor student outings, check-out and check-in times.
+                                </p>
+                            </CardContent>
+                            <CardFooter>
+                                <Button className="w-full bg-blue-600 hover:bg-blue-700">View Register</Button>
+                            </CardFooter>
+                        </Card>
+
+                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-red-500">
+                            <CardHeader>
+                                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
+                                    <Thermometer className="w-6 h-6" />
+                                </div>
+                                <CardTitle>Sick Register</CardTitle>
+                                <CardDescription>Medical emergency logs</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                    Access records of sick students and hospital visits.
+                                </p>
+                            </CardContent>
+                            <CardFooter>
+                                <Button className="w-full bg-red-600 hover:bg-red-700">View Register</Button>
+                            </CardFooter>
+                        </Card>
+                    </div>
+                )}
+            </div>
+        </>
+    );
 }

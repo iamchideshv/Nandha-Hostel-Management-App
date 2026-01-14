@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye, ClipboardList, Thermometer, Footprints } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
@@ -38,7 +38,7 @@ interface OutpassData {
 
 export default function StudentDashboard() {
     const { user, login } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found'>('mess');
+    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -598,6 +598,10 @@ export default function StudentDashboard() {
                                 <Search className="w-5 h-5" />
                                 <span>Lost & Found</span>
                             </button>
+                            <button onClick={() => { setActiveTab('register'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                                <ClipboardList className="w-5 h-5" />
+                                <span>Register</span>
+                            </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
                             <button onClick={() => { if (confirm('Go to home page?')) window.location.href = '/'; setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
@@ -683,6 +687,10 @@ export default function StudentDashboard() {
                             {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                         </p>
                     </div>
+                    <button onClick={() => setActiveTab('register')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                        <ClipboardList className="h-6 w-6 text-indigo-600 mb-2" />
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Register</h3>
+                    </button>
 
                     {/* Profile Modal */}
                     {showProfileModal && (
@@ -1822,7 +1830,7 @@ export default function StudentDashboard() {
                 )}
 
                 <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
-            </div >
+            </div>
             {/* Cropping Modal */}
             {showCropModal && imageToCrop && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
@@ -1888,6 +1896,64 @@ export default function StudentDashboard() {
                     </div>
                 </div>
             )}
+            {activeTab === 'register' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-500">
+                        <CardHeader>
+                            <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
+                                <LogOut className="w-6 h-6" />
+                            </div>
+                            <CardTitle>Leave Register</CardTitle>
+                            <CardDescription>Apply for long leave or vacation</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                Request permission for leave exceeding 24 hours. Requires parental approval.
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
+                        </CardFooter>
+                    </Card>
+
+                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-blue-500">
+                        <CardHeader>
+                            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                                <Footprints className="w-6 h-6" />
+                            </div>
+                            <CardTitle>Outing Register</CardTitle>
+                            <CardDescription>Short duration outing entry</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                Register for local outings, shopping, or movie trips. Return by curfew time.
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full bg-blue-600 hover:bg-blue-700">Open Register</Button>
+                        </CardFooter>
+                    </Card>
+
+                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-red-500">
+                        <CardHeader>
+                            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
+                                <Thermometer className="w-6 h-6" />
+                            </div>
+                            <CardTitle>Sick Register</CardTitle>
+                            <CardDescription>Report sickness or medical emergency</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                Log medical issues or requests to visit the hospital/infirmary.
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
+                        </CardFooter>
+                    </Card>
+                </div>
+            )}
+        </div >
         </>
     );
 }
