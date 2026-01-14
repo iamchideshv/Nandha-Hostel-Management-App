@@ -137,6 +137,22 @@ export default function StudentDashboard() {
         }
     };
 
+    const calculateCompletion = () => {
+        if (!user) return 0;
+        const fields = [
+            user.name,
+            user.department,
+            user.roomNumber,
+            user.phoneNumber,
+            user.email,
+            user.profileImage
+        ];
+        const completed = fields.filter(f => f && f.length > 0).length;
+        return Math.round((completed / fields.length) * 100);
+    };
+
+    const completion = calculateCompletion();
+
     useEffect(() => {
         fetchData();
         if (user) {
@@ -148,8 +164,16 @@ export default function StudentDashboard() {
                 phoneNumber: user.phoneNumber || '',
                 profileImage: user.profileImage || ''
             });
+
+            // Auto-popup for new users (if profile is less than 50% complete)
+            const hasSeenPopup = sessionStorage.getItem('profilePopupSeen');
+            if (!hasSeenPopup && completion < 50) {
+                setShowProfileModal(true);
+                sessionStorage.setItem('profilePopupSeen', 'true');
+                toast.info('Please complete your profile to access all features');
+            }
         }
-    }, [user, messHostelType]);
+    }, [user, messHostelType, completion]);
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -548,13 +572,26 @@ export default function StudentDashboard() {
                             </h1>
                             <div className="flex flex-col items-start gap-1">
                                 <p className="text-slate-500">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
-                                <button
-                                    onClick={() => setShowProfileModal(true)}
-                                    className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium mt-1"
-                                >
-                                    <UserCircle className="w-4 h-4" />
-                                    View / Edit Profile
-                                </button>
+                                <div className="flex flex-col gap-2 mt-1">
+                                    <button
+                                        onClick={() => setShowProfileModal(true)}
+                                        className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                                    >
+                                        <UserCircle className="w-4 h-4" />
+                                        View / Edit Profile
+                                    </button>
+                                    <div className="progress-container">
+                                        <div className="progress-bar" style={{ width: `${completion}%` }}></div>
+                                        <div className="progress-text">Profile {completion}%</div>
+                                        <div className="particles">
+                                            <div className="particle"></div>
+                                            <div className="particle"></div>
+                                            <div className="particle"></div>
+                                            <div className="particle"></div>
+                                            <div className="particle"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
