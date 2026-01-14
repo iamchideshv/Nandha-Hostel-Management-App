@@ -1968,7 +1968,7 @@ export default function AdminDashboard() {
                                                                                 )}
                                                                             </>
                                                                         ) : (
-                                                                            !o.pushedToSheet && (
+                                                                            !o.pushedToSheet ? (
                                                                                 <Button
                                                                                     size="sm"
                                                                                     variant="outline"
@@ -1978,6 +1978,11 @@ export default function AdminDashboard() {
                                                                                     <Upload className="w-3 h-3 mr-1" />
                                                                                     Push Record
                                                                                 </Button>
+                                                                            ) : (
+                                                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                                                                                    <BadgeCheck className="w-3 h-3" />
+                                                                                    Pushed
+                                                                                </div>
                                                                             )
                                                                         )}
                                                                     </div>
@@ -2142,7 +2147,7 @@ export default function AdminDashboard() {
                                                                                 )}
                                                                             </>
                                                                         ) : (
-                                                                            !o.pushedToSheet && (
+                                                                            !o.pushedToSheet ? (
                                                                                 <Button
                                                                                     size="sm"
                                                                                     variant="outline"
@@ -2152,6 +2157,11 @@ export default function AdminDashboard() {
                                                                                     <Upload className="w-3 h-3 mr-1" />
                                                                                     Push Record
                                                                                 </Button>
+                                                                            ) : (
+                                                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                                                                                    <BadgeCheck className="w-3 h-3" />
+                                                                                    Pushed
+                                                                                </div>
                                                                             )
                                                                         )}
                                                                     </div>
