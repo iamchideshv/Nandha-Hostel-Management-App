@@ -1949,7 +1949,6 @@ export default function StudentDashboard() {
                                                                     {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                                                     INTIMATE ADMIN
                                                                 </Button>
-                                                                <Button variant="outline" onClick={() => toast.success('Entry format verified. Please proceed to Outpass form for official submission.')}>Verify Details</Button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2131,7 +2130,6 @@ export default function StudentDashboard() {
                                                         <div className="space-y-4">
                                                             <div className="flex justify-between items-center px-2">
                                                                 <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{outingCollegeFilter} Outing History</h4>
-                                                                <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')} className="font-bold">INTIMATE ADMIN</Button>
                                                             </div>
                                                             {outpasses.filter(o => o.collegeName === outingCollegeFilter || !o.collegeName).length === 0 ? (
                                                                 <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
