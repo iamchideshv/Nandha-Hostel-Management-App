@@ -133,7 +133,24 @@ export default function AdminDashboard() {
         }
     };
 
+    const handlePushToSheet = async (outpass: Outpass) => {
+        try {
+            const res = await fetch('/api/push-register-record', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ outpass, adminName: user?.name || 'Admin' })
+            });
 
+            if (res.ok) {
+                toast.success('Record pushed to Google Sheet successfully');
+                fetchData();
+            } else {
+                toast.error('Failed to push record');
+            }
+        } catch (error) {
+            toast.error('Error pushing record');
+        }
+    };
 
     const fetchData = async () => {
         setLoading(true);
@@ -1928,7 +1945,7 @@ export default function AdminDashboard() {
                                                                         </div>
                                                                     </div>
                                                                     <div className="flex items-center gap-1.5 shrink-0 ml-4 transition-opacity">
-                                                                        {!o.inTimeConfirmed && (
+                                                                        {!o.inTimeConfirmed ? (
                                                                             <>
                                                                                 <Button
                                                                                     size="sm"
@@ -1950,6 +1967,18 @@ export default function AdminDashboard() {
                                                                                     </a>
                                                                                 )}
                                                                             </>
+                                                                        ) : (
+                                                                            !o.pushedToSheet && (
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    variant="outline"
+                                                                                    className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all"
+                                                                                    onClick={() => handlePushToSheet(o)}
+                                                                                >
+                                                                                    <Upload className="w-3 h-3 mr-1" />
+                                                                                    Push Record
+                                                                                </Button>
+                                                                            )
                                                                         )}
                                                                     </div>
                                                                     <div className="text-right min-w-[80px]">
@@ -2090,7 +2119,7 @@ export default function AdminDashboard() {
                                                                         </div>
                                                                     </div>
                                                                     <div className="flex items-center gap-1.5 shrink-0 ml-4 transition-opacity">
-                                                                        {!o.inTimeConfirmed && (
+                                                                        {!o.inTimeConfirmed ? (
                                                                             <>
                                                                                 <Button
                                                                                     size="sm"
@@ -2112,6 +2141,18 @@ export default function AdminDashboard() {
                                                                                     </a>
                                                                                 )}
                                                                             </>
+                                                                        ) : (
+                                                                            !o.pushedToSheet && (
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    variant="outline"
+                                                                                    className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all"
+                                                                                    onClick={() => handlePushToSheet(o)}
+                                                                                >
+                                                                                    <Upload className="w-3 h-3 mr-1" />
+                                                                                    Push Record
+                                                                                </Button>
+                                                                            )
                                                                         )}
                                                                     </div>
                                                                     <div className="text-right min-w-[100px]">

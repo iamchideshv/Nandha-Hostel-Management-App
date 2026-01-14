@@ -55,6 +55,8 @@ export interface Outpass {
     status: OutpassStatus;
     createdAt: string;
     approvedAt?: string;
+    pushedToSheet?: boolean;
+    pushedBy?: string;
 }
 
 export interface FeeStatus {
