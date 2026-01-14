@@ -305,6 +305,30 @@ input:checked+.theme-slider:before {
   justify-content: center;
 }
 
+.progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 30px;
+  transition: width 1s ease-in-out, background 0.3s ease;
+}
+
+.progress-bar-green {
+  background: linear-gradient(90deg, #00f260, #0575e6);
+  box-shadow: 0 0 10px #00f260, 0 0 20px #0575e6;
+}
+
+.progress-bar-yellow {
+  background: linear-gradient(90deg, #f1c40f, #f39c12);
+  box-shadow: 0 0 10px #f1c40f, 0 0 20px #f39c12;
+}
+
+.progress-bar-red {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+  box-shadow: 0 0 10px #e74c3c, 0 0 20px #c0392b;
+}
+
 .uiverse-login-button::before {
   content: "";
   position: absolute;

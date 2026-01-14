@@ -658,8 +658,13 @@ export default function StudentDashboard() {
                                         View / Edit Profile
                                     </button>
                                     <div className="progress-container">
-                                        <div className="progress-bar" style={{ width: `${completion}%` }}></div>
-                                        <div className="progress-text">Profile {completion}%</div>
+                                        <div
+                                            className={`progress-bar ${completion === 100 ? 'progress-bar-green' : completion >= 50 ? 'progress-bar-yellow' : 'progress-bar-red'}`}
+                                            style={{ width: `${completion}%` }}
+                                        ></div>
+                                        <div className="progress-text">
+                                            {completion < 50 ? 'Complete Your profile' : `Profile ${completion}%`}
+                                        </div>
                                         <div className="particles">
                                             <div className="particle"></div>
                                             <div className="particle"></div>
