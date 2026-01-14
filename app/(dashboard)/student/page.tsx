@@ -599,7 +599,10 @@ export default function StudentDashboard() {
                         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }}>
                             <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
                                 <div className="p-6 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-                                    <h3 className="text-lg font-bold">My Profile</h3>
+                                    <div className="flex flex-col">
+                                        <h3 className="text-lg font-bold">My Profile</h3>
+                                        <p className="text-[10px] text-red-500 font-medium">Update Detail correctly Next time you can't able to modify</p>
+                                    </div>
                                     <button onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }} className="text-slate-500 hover:text-red-500">
                                         <XCircle className="w-6 h-6" />
                                     </button>
@@ -653,11 +656,14 @@ export default function StudentDashboard() {
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Year & Department</Label>
+                                                <Label className="flex justify-between">
+                                                    <span>Year & Department</span>
+                                                    <span className="text-[10px] text-slate-400 font-normal">(Ex: 2nd-ECE)</span>
+                                                </Label>
                                                 <Input
                                                     value={profileForm.department}
                                                     onChange={e => setProfileForm({ ...profileForm, department: e.target.value })}
-                                                    placeholder="e.g. CSE - A"
+                                                    placeholder="e.g. 2nd-ECE"
                                                     readOnly={!!user?.department && !unlockedFields.includes('department')}
                                                     className={user?.department && !unlockedFields.includes('department') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
