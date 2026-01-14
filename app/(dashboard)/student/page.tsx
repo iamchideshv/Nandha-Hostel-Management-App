@@ -14,6 +14,7 @@ import { AboutModal } from '@/components/about-modal';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
 import { Mail, UserCircle, Upload, Camera } from 'lucide-react';
+import Cropper from 'react-easy-crop';
 
 interface ComplaintData {
     id: string;
@@ -91,6 +92,13 @@ export default function StudentDashboard() {
     const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false);
     const [unlockedFields, setUnlockedFields] = useState<string[]>([]);
     const [showModifyInfo, setShowModifyInfo] = useState(false);
+
+    // Cropping State
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [showCropModal, setShowCropModal] = useState(false);
 
     const [vendingStatus, setVendingStatus] = useState<any>(null);
     const [messTimings, setMessTimings] = useState({
@@ -475,32 +483,56 @@ export default function StudentDashboard() {
         }
     };
 
+    const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    };
+
+    const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<string | null> => {
+        const image = new Image();
+        image.src = imageSrc;
+        await new Promise((resolve) => (image.onload = resolve));
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) return null;
+
+        canvas.width = pixelCrop.width;
+        canvas.height = pixelCrop.height;
+
+        ctx.drawImage(
+            image,
+            pixelCrop.x,
+            pixelCrop.y,
+            pixelCrop.width,
+            pixelCrop.height,
+            0,
+            0,
+            pixelCrop.width,
+            pixelCrop.height
+        );
+
+        return canvas.toDataURL('image/jpeg', 0.8);
+    };
+
+    const handleApplyCrop = async () => {
+        if (imageToCrop && croppedAreaPixels) {
+            const croppedImage = await getCroppedImg(imageToCrop, croppedAreaPixels);
+            if (croppedImage) {
+                setProfileForm(prev => ({ ...prev, profileImage: croppedImage }));
+                setShowCropModal(false);
+                setImageToCrop(null);
+            }
+        }
+    };
+
     const handleProfileImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const MAX_WIDTH = 300;
-                    const MAX_HEIGHT = 300;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                    } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx?.drawImage(img, 0, 0, width, height);
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    setProfileForm(prev => ({ ...prev, profileImage: compressedBase64 }));
-                }
-                img.src = reader.result as string;
+                setImageToCrop(reader.result as string);
+                setShowCropModal(true);
             };
             reader.readAsDataURL(file);
         }
@@ -550,6 +582,51 @@ export default function StudentDashboard() {
                                 <LogOut className="w-5 h-5" />
                                 <span>Sign Out</span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Crop Modal */}
+            {showCropModal && imageToCrop && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                    <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+                        <div className="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                            <h3 className="font-bold">Crop Profile Image</h3>
+                            <button onClick={() => setShowCropModal(false)} className="text-slate-500 hover:text-red-500">
+                                <XCircle className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <div className="relative h-80 bg-slate-100 dark:bg-slate-800">
+                            <Cropper
+                                image={imageToCrop}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={1}
+                                onCropChange={setCrop}
+                                onCropComplete={onCropComplete}
+                                onZoomChange={setZoom}
+                                cropShape="round"
+                                showGrid={false}
+                            />
+                        </div>
+                        <div className="p-4 space-y-4">
+                            <div className="space-y-1">
+                                <Label className="text-[10px] uppercase tracking-wider text-slate-500">Zoom Level</Label>
+                                <input
+                                    type="range"
+                                    value={zoom}
+                                    min={1}
+                                    max={3}
+                                    step={0.1}
+                                    aria-labelledby="Zoom"
+                                    onChange={(e) => setZoom(Number(e.target.value))}
+                                    className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                            </div>
+                            <Button onClick={handleApplyCrop} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all active:scale-95">
+                                Set Profile Picture
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -664,7 +741,12 @@ export default function StudentDashboard() {
                                     <form onSubmit={handleProfileUpdate} className="space-y-6">
                                         {/* Image Upload */}
                                         <div className="flex flex-col items-center justify-center gap-4">
-                                            <div className="relative group">
+                                            <div className="relative group cursor-pointer" onClick={() => {
+                                                if (profileForm.profileImage) {
+                                                    setImageToCrop(profileForm.profileImage);
+                                                    setShowCropModal(true);
+                                                }
+                                            }}>
                                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                                                     {profileForm.profileImage ? (
                                                         <img src={profileForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
@@ -672,12 +754,12 @@ export default function StudentDashboard() {
                                                         <UserCircle className="w-20 h-20 text-slate-300" />
                                                     )}
                                                 </div>
-                                                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                                                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95" onClick={e => e.stopPropagation()}>
                                                     <Camera className="w-4 h-4" />
                                                     <input type="file" accept="image/*" className="hidden" onChange={handleProfileImageUpload} />
                                                 </label>
                                             </div>
-                                            <p className="text-xs text-slate-500">Click camera icon to change photo</p>
+                                            <p className="text-xs text-slate-500">Click photo to adjust or camera icon to change</p>
                                         </div>
 
                                         <div className="grid md:grid-cols-2 gap-4">
