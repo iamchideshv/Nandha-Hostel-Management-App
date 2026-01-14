@@ -204,11 +204,12 @@ export default function StudentDashboard() {
     }, [searchParams, router]);
 
     useEffect(() => {
-        if (user?.college) {
+        if (user) {
             setOutpassForm(prev => ({
                 ...prev,
                 collegeName: user.college || '',
-                hostelName: user.hostelName || prev.hostelName
+                hostelName: user.hostelName || prev.hostelName,
+                yearAndDept: user.department || 'Fetch your profile'
             }));
         }
     }, [user]);
@@ -1229,22 +1230,12 @@ export default function StudentDashboard() {
 
                                         <div className="space-y-2">
                                             <Label>Hostel Name</Label>
-                                            <select
-                                                className={`flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-black dark:border-slate-800 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
-                                                value={outpassForm.hostelName || user?.hostelName || ''}
-                                                onChange={(e) => setOutpassForm({ ...outpassForm, hostelName: e.target.value })}
-                                                required
-                                            >
-                                                <option value="">Select Hostel</option>
-                                                <option value="NRI-1">NRI-1</option>
-                                                <option value="NRI-2">NRI-2</option>
-                                                <option value="NRI-3">NRI-3</option>
-                                                <option value="NRI-4">NRI-4</option>
-                                                <option value="AKSHAYA-1">AKSHAYA-1</option>
-                                                <option value="AKSHAYA-2">AKSHAYA-2</option>
-                                                <option value="AKSHAYA-3">AKSHAYA-3</option>
-                                                <option value="AKSHAYA-4">AKSHAYA-4</option>
-                                            </select>
+                                            <Input
+                                                value={user?.hostelName || outpassForm.hostelName || ''}
+                                                readOnly={!!user?.hostelName}
+                                                className={user?.hostelName ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                placeholder="Lock your hostel in profile"
+                                            />
                                         </div>
 
                                         <div className="space-y-2">
@@ -1264,6 +1255,8 @@ export default function StudentDashboard() {
                                                 value={outpassForm.yearAndDept}
                                                 onChange={(e) => setOutpassForm({ ...outpassForm, yearAndDept: e.target.value })}
                                                 required
+                                                readOnly={!!user?.department}
+                                                className={user?.department ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                             />
                                         </div>
 
