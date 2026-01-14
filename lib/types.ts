@@ -50,6 +50,7 @@ export interface Outpass {
     toDate: string;
     outTime?: string;
     inTime?: string;
+    inTimeConfirmed?: boolean;
     type?: 'outpass' | 'leave' | 'outing' | 'sick';
     status: OutpassStatus;
     createdAt: string;

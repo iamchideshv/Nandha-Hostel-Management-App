@@ -147,6 +147,17 @@ export const db = {
     return snap.exists() ? (snap.data() as Outpass) : null;
   },
 
+  updateOutpass: async (id: string, data: Partial<Outpass>): Promise<Outpass | null> => {
+    const ref = doc(firestore, OUTPASS_COL, id);
+    // Sanitize data
+    const cleanData = Object.fromEntries(
+      Object.entries(data).filter(([_, v]) => v !== undefined)
+    );
+    await updateDoc(ref, cleanData);
+    const snap = await getDoc(ref);
+    return snap.exists() ? (snap.data() as Outpass) : null;
+  },
+
   clearOutpasses: async (hostelName?: string, studentId?: string): Promise<void> => {
     let q = query(collection(firestore, OUTPASS_COL));
     const constraints: QueryConstraint[] = [];

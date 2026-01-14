@@ -1892,7 +1892,7 @@ export default function AdminDashboard() {
                                                                     <div className="text-right">
                                                                         <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{o.fromDate}</p>
                                                                         {o.outTime ? (
-                                                                            <p className="text-[10px] text-slate-400 font-medium">{o.outTime} - {o.inTime}</p>
+                                                                            <p className="text-[10px] text-slate-400 font-medium">{o.outTime} - {o.inTimeConfirmed ? o.inTime : 'Not In'}</p>
                                                                         ) : (
                                                                             <p className="text-[10px] text-slate-400 font-medium">to {o.toDate}</p>
                                                                         )}
@@ -2027,10 +2027,10 @@ export default function AdminDashboard() {
                                                                         </div>
                                                                     </div>
                                                                     <div className="text-right">
-                                                                        <p className={`text-[10px] font-black uppercase ${o.type === 'outing' && o.status === 'pending' ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
-                                                                            {o.type === 'outing' && o.status === 'pending' ? 'Intimation' : 'Currently Out'}
+                                                                        <p className={`text-[10px] font-black uppercase ${o.type === 'outing' && !o.inTimeConfirmed ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
+                                                                            {o.type === 'outing' && !o.inTimeConfirmed ? 'Intimation' : 'Currently Out'}
                                                                         </p>
-                                                                        <p className="text-xs font-medium text-slate-500">{o.outTime ? `${o.outTime} - ${o.inTime}` : `Return by: ${o.toDate}`}</p>
+                                                                        <p className="text-xs font-medium text-slate-500">{o.outTime ? `${o.outTime} - ${o.inTimeConfirmed ? o.inTime : 'Not In'}` : `Return by: ${o.toDate}`}</p>
                                                                     </div>
                                                                 </div>
                                                             ))}

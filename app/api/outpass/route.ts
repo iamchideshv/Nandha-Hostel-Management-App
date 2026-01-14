@@ -76,9 +76,9 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { id, status } = body;
+    const { id, ...updateData } = body;
 
-    const updated = await db.updateOutpassStatus(id, status);
+    const updated = await db.updateOutpass(id, updateData);
     if (!updated) {
       return NextResponse.json({ error: 'Outpass not found' }, { status: 404 });
     }

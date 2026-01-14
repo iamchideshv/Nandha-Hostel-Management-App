@@ -34,6 +34,10 @@ interface OutpassData {
     hostelName?: string;
     roomNumber?: string;
     yearAndDept?: string;
+    outTime?: string;
+    inTime?: string;
+    inTimeConfirmed?: boolean;
+    type?: 'outpass' | 'leave' | 'outing' | 'sick';
 }
 
 export default function StudentDashboard() {
@@ -115,6 +119,7 @@ export default function StudentDashboard() {
         outTime: '',
         inTime: ''
     });
+    const [historyInTimes, setHistoryInTimes] = useState<{ [key: string]: string }>({});
 
     // Cropping State
     const [showCropModal, setShowCropModal] = useState(false);
@@ -270,18 +275,56 @@ export default function StudentDashboard() {
                     toDate: registerEntryForm.date,
                     outTime: registerEntryForm.outTime,
                     inTime: registerEntryForm.inTime,
-                    type: type
+                    type: type,
+                    inTimeConfirmed: !!registerEntryForm.inTime
                 })
             });
             if (res.ok) {
                 toast.success(`Admin Intimated successfully for ${type}`);
                 fetchData();
-                // Reset form or navigating? The user just said "send that detail"
+                setRegisterEntryForm({ ...registerEntryForm, outTime: '', inTime: '' });
             } else {
                 toast.error('Failed to intimate admin');
             }
         } catch (e) {
             toast.error('Error sending intimation');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleConfirmReturn = async (outpassId: string) => {
+        const inTime = historyInTimes[outpassId];
+        if (!inTime) {
+            toast.error('Please enter in-time');
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/outpass', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: outpassId,
+                    inTime,
+                    inTimeConfirmed: true,
+                    status: 'entered'
+                })
+            });
+            if (res.ok) {
+                toast.success('Return confirmed successfully');
+                fetchData();
+                setHistoryInTimes(prev => {
+                    const next = { ...prev };
+                    delete next[outpassId];
+                    return next;
+                });
+            } else {
+                toast.error('Failed to confirm return');
+            }
+        } catch (e) {
+            toast.error('Error confirming return');
         } finally {
             setSubmitting(false);
         }
@@ -1364,8 +1407,8 @@ export default function StudentDashboard() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
-                                        {!outpasses.length ? <p className="text-sm text-slate-500">No outpass history.</p> :
-                                            outpasses.map((o) => (
+                                        {!outpasses.filter(o => !o.type || o.type === 'outpass').length ? <p className="text-sm text-slate-500">No outpass history.</p> :
+                                            outpasses.filter(o => !o.type || o.type === 'outpass').map((o) => (
                                                 <div key={o.id} className="p-3 border rounded-lg flex flex-col bg-white dark:bg-black">
                                                     <div className="flex justify-between items-center w-full">
                                                         <div>
@@ -1951,6 +1994,60 @@ export default function StudentDashboard() {
                                                                 </Button>
                                                             </div>
                                                         </div>
+
+                                                        <div className="space-y-4">
+                                                            <div className="flex justify-between items-center px-2">
+                                                                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{leaveCollegeFilter} Leave History</h4>
+                                                            </div>
+                                                            {outpasses.filter(o => o.type === 'leave' && (o.collegeName === leaveCollegeFilter || !o.collegeName)).length === 0 ? (
+                                                                <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
+                                                                    No leave history found for {leaveCollegeFilter}.
+                                                                </div>
+                                                            ) : (
+                                                                <div className="space-y-3">
+                                                                    {outpasses.filter(o => o.type === 'leave' && (o.collegeName === leaveCollegeFilter || !o.collegeName)).map(o => (
+                                                                        <div key={o.id} className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col gap-4 hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
+                                                                            <div className="flex justify-between items-center">
+                                                                                <div className="flex items-center gap-4">
+                                                                                    <div className={`w-2 h-2 rounded-full ${o.inTimeConfirmed ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`} />
+                                                                                    <div>
+                                                                                        <p className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                                                            {o.reason}
+                                                                                        </p>
+                                                                                        <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
+                                                                                            <Clock className="w-3 h-3" />
+                                                                                            {o.fromDate} | {o.outTime || 'N/A'} - {o.inTime || 'N/A'}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className={`text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-wider ${o.inTimeConfirmed ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'}`}>
+                                                                                    {o.inTimeConfirmed ? 'Entered' : 'Not In'}
+                                                                                </div>
+                                                                            </div>
+                                                                            {!o.inTimeConfirmed && (
+                                                                                <div className="flex items-center gap-2 pt-2 border-t dark:border-slate-800">
+                                                                                    <Input
+                                                                                        type="time"
+                                                                                        placeholder="Enter In Time"
+                                                                                        className="h-8 text-xs w-32"
+                                                                                        value={historyInTimes[o.id] || ''}
+                                                                                        onChange={e => setHistoryInTimes({ ...historyInTimes, [o.id]: e.target.value })}
+                                                                                    />
+                                                                                    <Button
+                                                                                        size="sm"
+                                                                                        className="h-8 text-[10px] font-bold bg-green-600 hover:bg-green-700"
+                                                                                        onClick={() => handleConfirmReturn(o.id)}
+                                                                                        disabled={submitting}
+                                                                                    >
+                                                                                        CONFIRM RETURN
+                                                                                    </Button>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 )}
                                             </div>
@@ -2131,27 +2228,50 @@ export default function StudentDashboard() {
                                                             <div className="flex justify-between items-center px-2">
                                                                 <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{outingCollegeFilter} Outing History</h4>
                                                             </div>
-                                                            {outpasses.filter(o => o.collegeName === outingCollegeFilter || !o.collegeName).length === 0 ? (
+                                                            {outpasses.filter(o => o.type === 'outing' && (o.collegeName === outingCollegeFilter || !o.collegeName)).length === 0 ? (
                                                                 <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
-                                                                    No history found for {outingCollegeFilter}.
+                                                                    No outing history found for {outingCollegeFilter}.
                                                                 </div>
                                                             ) : (
                                                                 <div className="space-y-3">
-                                                                    {outpasses.filter(o => o.collegeName === outingCollegeFilter || !o.collegeName).map(o => (
-                                                                        <div key={o.id} className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex justify-between items-center hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
-                                                                            <div className="flex items-center gap-4">
-                                                                                <div className={`w-2 h-2 rounded-full ${o.status === 'exited' ? 'bg-orange-500 animate-pulse' : o.status === 'entered' ? 'bg-green-500' : 'bg-slate-300'}`} />
-                                                                                <div>
-                                                                                    <p className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{o.reason}</p>
-                                                                                    <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
-                                                                                        <Clock className="w-3 h-3" />
-                                                                                        {o.fromDate} - {o.toDate}
-                                                                                    </p>
+                                                                    {outpasses.filter(o => o.type === 'outing' && (o.collegeName === outingCollegeFilter || !o.collegeName)).map(o => (
+                                                                        <div key={o.id} className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col gap-4 hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
+                                                                            <div className="flex justify-between items-center">
+                                                                                <div className="flex items-center gap-4">
+                                                                                    <div className={`w-2 h-2 rounded-full ${o.inTimeConfirmed ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`} />
+                                                                                    <div>
+                                                                                        <p className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                                                            {o.reason}
+                                                                                        </p>
+                                                                                        <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
+                                                                                            <Clock className="w-3 h-3" />
+                                                                                            {o.fromDate} | {o.outTime || 'N/A'} - {o.inTime || 'N/A'}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className={`text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-wider ${o.inTimeConfirmed ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'}`}>
+                                                                                    {o.inTimeConfirmed ? 'Entered' : 'Not In'}
                                                                                 </div>
                                                                             </div>
-                                                                            <div className={`text-[10px] px-3 py-1 rounded-full uppercase font-black tracking-wider ${o.status === 'exited' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : o.status === 'entered' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'}`}>
-                                                                                {o.status}
-                                                                            </div>
+                                                                            {!o.inTimeConfirmed && (
+                                                                                <div className="flex items-center gap-2 pt-2 border-t dark:border-slate-800">
+                                                                                    <Input
+                                                                                        type="time"
+                                                                                        placeholder="Enter In Time"
+                                                                                        className="h-8 text-xs w-32"
+                                                                                        value={historyInTimes[o.id] || ''}
+                                                                                        onChange={e => setHistoryInTimes({ ...historyInTimes, [o.id]: e.target.value })}
+                                                                                    />
+                                                                                    <Button
+                                                                                        size="sm"
+                                                                                        className="h-8 text-[10px] font-bold bg-green-600 hover:bg-green-700"
+                                                                                        onClick={() => handleConfirmReturn(o.id)}
+                                                                                        disabled={submitting}
+                                                                                    >
+                                                                                        CONFIRM RETURN
+                                                                                    </Button>
+                                                                                </div>
+                                                                            )}
                                                                         </div>
                                                                     ))}
                                                                 </div>
