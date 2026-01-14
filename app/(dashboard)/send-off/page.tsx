@@ -235,7 +235,7 @@ export default function SendOffDashboard() {
                 </Button>
             </header>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="max-w-2xl mx-auto">
                 {/* Scanner Section */}
                 <Card className="h-fit">
                     <CardHeader>
@@ -457,37 +457,6 @@ export default function SendOffDashboard() {
                                 )}
                             </div>
                         )}
-                    </CardContent>
-                </Card>
-
-                {/* Instructions / Info */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Instructions</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4 text-sm text-slate-600">
-                        <p>1. Ensure you have allowed camera permissions.</p>
-                        <p>2. Ask the student to show the QR Code from their dashboard.</p>
-                        <p>3. Align the QR code within the frame.</p>
-                        <p>4. Verify the details (Name, Date) on screen match the student.</p>
-
-                        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-4">
-                            <h4 className="font-semibold text-yellow-800 mb-1">Security Note</h4>
-                            <p>Only "APPROVED" outpasses are valid for exit. Check the dates strictly.</p>
-                        </div>
-
-                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mt-4">
-                            <h4 className="font-semibold text-blue-800 mb-1">Mobile Camera Issue?</h4>
-                            <p className="mb-2">Browsers block cameras on non-secure (HTTP) connections.</p>
-                            <p className="font-medium text-blue-900">To fix on Android (Chrome/Edge):</p>
-                            <ol className="list-decimal pl-5 space-y-1 mt-1">
-                                <li>Open <code>chrome://flags</code></li>
-                                <li>Search <code>insecure origins</code></li>
-                                <li>Enable <strong>"Insecure origins treated as secure"</strong></li>
-                                <li>Add your IP: <code>http://10.144.77.232:3000</code></li>
-                                <li>Relaunch Browser</li>
-                            </ol>
-                        </div>
                     </CardContent>
                 </Card>
                 <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
