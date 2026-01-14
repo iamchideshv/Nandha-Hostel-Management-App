@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { id, password, name, hostelName, roomNumber, secretCode } = body;
+        const { id, password, name, hostelName, roomNumber, college, secretCode } = body;
 
         // Check mandatory fields (ID, Password, Name are common)
         if (!id || !password || !name) {
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
             role,
             hostelName: hostelName || (role === 'admin' ? 'Administrative' : 'Main Hostel'),
             roomNumber: roomNumber || '',
+            college: college || '',
             feesPaid: false,
         };
 

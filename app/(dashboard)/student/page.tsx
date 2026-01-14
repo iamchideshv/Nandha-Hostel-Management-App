@@ -165,6 +165,9 @@ export default function StudentDashboard() {
 
     useEffect(() => {
         fetchData();
+    }, [user?.id, messHostelType]);
+
+    useEffect(() => {
         if (user) {
             setProfileForm({
                 name: user.name || '',
@@ -177,14 +180,16 @@ export default function StudentDashboard() {
             });
 
             // Auto-popup for new registrations (if profile is not complete)
-            const hasSeenPopup = sessionStorage.getItem('profilePopupSeen');
-            if (!hasSeenPopup && completion < 100) {
-                setShowProfileModal(true);
-                sessionStorage.setItem('profilePopupSeen', 'true');
-                toast.info('Welcome! Please complete your profile details');
+            if (!loadingData) {
+                const hasSeenPopup = sessionStorage.getItem('profilePopupSeen');
+                if (!hasSeenPopup && completion < 100) {
+                    setShowProfileModal(true);
+                    sessionStorage.setItem('profilePopupSeen', 'true');
+                    toast.info('Welcome! Please complete your profile details');
+                }
             }
         }
-    }, [user, messHostelType, completion]);
+    }, [user, completion, loadingData]);
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
