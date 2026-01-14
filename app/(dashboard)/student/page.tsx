@@ -1745,14 +1745,20 @@ export default function StudentDashboard() {
                                                             <h3 className="text-xl font-bold text-slate-900 dark:text-white">Select Your College</h3>
                                                             <p className="text-sm text-slate-500 dark:text-slate-400">Choose your institution to proceed with leave management</p>
                                                         </div>
-                                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                                                             {[
                                                                 { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
                                                                 { id: 'NPC', name: 'Nandha Polytechnic College', color: 'orange', icon: '⚙️' },
                                                                 { id: 'NCT', name: 'Nandha College of Technology', color: 'green', icon: '💻' },
                                                                 { id: 'BAMS', name: 'Nandha Ayurveda College', color: 'emerald', icon: '🌿' },
                                                                 { id: 'NMC', name: 'Nandha Medical College', color: 'red', icon: '🏥' },
-                                                                { id: 'NDC', name: 'Nandha Dental College', color: 'purple', icon: '🦷' }
+                                                                { id: 'NDC', name: 'Nandha Dental College', color: 'purple', icon: '🦷' },
+                                                                { id: 'NCP', name: 'Nandha College of Pharmacy', color: 'pink', icon: '💊' },
+                                                                { id: 'NASC', name: 'Nandha Arts & Science College', color: 'sky', icon: '🎨' },
+                                                                { id: 'NCPT', name: 'Nandha College of Physiotherapy', color: 'cyan', icon: '🏃' },
+                                                                { id: 'NCN', name: 'Nandha College of Nursing', color: 'rose', icon: '👩‍⚕️' },
+                                                                { id: 'NCAHS', name: 'Nandha College of Allied Health Sciences', color: 'teal', icon: '🧪' },
+                                                                { id: 'NNYMC', name: 'Nandha Naturopathy and Yoga Medical College', color: 'lime', icon: '🧘' }
                                                             ].map((col) => (
                                                                 <button
                                                                     key={col.id}
@@ -1763,7 +1769,13 @@ export default function StudentDashboard() {
                                                                                 col.color === 'green' ? 'border-green-100 hover:border-green-500 bg-green-50/50 hover:bg-green-50' :
                                                                                     col.color === 'emerald' ? 'border-emerald-100 hover:border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50' :
                                                                                         col.color === 'red' ? 'border-red-100 hover:border-red-500 bg-red-50/50 hover:bg-red-50' :
-                                                                                            'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
+                                                                                            col.color === 'pink' ? 'border-pink-100 hover:border-pink-500 bg-pink-50/50 hover:bg-pink-50' :
+                                                                                                col.color === 'sky' ? 'border-sky-100 hover:border-sky-500 bg-sky-50/50 hover:bg-sky-50' :
+                                                                                                    col.color === 'cyan' ? 'border-cyan-100 hover:border-cyan-500 bg-cyan-50/50 hover:bg-cyan-50' :
+                                                                                                        col.color === 'rose' ? 'border-rose-100 hover:border-rose-500 bg-rose-50/50 hover:bg-rose-50' :
+                                                                                                            col.color === 'teal' ? 'border-teal-100 hover:border-teal-500 bg-teal-50/50 hover:bg-teal-50' :
+                                                                                                                col.color === 'lime' ? 'border-lime-100 hover:border-lime-500 bg-lime-50/50 hover:bg-lime-50' :
+                                                                                                                    'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
                                                                 >
                                                                     <div className={`text-4xl mb-1 group-hover:scale-110 transition-transform`}>{col.icon}</div>
                                                                     <div className="space-y-1">
@@ -1773,7 +1785,13 @@ export default function StudentDashboard() {
                                                                                     col.color === 'green' ? 'text-green-700' :
                                                                                         col.color === 'emerald' ? 'text-emerald-700' :
                                                                                             col.color === 'red' ? 'text-red-700' :
-                                                                                                'text-purple-700'}`}>{col.id}</span>
+                                                                                                col.color === 'pink' ? 'text-pink-700' :
+                                                                                                    col.color === 'sky' ? 'text-sky-700' :
+                                                                                                        col.color === 'cyan' ? 'text-cyan-700' :
+                                                                                                            col.color === 'rose' ? 'text-rose-700' :
+                                                                                                                col.color === 'teal' ? 'text-teal-700' :
+                                                                                                                    col.color === 'lime' ? 'text-lime-700' :
+                                                                                                                        'text-purple-700'}`}>{col.id}</span>
                                                                         <p className="text-[10px] leading-tight font-medium text-slate-500 dark:text-slate-400 line-clamp-1">{col.name}</p>
                                                                     </div>
                                                                 </button>
