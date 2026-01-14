@@ -203,6 +203,16 @@ export default function StudentDashboard() {
         }
     }, [searchParams, router]);
 
+    useEffect(() => {
+        if (user?.college) {
+            setOutpassForm(prev => ({
+                ...prev,
+                collegeName: user.college || '',
+                hostelName: user.hostelName || prev.hostelName
+            }));
+        }
+    }, [user]);
+
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
@@ -1209,10 +1219,11 @@ export default function StudentDashboard() {
                                             <Label>College Name</Label>
                                             <Input
                                                 placeholder="College Name"
-                                                className={`focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'}`}
+                                                className={`focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'} ${user?.college ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}`}
                                                 value={outpassForm.collegeName}
                                                 onChange={(e) => setOutpassForm({ ...outpassForm, collegeName: e.target.value })}
                                                 required
+                                                readOnly={!!user?.college}
                                             />
                                         </div>
 
