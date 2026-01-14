@@ -18,6 +18,7 @@ export default function AdminDashboard() {
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick'>('main');
     const [leaveCollegeFilter, setLeaveCollegeFilter] = useState<string | null>(null);
+    const [outingCollegeFilter, setOutingCollegeFilter] = useState<string | null>(null);
 
     // Data
     const [users, setUsers] = useState<User[]>([]);
@@ -1902,32 +1903,133 @@ export default function AdminDashboard() {
                                     )}
 
                                     {registerSubTab === 'outing' && (
-                                        <div className="space-y-4">
-                                            <div className="flex justify-between items-center px-2">
-                                                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Active Outpasses</h4>
-                                                <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')}>Manage All Outpasses</Button>
-                                            </div>
-                                            {outpasses.filter(o => o.status === 'exited').length === 0 ? (
-                                                <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
-                                                    No students currently outside.
+                                        <div className="space-y-6">
+                                            {!outingCollegeFilter ? (
+                                                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                    <div className="text-center space-y-2">
+                                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">Outing Management</h3>
+                                                        <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view active outings</p>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                                        {[
+                                                            { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
+                                                            { id: 'NPC', name: 'Nandha Polytechnic College', color: 'orange', icon: '⚙️' },
+                                                            { id: 'NCT', name: 'Nandha College of Technology', color: 'green', icon: '💻' },
+                                                            { id: 'BAMS', name: 'Nandha Ayurveda College', color: 'emerald', icon: '🌿' },
+                                                            { id: 'NMC', name: 'Nandha Medical College', color: 'red', icon: '🏥' },
+                                                            { id: 'NDC', name: 'Nandha Dental College', color: 'purple', icon: '🦷' },
+                                                            { id: 'NCP', name: 'Nandha College of Pharmacy', color: 'pink', icon: '💊' },
+                                                            { id: 'NASC', name: 'Nandha Arts & Science College', color: 'sky', icon: '🎨' },
+                                                            { id: 'NCPT', name: 'Nandha College of Physiotherapy', color: 'cyan', icon: '🏃' },
+                                                            { id: 'NCN', name: 'Nandha College of Nursing', color: 'rose', icon: '👩‍⚕️' },
+                                                            { id: 'NCAHS', name: 'Nandha College of Allied Health Sciences', color: 'teal', icon: '🧪' },
+                                                            { id: 'NNYMC', name: 'Nandha Naturopathy and Yoga Medical College', color: 'lime', icon: '🧘' }
+                                                        ].map((col) => (
+                                                            <button
+                                                                key={col.id}
+                                                                onClick={() => setOutingCollegeFilter(col.id)}
+                                                                className={`group relative p-6 rounded-2xl border-2 transition-all hover:shadow-xl active:scale-95 flex flex-col items-center text-center gap-3
+                                                                    ${col.color === 'blue' ? 'border-blue-100 hover:border-blue-500 bg-blue-50/50 hover:bg-blue-50' :
+                                                                        col.color === 'orange' ? 'border-orange-100 hover:border-orange-500 bg-orange-50/50 hover:bg-orange-50' :
+                                                                            col.color === 'green' ? 'border-green-100 hover:border-green-500 bg-green-50/50 hover:bg-green-50' :
+                                                                                col.color === 'emerald' ? 'border-emerald-100 hover:border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50' :
+                                                                                    col.color === 'red' ? 'border-red-100 hover:border-red-500 bg-red-50/50 hover:bg-red-50' :
+                                                                                        col.color === 'pink' ? 'border-pink-100 hover:border-pink-500 bg-pink-50/50 hover:bg-pink-50' :
+                                                                                            col.color === 'sky' ? 'border-sky-100 hover:border-sky-500 bg-sky-50/50 hover:bg-sky-50' :
+                                                                                                col.color === 'cyan' ? 'border-cyan-100 hover:border-cyan-500 bg-cyan-50/50 hover:bg-cyan-50' :
+                                                                                                    col.color === 'rose' ? 'border-rose-100 hover:border-rose-500 bg-rose-50/50 hover:bg-rose-50' :
+                                                                                                        col.color === 'teal' ? 'border-teal-100 hover:border-teal-500 bg-teal-50/50 hover:bg-teal-50' :
+                                                                                                            col.color === 'lime' ? 'border-lime-100 hover:border-lime-500 bg-lime-50/50 hover:bg-lime-50' :
+                                                                                                                'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
+                                                            >
+                                                                <div className={`text-4xl mb-1 group-hover:scale-110 transition-transform`}>{col.icon}</div>
+                                                                <div className="space-y-1">
+                                                                    <span className={`text-lg font-black tracking-tighter
+                                                                        ${col.color === 'blue' ? 'text-blue-700' :
+                                                                            col.color === 'orange' ? 'text-orange-700' :
+                                                                                col.color === 'green' ? 'text-green-700' :
+                                                                                    col.color === 'emerald' ? 'text-emerald-700' :
+                                                                                        col.color === 'red' ? 'text-red-700' :
+                                                                                            col.color === 'pink' ? 'text-pink-700' :
+                                                                                                col.color === 'sky' ? 'text-sky-700' :
+                                                                                                    col.color === 'cyan' ? 'text-cyan-700' :
+                                                                                                        col.color === 'rose' ? 'text-rose-700' :
+                                                                                                            col.color === 'teal' ? 'text-teal-700' :
+                                                                                                                col.color === 'lime' ? 'text-lime-700' :
+                                                                                                                    'text-purple-700'}`}>{col.id}</span>
+                                                                    <p className="text-[10px] leading-tight font-medium text-slate-500 dark:text-slate-400 line-clamp-1">{col.name}</p>
+                                                                </div>
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             ) : (
-                                                <div className="grid gap-3">
-                                                    {outpasses.filter(o => o.status === 'exited').map(o => (
-                                                        <div key={o.id} className="p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10 flex justify-between items-center">
-                                                            <div className="flex items-center gap-4">
-                                                                <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                                                                <div>
-                                                                    <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
-                                                                    <p className="text-xs text-slate-500">{o.reason}</p>
-                                                                </div>
+                                                <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                                    <div className="flex items-center justify-between mb-2 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow-lg
+                                                                ${outingCollegeFilter === 'NEC' ? 'bg-blue-600' :
+                                                                    outingCollegeFilter === 'NPC' ? 'bg-orange-600' :
+                                                                        outingCollegeFilter === 'NCT' ? 'bg-green-600' :
+                                                                            outingCollegeFilter === 'BAMS' ? 'bg-emerald-600' :
+                                                                                outingCollegeFilter === 'NMC' ? 'bg-red-600' :
+                                                                                    outingCollegeFilter === 'NCP' ? 'bg-pink-600' :
+                                                                                        outingCollegeFilter === 'NASC' ? 'bg-sky-600' :
+                                                                                            outingCollegeFilter === 'NCPT' ? 'bg-cyan-600' :
+                                                                                                outingCollegeFilter === 'NCN' ? 'bg-rose-600' :
+                                                                                                    outingCollegeFilter === 'NCAHS' ? 'bg-teal-600' :
+                                                                                                        outingCollegeFilter === 'NNYMC' ? 'bg-lime-600' :
+                                                                                                            'bg-purple-600'}`}>
+                                                                {outingCollegeFilter}
                                                             </div>
-                                                            <div className="text-right">
-                                                                <p className="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase">Currently Out</p>
-                                                                <p className="text-xs font-medium text-slate-500">Return by: {o.toDate}</p>
+                                                            <div>
+                                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Selected College</p>
+                                                                <p className="text-sm font-bold text-slate-900 dark:text-white">
+                                                                    {outingCollegeFilter === 'NEC' ? 'Nandha Engineering College' :
+                                                                        outingCollegeFilter === 'NPC' ? 'Nandha Polytechnic College' :
+                                                                            outingCollegeFilter === 'NCT' ? 'Nandha College of Technology' :
+                                                                                outingCollegeFilter === 'BAMS' ? 'Nandha Ayurveda College' :
+                                                                                    outingCollegeFilter === 'NMC' ? 'Nandha Medical College' :
+                                                                                        outingCollegeFilter === 'NCP' ? 'Nandha College of Pharmacy' :
+                                                                                            outingCollegeFilter === 'NASC' ? 'Nandha Arts & Science College' :
+                                                                                                outingCollegeFilter === 'NCPT' ? 'Nandha College of Physiotherapy' :
+                                                                                                    outingCollegeFilter === 'NCN' ? 'Nandha College of Nursing' :
+                                                                                                        outingCollegeFilter === 'NCAHS' ? 'Nandha College of Allied Health Sciences' :
+                                                                                                            outingCollegeFilter === 'NNYMC' ? 'Nandha Naturopathy and Yoga Medical College' :
+                                                                                                                'Nandha Dental College'}
+                                                                </p>
                                                             </div>
                                                         </div>
-                                                    ))}
+                                                        <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
+                                                    </div>
+
+                                                    <div className="flex justify-between items-center px-2">
+                                                        <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Active Outpasses - {outingCollegeFilter}</h4>
+                                                        <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')}>Manage All</Button>
+                                                    </div>
+                                                    {outpasses.filter(o => o.status === 'exited' && o.collegeName === outingCollegeFilter).length === 0 ? (
+                                                        <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
+                                                            No students from {outingCollegeFilter} currently outside.
+                                                        </div>
+                                                    ) : (
+                                                        <div className="grid gap-3">
+                                                            {outpasses.filter(o => o.status === 'exited' && o.collegeName === outingCollegeFilter).map(o => (
+                                                                <div key={o.id} className="p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10 flex justify-between items-center">
+                                                                    <div className="flex items-center gap-4">
+                                                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                                                                        <div>
+                                                                            <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
+                                                                            <p className="text-xs text-slate-500">{o.reason}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="text-right">
+                                                                        <p className="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase">Currently Out</p>
+                                                                        <p className="text-xs font-medium text-slate-500">Return by: {o.toDate}</p>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
