@@ -175,8 +175,16 @@ export default function StudentDashboard() {
                 college: user.college || '',
                 profileImage: user.profileImage || ''
             });
+
+            // Auto-popup for new registrations (if profile is not complete)
+            const hasSeenPopup = sessionStorage.getItem('profilePopupSeen');
+            if (!hasSeenPopup && completion < 100) {
+                setShowProfileModal(true);
+                sessionStorage.setItem('profilePopupSeen', 'true');
+                toast.info('Welcome! Please complete your profile details');
+            }
         }
-    }, [user, messHostelType]);
+    }, [user, messHostelType, completion]);
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -765,7 +773,7 @@ export default function StudentDashboard() {
                                                 <Input
                                                     value={profileForm.college}
                                                     onChange={e => setProfileForm({ ...profileForm, college: e.target.value })}
-                                                    placeholder="Your College Name"
+                                                    placeholder="Select your college"
                                                     readOnly={!!user?.college && !unlockedFields.includes('college')}
                                                     className={user?.college && !unlockedFields.includes('college') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
                                                 />
