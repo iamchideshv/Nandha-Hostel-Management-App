@@ -1228,7 +1228,7 @@ export default function StudentDashboard() {
                         <div className="grid md:grid-cols-2 gap-6">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Apply for Outpass</CardTitle>
+                                    <CardTitle>INTIMATE ADMIN</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <form onSubmit={handleOutpassSubmit} className="space-y-4">
@@ -1905,7 +1905,7 @@ export default function StudentDashboard() {
                                                                 </div>
                                                             </div>
                                                             <div className="pt-4 flex gap-4">
-                                                                <Button onClick={() => setActiveTab('outpass')} className="flex-1 bg-blue-600 hover:bg-blue-700">Apply for Official Pass</Button>
+                                                                <Button onClick={() => setActiveTab('outpass')} className="flex-1 bg-blue-600 hover:bg-blue-700 font-bold tracking-tight">INTIMATE ADMIN</Button>
                                                                 <Button variant="outline" onClick={() => toast.success('Entry format verified. Please proceed to Outpass form for official submission.')}>Verify Details</Button>
                                                             </div>
                                                         </div>
@@ -2075,13 +2075,13 @@ export default function StudentDashboard() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <Button onClick={() => setActiveTab('outpass')} className="w-full bg-blue-600 hover:bg-blue-700">Apply New Outpass</Button>
+                                                            <Button onClick={() => setActiveTab('outpass')} className="w-full bg-blue-600 hover:bg-blue-700 font-bold tracking-tight">INTIMATE ADMIN</Button>
                                                         </div>
 
                                                         <div className="space-y-4">
                                                             <div className="flex justify-between items-center px-2">
                                                                 <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{outingCollegeFilter} Outing History</h4>
-                                                                <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')}>Apply New Outpass</Button>
+                                                                <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')} className="font-bold">INTIMATE ADMIN</Button>
                                                             </div>
                                                             {outpasses.filter(o => o.collegeName === outingCollegeFilter || !o.collegeName).length === 0 ? (
                                                                 <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
