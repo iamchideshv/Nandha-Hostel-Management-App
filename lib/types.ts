@@ -48,6 +48,9 @@ export interface Outpass {
     reason: string;
     fromDate: string;
     toDate: string;
+    outTime?: string;
+    inTime?: string;
+    type?: 'outpass' | 'leave' | 'outing' | 'sick';
     status: OutpassStatus;
     createdAt: string;
     approvedAt?: string;

@@ -251,6 +251,42 @@ export default function StudentDashboard() {
     };
 
 
+    const handleRegisterIntimation = async (type: 'leave' | 'outing') => {
+        if (!user) return;
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/outpass', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    studentId: user.id,
+                    studentName: user.name,
+                    hostelName: user.hostelName,
+                    collegeName: type === 'leave' ? leaveCollegeFilter : outingCollegeFilter,
+                    roomNumber: user.roomNumber,
+                    yearAndDept: user.department,
+                    reason: `Register Intimation: ${type.toUpperCase()}`,
+                    fromDate: registerEntryForm.date,
+                    toDate: registerEntryForm.date,
+                    outTime: registerEntryForm.outTime,
+                    inTime: registerEntryForm.inTime,
+                    type: type
+                })
+            });
+            if (res.ok) {
+                toast.success(`Admin Intimated successfully for ${type}`);
+                fetchData();
+                // Reset form or navigating? The user just said "send that detail"
+            } else {
+                toast.error('Failed to intimate admin');
+            }
+        } catch (e) {
+            toast.error('Error sending intimation');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     const handleOutpassSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
@@ -1905,7 +1941,14 @@ export default function StudentDashboard() {
                                                                 </div>
                                                             </div>
                                                             <div className="pt-4 flex gap-4">
-                                                                <Button onClick={() => setActiveTab('outpass')} className="flex-1 bg-blue-600 hover:bg-blue-700 font-bold tracking-tight">INTIMATE ADMIN</Button>
+                                                                <Button
+                                                                    onClick={() => handleRegisterIntimation('leave')}
+                                                                    disabled={submitting}
+                                                                    className="flex-1 bg-blue-600 hover:bg-blue-700 font-bold tracking-tight"
+                                                                >
+                                                                    {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                                                    INTIMATE ADMIN
+                                                                </Button>
                                                                 <Button variant="outline" onClick={() => toast.success('Entry format verified. Please proceed to Outpass form for official submission.')}>Verify Details</Button>
                                                             </div>
                                                         </div>
@@ -2075,7 +2118,14 @@ export default function StudentDashboard() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <Button onClick={() => setActiveTab('outpass')} className="w-full bg-blue-600 hover:bg-blue-700 font-bold tracking-tight">INTIMATE ADMIN</Button>
+                                                            <Button
+                                                                onClick={() => handleRegisterIntimation('outing')}
+                                                                disabled={submitting}
+                                                                className="w-full bg-blue-600 hover:bg-blue-700 font-bold tracking-tight"
+                                                            >
+                                                                {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                                                INTIMATE ADMIN
+                                                            </Button>
                                                         </div>
 
                                                         <div className="space-y-4">

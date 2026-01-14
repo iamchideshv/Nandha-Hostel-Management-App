@@ -41,7 +41,10 @@ export async function POST(req: Request) {
       collegeName,
       roomNumber,
       yearAndDept,
-      hostelName // Add this
+      hostelName, // Add this
+      outTime,
+      inTime,
+      type
     } = body;
 
     const newOutpass: Outpass = {
@@ -50,7 +53,10 @@ export async function POST(req: Request) {
       studentName,
       reason,
       fromDate,
-      toDate,
+      toDate: toDate || fromDate, // Fallback
+      outTime,
+      inTime,
+      type: type || 'outpass',
       collegeName,
       roomNumber,
       yearAndDept,

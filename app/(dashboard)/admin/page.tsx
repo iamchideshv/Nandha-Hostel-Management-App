@@ -1869,7 +1869,7 @@ export default function AdminDashboard() {
                                                     </div>
 
                                                     {outpasses.filter(o =>
-                                                        (o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) &&
+                                                        (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) &&
                                                         (o.collegeName === leaveCollegeFilter)
                                                     ).length === 0 ? (
                                                         <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
@@ -1878,7 +1878,7 @@ export default function AdminDashboard() {
                                                     ) : (
                                                         <div className="space-y-3">
                                                             {outpasses.filter(o =>
-                                                                (o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) &&
+                                                                (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) &&
                                                                 (o.collegeName === leaveCollegeFilter)
                                                             ).map(o => (
                                                                 <div key={o.id} className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex justify-between items-center group">
@@ -2007,13 +2007,13 @@ export default function AdminDashboard() {
                                                         <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Active Outpasses - {outingCollegeFilter}</h4>
                                                         <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')}>Manage All</Button>
                                                     </div>
-                                                    {outpasses.filter(o => o.status === 'exited' && o.collegeName === outingCollegeFilter).length === 0 ? (
+                                                    {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).length === 0 ? (
                                                         <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
                                                             No students from {outingCollegeFilter} currently outside.
                                                         </div>
                                                     ) : (
                                                         <div className="grid gap-3">
-                                                            {outpasses.filter(o => o.status === 'exited' && o.collegeName === outingCollegeFilter).map(o => (
+                                                            {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).map(o => (
                                                                 <div key={o.id} className="p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10 flex justify-between items-center">
                                                                     <div className="flex items-center gap-4">
                                                                         <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
@@ -2023,8 +2023,10 @@ export default function AdminDashboard() {
                                                                         </div>
                                                                     </div>
                                                                     <div className="text-right">
-                                                                        <p className="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase">Currently Out</p>
-                                                                        <p className="text-xs font-medium text-slate-500">Return by: {o.toDate}</p>
+                                                                        <p className={`text-[10px] font-black uppercase ${o.type === 'outing' && o.status === 'pending' ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
+                                                                            {o.type === 'outing' && o.status === 'pending' ? 'Intimation' : 'Currently Out'}
+                                                                        </p>
+                                                                        <p className="text-xs font-medium text-slate-500">{o.outTime ? `${o.outTime} - ${o.inTime}` : `Return by: ${o.toDate}`}</p>
                                                                     </div>
                                                                 </div>
                                                             ))}
