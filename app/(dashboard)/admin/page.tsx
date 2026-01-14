@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/types';
-import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer } from 'lucide-react';
+import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer, MessageSquare } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 
@@ -1618,6 +1618,44 @@ export default function AdminDashboard() {
                         </button>
                     </div>
                 )}
+
+                {/* Private Message Modal */}
+                {replyingTo && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setReplyingTo(null)}>
+                        <Card className="w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+                            <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <CardTitle>Send Private Message</CardTitle>
+                                    <Button variant="ghost" size="sm" onClick={() => setReplyingTo(null)}>
+                                        <XCircle className="w-5 h-5 text-slate-400" />
+                                    </Button>
+                                </div>
+                                <CardDescription>To Student: {users.find(u => u.id === replyingTo)?.name || replyingTo}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Message</label>
+                                    <textarea
+                                        className="w-full min-h-[120px] p-3 text-sm rounded-lg border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        placeholder="Type your message here..."
+                                        value={replyMessage}
+                                        onChange={(e) => setReplyMessage(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex gap-3 pt-2">
+                                    <Button variant="outline" className="flex-1" onClick={() => setReplyingTo(null)}>Cancel</Button>
+                                    <Button
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                                        onClick={() => handleSendPrivateMessage(replyingTo)}
+                                    >
+                                        <Send className="w-4 h-4 mr-2" />
+                                        Send Message
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
                 {/* Student Profile View Modal */}
                 {viewingStudent && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto" onClick={() => setViewingStudent(null)}>
@@ -1889,7 +1927,32 @@ export default function AdminDashboard() {
                                                                             <p className="text-xs text-slate-500 font-medium">Reason: {o.reason}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div className="text-right">
+                                                                    <div className="flex items-center gap-1.5 shrink-0 ml-4 transition-opacity">
+                                                                        {!o.inTimeConfirmed && (
+                                                                            <>
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    variant="outline"
+                                                                                    className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                                                                    onClick={() => {
+                                                                                        setReplyingTo(o.studentId);
+                                                                                        setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for the leave starting on ${o.fromDate}. Please update your in-time.`);
+                                                                                    }}
+                                                                                >
+                                                                                    <MessageSquare className="w-4 h-4" />
+                                                                                </Button>
+                                                                                {users.find(u => u.id === o.studentId)?.phoneNumber && (
+                                                                                    <a
+                                                                                        href={`tel:${users.find(u => u.id === o.studentId)?.phoneNumber}`}
+                                                                                        className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors"
+                                                                                    >
+                                                                                        <Phone className="w-4 h-4" />
+                                                                                    </a>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="text-right min-w-[80px]">
                                                                         <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{o.fromDate}</p>
                                                                         {o.outTime ? (
                                                                             <p className="text-[10px] text-slate-400 font-medium">{o.outTime} - {o.inTimeConfirmed ? o.inTime : 'Not In'}</p>
@@ -2026,7 +2089,32 @@ export default function AdminDashboard() {
                                                                             <p className="text-xs text-slate-500">{o.reason}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <div className="text-right">
+                                                                    <div className="flex items-center gap-1.5 shrink-0 ml-4 transition-opacity">
+                                                                        {!o.inTimeConfirmed && (
+                                                                            <>
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    variant="outline"
+                                                                                    className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                                                                    onClick={() => {
+                                                                                        setReplyingTo(o.studentId);
+                                                                                        setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for your outing today. Please update your in-time.`);
+                                                                                    }}
+                                                                                >
+                                                                                    <MessageSquare className="w-4 h-4" />
+                                                                                </Button>
+                                                                                {users.find(u => u.id === o.studentId)?.phoneNumber && (
+                                                                                    <a
+                                                                                        href={`tel:${users.find(u => u.id === o.studentId)?.phoneNumber}`}
+                                                                                        className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors"
+                                                                                    >
+                                                                                        <Phone className="w-4 h-4" />
+                                                                                    </a>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="text-right min-w-[100px]">
                                                                         <p className={`text-[10px] font-black uppercase ${o.type === 'outing' && !o.inTimeConfirmed ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
                                                                             {o.type === 'outing' && !o.inTimeConfirmed ? 'Intimation' : 'Currently Out'}
                                                                         </p>
