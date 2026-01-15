@@ -1958,8 +1958,8 @@ export default function AdminDashboard() {
                                                             )}
                                                             <Button
                                                                 onClick={() => {
-                                                                    const GIRLS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1fZpDraz__Bb--8rX5NktVQSJ6Y9fLiDoZ27YhHr1vr0/edit?usp=sharing';
-                                                                    const BOYS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1AkuIj3I7BXB7k7gdp01aVjSET1M___j2cKesFo-7am4/edit?usp=sharing';
+                                                                    const GIRLS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1ibukV7nGbO8B6WBxVVdOzB5Cv9bfqKQhRDDzPsWYUa0/edit?usp=sharing';
+                                                                    const BOYS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/14T2A_oGScAAbDR08P8GFjnFxZOZgisFebK3UproeaqE/edit?usp=sharing';
 
                                                                     const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
                                                                     const isGirlsHostel = normalizedHostel.includes('akshaya');
