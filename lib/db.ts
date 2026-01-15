@@ -172,22 +172,36 @@ export const db = {
     const constraints: QueryConstraint[] = [];
     if (hostelName) constraints.push(where("hostelName", "==", hostelName));
     if (studentId) constraints.push(where("studentId", "==", studentId));
-    if (type) constraints.push(where("type", "==", type));
+
+    // For type, we handle 'outpass' specially to include legacy records (no type)
+    if (type && type !== 'outpass') {
+      constraints.push(where("type", "==", type));
+    }
+
     if (collegeName) constraints.push(where("collegeName", "==", collegeName));
 
     if (constraints.length > 0) {
       q = query(collection(firestore, OUTPASS_COL), ...constraints);
     }
 
-    const snap = await getDocs(q);
+    let snap = await getDocs(q);
+    let docsToDelete = snap.docs;
 
-    // If studentId is provided but NO hostelName, it's a student clearing their own history -> Soft Delete
+    // Manual filtering for 'outpass' type to include null/undefined
+    if (type === 'outpass') {
+      docsToDelete = docsToDelete.filter(d => {
+        const data = d.data() as Outpass;
+        return !data.type || data.type === 'outpass';
+      });
+    }
+
     if (studentId && !hostelName) {
-      const updatePromises = snap.docs.map(d => updateDoc(d.ref, { studentHidden: true }));
+      // Student clearing own history -> Soft Delete
+      const updatePromises = docsToDelete.map(d => updateDoc(d.ref, { studentHidden: true }));
       await Promise.all(updatePromises);
     } else {
       // Admin clearance -> Hard Delete
-      const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
+      const deletePromises = docsToDelete.map(d => deleteDoc(d.ref));
       await Promise.all(deletePromises);
     }
   },
@@ -220,36 +234,17 @@ export const db = {
   },
 
   clearFeeRequests: async (hostelName?: string): Promise<void> => {
-    let q = query(collection(firestore, FEES_COL), where("status", "==", "pending_request"));
+    let q = query(collection(firestore, FEES_COL));
     if (hostelName) {
-      q = query(collection(firestore, FEES_COL), where("status", "==", "pending_request"), where("hostelName", "==", hostelName));
+      q = query(collection(firestore, FEES_COL), where("hostelName", "==", hostelName));
     }
     const snap = await getDocs(q);
-    // For fees, we might want to reset them to 'unpaid' or delete them? 
-    // User asked for "Clear History" for "Fees Pending". Usually this means clearing requests or old logs.
-    // Assuming clearing the "pending requests" back to a state or deleting if they are just requests.
-    // But FeeStatus is the source of truth for fee payment. We shouldn't delete the student's fee record entirely.
-    // Maybe just revert 'pending_request' to 'unpaid'? 
-    // But if it's "Clear History", maybe they mean delete resolved ones?
-    // Re-reading: "clear history botton for complaint registerd, outpass verification, fees pending"
-    // Likely means clearing the *lists* shown in the dashboard.
-    // For Outpass/Complaints, deleting the record is fine.
-    // For Fee Pending, it lists students with status 'pending_request'. 
-    // If we "clear" it, we probably acknowledge them or reject them. Or maybe the user implies clearing DONE items?
-    // "Fees Pending" tab lists requests. Clearing them implies ignoring them or resetting.
-    // Let's assume for now we remove the 'pending_request' status -> 'unpaid' (reject) or just delete strictly the REQUEST logic if it was separate.
-    // But here FeeStatus IS the record.
-    // Deleting the record would delete the student's fee tracking entirely. Bad.
-    // So, clearing fee pending history might mean setting status back to 'unpaid' or 'paid' (if history of paid ones).
-    // The tab name is "Fee Pending" (activeTab === 'fees'). Code shows it lists `fees` state.
-    // Let's implement removing "pending_request" status => 'unpaid' effectively "clearing" the request.
 
-    const updatePromises = snap.docs.map(d => updateDoc(d.ref, { status: 'unpaid' } as any));
-    // Actually, if it's "Clear History", usually it means removing Completed/Old items? 
-    // But the request says "fees pending". 
-    // Let's implement a HARD delete for Outpass/Complaints (history), but for Fees, let's just reset the status or maybe strictly delete if the user intends to remove "notifications".
-    // Given the specific request "fees pending", I'll stick to resetting them to 'unpaid' so they disappear from the "Pending" list but don't break data.
-    await Promise.all(updatePromises);
+    // Clear History usually means everything that isn't a current critical state?
+    // In this app, FeeStatus is used for the list. 
+    // Deleting them is the only way to clear the "history" from the admin view.
+    const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
+    await Promise.all(deletePromises);
   },
 
   // --- MESS MENU ---
