@@ -2180,6 +2180,22 @@ export default function AdminDashboard() {
                                                                     Clear History
                                                                 </Button>
                                                             )}
+                                                            <Button
+                                                                onClick={() => {
+                                                                    const GIRLS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/15VxATYHLpnJiJL9L8lmkmMLS2RUc4IXxodbOc7v_XIo/edit?usp=sharing';
+                                                                    const BOYS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/1gZJ_MKdbDpHtJQhNSi2RL4AFtAlbLamxd8L_cnw2T1I/edit?usp=sharing';
+
+                                                                    const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
+                                                                    const isGirlsHostel = normalizedHostel.includes('akshaya');
+
+                                                                    window.open(isGirlsHostel ? GIRLS_OUTING_SHEET : BOYS_OUTING_SHEET, '_blank');
+                                                                }}
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                                                            >
+                                                                <FileText className="w-4 h-4 mr-2" /> View Report
+                                                            </Button>
                                                             <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
                                                         </div>
                                                     </div>
@@ -2246,8 +2262,8 @@ export default function AdminDashboard() {
                                                                         )}
                                                                     </div>
                                                                     <div className="text-right min-w-[100px]">
-                                                                        <p className={`text-[10px] font-black uppercase ${o.type === 'outing' && !o.inTimeConfirmed ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
-                                                                            {o.type === 'outing' && !o.inTimeConfirmed ? 'Intimation' : 'Currently Out'}
+                                                                        <p className={`text-[10px] font-black uppercase ${o.inTimeConfirmed ? 'text-emerald-600 dark:text-emerald-400' : o.type === 'outing' ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
+                                                                            {o.inTimeConfirmed ? 'Returned Hostel' : (o.type === 'outing' ? 'Intimation' : 'Currently Out')}
                                                                         </p>
                                                                         <p className="text-xs font-medium text-slate-500">{o.outTime ? `${o.outTime} - ${o.inTimeConfirmed ? o.inTime : 'Not In'}` : `Return by: ${o.toDate}`}</p>
                                                                     </div>

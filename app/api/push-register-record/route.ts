@@ -41,14 +41,22 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Outpass data and admin name required' }, { status: 400 });
         }
 
-        const BOYS_SHEET_ID = '14T2A_oGScAAbDR08P8GFjnFxZOZgisFebK3UproeaqE';
-        const GIRLS_SHEET_ID = '1ibukV7nGbO8B6WBxVVdOzB5Cv9bfqKQhRDDzPsWYUa0';
+        const BOYS_LEAVE_SHEET_ID = '14T2A_oGScAAbDR08P8GFjnFxZOZgisFebK3UproeaqE';
+        const GIRLS_LEAVE_SHEET_ID = '1ibukV7nGbO8B6WBxVVdOzB5Cv9bfqKQhRDDzPsWYUa0';
 
-        // Determine sheet ID based on hostel name (check for NRI)
-        // Default to GIRLS_SHEET_ID if hostelName is missing or doesn't match NRI
-        const SPREADSHEET_ID = (outpass.hostelName && outpass.hostelName.toLowerCase().includes('nri'))
-            ? BOYS_SHEET_ID
-            : GIRLS_SHEET_ID;
+        const BOYS_OUTING_SHEET_ID = '1gZJ_MKdbDpHtJQhNSi2RL4AFtAlbLamxd8L_cnw2T1I';
+        const GIRLS_OUTING_SHEET_ID = '15VxATYHLpnJiJL9L8lmkmMLS2RUc4IXxodbOc7v_XIo';
+
+        const isBoysHostel = outpass.hostelName && outpass.hostelName.toLowerCase().includes('nri');
+        const isOuting = outpass.type === 'outing';
+
+        // Determine sheet ID
+        let SPREADSHEET_ID;
+        if (isOuting) {
+            SPREADSHEET_ID = isBoysHostel ? BOYS_OUTING_SHEET_ID : GIRLS_OUTING_SHEET_ID;
+        } else {
+            SPREADSHEET_ID = isBoysHostel ? BOYS_LEAVE_SHEET_ID : GIRLS_LEAVE_SHEET_ID;
+        }
 
         const sheets = getGoogleSheetsClient();
 
