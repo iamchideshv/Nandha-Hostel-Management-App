@@ -10,6 +10,7 @@ import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/t
 import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer, MessageSquare } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
+import { formatDate, formatTime } from '@/lib/formatters';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
@@ -698,7 +699,7 @@ export default function AdminDashboard() {
                                             </div>
                                             <div>
                                                 <p className="text-slate-500 dark:text-slate-400">Duration</p>
-                                                <p className="font-medium dark:text-slate-100">{o.fromDate} to {o.toDate}</p>
+                                                <p className="font-medium dark:text-slate-100">{formatDate(o.fromDate)} to {formatDate(o.toDate)}</p>
                                             </div>
                                         </div>
 
@@ -712,7 +713,7 @@ export default function AdminDashboard() {
                                                         hostelName: o.hostelName,
                                                         roomNumber: o.roomNumber,
                                                         reason: o.reason,
-                                                        valid: `${o.fromDate} to ${o.toDate}`,
+                                                        valid: `${formatDate(o.fromDate)} to ${formatDate(o.toDate)}`,
                                                         status: 'APPROVED'
                                                     })}
                                                     size={128}
@@ -1953,7 +1954,7 @@ export default function AdminDashboard() {
                                                                                     className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
                                                                                     onClick={() => {
                                                                                         setReplyingTo(o.studentId);
-                                                                                        setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for the leave starting on ${o.fromDate}. Please update your in-time.`);
+                                                                                        setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for the leave starting on ${formatDate(o.fromDate)}. Please update your in-time.`);
                                                                                     }}
                                                                                 >
                                                                                     <MessageSquare className="w-4 h-4" />
@@ -1987,11 +1988,11 @@ export default function AdminDashboard() {
                                                                         )}
                                                                     </div>
                                                                     <div className="text-right min-w-[80px]">
-                                                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{o.fromDate}</p>
+                                                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{formatDate(o.fromDate)}</p>
                                                                         {o.outTime ? (
-                                                                            <p className="text-[10px] text-slate-400 font-medium">{o.outTime} - {o.inTimeConfirmed ? o.inTime : 'Not In'}</p>
+                                                                            <p className="text-[10px] text-slate-400 font-medium">{formatTime(o.outTime)} - {o.inTimeConfirmed ? formatTime(o.inTime) : 'Not In'}</p>
                                                                         ) : (
-                                                                            <p className="text-[10px] text-slate-400 font-medium">to {o.toDate}</p>
+                                                                            <p className="text-[10px] text-slate-400 font-medium">to {formatDate(o.toDate)}</p>
                                                                         )}
                                                                     </div>
                                                                 </div>

@@ -12,6 +12,7 @@ import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
+import { formatDate, formatTime } from '@/lib/formatters';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
 import { Mail, UserCircle, Upload, Camera, Crop } from 'lucide-react';
@@ -2016,7 +2017,7 @@ export default function StudentDashboard() {
                                                                                         </p>
                                                                                         <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                                                                             <Clock className="w-3 h-3" />
-                                                                                            {o.fromDate} | {o.outTime || 'N/A'} - {o.inTime || 'N/A'}
+                                                                                            {formatDate(o.fromDate)} | {formatTime(o.outTime)} - {formatTime(o.inTime)}
                                                                                         </p>
                                                                                     </div>
                                                                                 </div>
@@ -2245,7 +2246,7 @@ export default function StudentDashboard() {
                                                                                         </p>
                                                                                         <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                                                                             <Clock className="w-3 h-3" />
-                                                                                            {o.fromDate} | {o.outTime || 'N/A'} - {o.inTime || 'N/A'}
+                                                                                            {formatDate(o.fromDate)} | {formatTime(o.outTime)} - {formatTime(o.inTime)}
                                                                                         </p>
                                                                                     </div>
                                                                                 </div>
