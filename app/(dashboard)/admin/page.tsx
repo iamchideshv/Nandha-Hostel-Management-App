@@ -328,11 +328,9 @@ export default function AdminDashboard() {
         if (!confirm('Are you sure you want to clear ALL outpass history for this hostel? This action cannot be undone.')) return;
         setLoading(true);
         try {
-            const res = await fetch(`/api/outpass?hostelName=${user?.hostelName}`, { method: 'DELETE' });
-            if (res.ok) {
-                toast.success('Hostel Outpass History Cleared');
-                fetchData();
-            }
+            await fetch(`/api/outpass?hostelName=${user?.hostelName}&type=outpass`, { method: 'DELETE' });
+            toast.success('Hostel Outpass History Cleared');
+            fetchData();
         } catch (e) { toast.error('Clear Failed'); }
         setLoading(false);
     };
@@ -735,8 +733,8 @@ export default function AdminDashboard() {
                                 <FileText className="w-4 h-4 mr-2" /> View Report
                             </Button>
                         </div>
-                        {outpasses.length === 0 ? <p className="text-center text-slate-500">No outpass requests found.</p> :
-                            outpasses.map(o => (
+                        {outpasses.filter(o => !o.type || o.type === 'outpass').length === 0 ? <p className="text-center text-slate-500">No outpass requests found.</p> :
+                            outpasses.filter(o => !o.type || o.type === 'outpass').map(o => (
                                 <Card key={o.id} className={o.status === 'pending' ? 'border-l-4 border-l-yellow-400' : ''}>
                                     <CardHeader className="pb-2">
                                         <div className="flex justify-between items-start">

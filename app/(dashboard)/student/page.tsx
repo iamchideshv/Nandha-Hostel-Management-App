@@ -352,6 +352,7 @@ export default function StudentDashboard() {
                     studentId: user?.id,
                     studentName: user?.name,
                     ...outpassForm,
+                    type: 'outpass',
                     hostelName: outpassForm.hostelName || user?.hostelName,
                     roomNumber: user?.roomNumber,
                 })
@@ -378,14 +379,12 @@ export default function StudentDashboard() {
     };
 
     const handleClearOutpassHistory = async () => {
-        if (!confirm('Are you sure you want to clear your outpass history? This action cannot be undone.')) return;
+        if (!confirm('Are you sure you want to clear your Outpass history?')) return;
         setSubmitting(true);
         try {
-            const res = await fetch(`/api/outpass?studentId=${user?.id}`, { method: 'DELETE' });
-            if (res.ok) {
-                toast.success('History Cleared');
-                fetchData();
-            }
+            await fetch(`/api/outpass?studentId=${user?.id}&type=outpass`, { method: 'DELETE' });
+            toast.success('Outpass History Cleared');
+            fetchData();
         } catch (e) { toast.error('Clear Failed'); }
         setSubmitting(false);
     };
