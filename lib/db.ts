@@ -138,7 +138,10 @@ export const db = {
   },
 
   addOutpass: async (outpass: Outpass): Promise<Outpass> => {
-    await setDoc(doc(firestore, OUTPASS_COL, outpass.id), outpass);
+    const cleanOutpass = Object.fromEntries(
+      Object.entries(outpass).filter(([_, v]) => v !== undefined)
+    );
+    await setDoc(doc(firestore, OUTPASS_COL, outpass.id), cleanOutpass);
     return outpass;
   },
 
