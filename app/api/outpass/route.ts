@@ -93,6 +93,14 @@ export async function PATCH(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
+    const ids = searchParams.get('ids');
+
+    if (ids) {
+      const idList = ids.split(',').filter(Boolean);
+      await db.deleteOutpassesByIds(idList);
+      return NextResponse.json({ success: true });
+    }
+
     const hostelName = searchParams.get('hostelName');
     const studentId = searchParams.get('studentId');
     const type = searchParams.get('type');

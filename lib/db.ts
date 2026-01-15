@@ -192,6 +192,11 @@ export const db = {
     }
   },
 
+  deleteOutpassesByIds: async (ids: string[]): Promise<void> => {
+    const deletePromises = ids.map(id => deleteDoc(doc(firestore, OUTPASS_COL, id)));
+    await Promise.all(deletePromises);
+  },
+
   // --- FEES ---
   getFeeStatus: async (studentId: string): Promise<FeeStatus | null> => {
     const docRef = doc(firestore, FEES_COL, studentId);

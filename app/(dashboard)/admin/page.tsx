@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/types';
-import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer, MessageSquare } from 'lucide-react';
+import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer, MessageSquare, RefreshCw, Trash2 } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 import { formatDate, formatTime } from '@/lib/formatters';
@@ -20,6 +20,54 @@ export default function AdminDashboard() {
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick'>('main');
     const [leaveCollegeFilter, setLeaveCollegeFilter] = useState<string | null>(null);
     const [outingCollegeFilter, setOutingCollegeFilter] = useState<string | null>(null);
+
+    // Selection State
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+    // Reset selection when changing tabs
+    useEffect(() => {
+        setSelectedIds(new Set());
+        setIsSelectionMode(false);
+    }, [registerSubTab, activeTab]);
+
+    const toggleSelection = (id: string) => {
+        const newSelected = new Set(selectedIds);
+        if (newSelected.has(id)) newSelected.delete(id);
+        else newSelected.add(id);
+        setSelectedIds(newSelected);
+        if (newSelected.size > 0) setIsSelectionMode(true);
+        else setIsSelectionMode(false);
+    };
+
+    const handleSelectAll = (ids: string[]) => {
+        if (selectedIds.size === ids.length) {
+            setSelectedIds(new Set());
+            setIsSelectionMode(false);
+        } else {
+            setSelectedIds(new Set(ids));
+            setIsSelectionMode(true);
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        if (!confirm(`Delete ${selectedIds.size} items?`)) return;
+        setLoading(true);
+        try {
+            const idsList = Array.from(selectedIds).join(',');
+            const res = await fetch(`/api/outpass?ids=${idsList}`, { method: 'DELETE' });
+            if (res.ok) {
+                toast.success('Deleted successfully');
+                setSelectedIds(new Set());
+                setIsSelectionMode(false);
+                fetchData();
+            } else {
+                toast.error('Failed to delete');
+            }
+        } catch (e) { toast.error('Error deleting'); }
+        setLoading(false);
+    };
+
 
     // Data
     const [users, setUsers] = useState<User[]>([]);
@@ -146,7 +194,8 @@ export default function AdminDashboard() {
                 toast.success('Record pushed to Google Sheet successfully');
                 fetchData();
             } else {
-                toast.error('Failed to push record');
+                const errorData = await res.json();
+                toast.error(errorData.error || 'Failed to push record');
             }
         } catch (error) {
             toast.error('Error pushing record');
@@ -1944,7 +1993,32 @@ export default function AdminDashboard() {
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex gap-2">
+                                                        <div className="flex gap-2 items-center">
+                                                            {selectedIds.size > 0 && (
+                                                                <Button
+                                                                    variant="destructive"
+                                                                    size="sm"
+                                                                    onClick={handleDeleteSelected}
+                                                                    className="animate-in fade-in zoom-in"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4 mr-2" />
+                                                                    Delete ({selectedIds.size})
+                                                                </Button>
+                                                            )}
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => {
+                                                                    toast.promise(fetchData(), {
+                                                                        loading: 'Refreshing...',
+                                                                        success: 'Refreshed',
+                                                                        error: 'Failed to refresh'
+                                                                    });
+                                                                }}
+                                                            >
+                                                                <RefreshCw className="w-4 h-4" />
+                                                            </Button>
                                                             {outpasses.filter(o => (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) && (o.collegeName === leaveCollegeFilter)).length > 0 && (
                                                                 <Button
                                                                     variant="ghost"
@@ -1989,8 +2063,25 @@ export default function AdminDashboard() {
                                                                 (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) &&
                                                                 (o.collegeName === leaveCollegeFilter)
                                                             ).map(o => (
-                                                                <div key={o.id} className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 flex justify-between items-center group">
+                                                                <div
+                                                                    key={o.id}
+                                                                    className={`p-4 rounded-xl border flex justify-between items-center group
+                                                                        ${selectedIds.has(o.id)
+                                                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                                                            : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950'}`}
+                                                                    onContextMenu={(e) => {
+                                                                        e.preventDefault();
+                                                                        toggleSelection(o.id);
+                                                                    }}
+                                                                    onClick={() => isSelectionMode && toggleSelection(o.id)}
+                                                                >
                                                                     <div className="flex items-center gap-4">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={selectedIds.has(o.id)}
+                                                                            onChange={() => toggleSelection(o.id)}
+                                                                            className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                                        />
                                                                         {getStudentAvatar(o.studentId)}
                                                                         <div>
                                                                             <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
@@ -2168,7 +2259,32 @@ export default function AdminDashboard() {
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex gap-2">
+                                                        <div className="flex gap-2 items-center">
+                                                            {selectedIds.size > 0 && (
+                                                                <Button
+                                                                    variant="destructive"
+                                                                    size="sm"
+                                                                    onClick={handleDeleteSelected}
+                                                                    className="animate-in fade-in zoom-in"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4 mr-2" />
+                                                                    Delete ({selectedIds.size})
+                                                                </Button>
+                                                            )}
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                onClick={() => {
+                                                                    toast.promise(fetchData(), {
+                                                                        loading: 'Refreshing...',
+                                                                        success: 'Refreshed',
+                                                                        error: 'Failed to refresh'
+                                                                    });
+                                                                }}
+                                                            >
+                                                                <RefreshCw className="w-4 h-4" />
+                                                            </Button>
                                                             {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).length > 0 && (
                                                                 <Button
                                                                     variant="ghost"
@@ -2211,8 +2327,25 @@ export default function AdminDashboard() {
                                                     ) : (
                                                         <div className="grid gap-3">
                                                             {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).map(o => (
-                                                                <div key={o.id} className="p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10 flex justify-between items-center">
+                                                                <div
+                                                                    key={o.id}
+                                                                    className={`p-4 rounded-xl border flex justify-between items-center transition-colors
+                                                                        ${selectedIds.has(o.id)
+                                                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                                                            : 'border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10'}`}
+                                                                    onContextMenu={(e) => {
+                                                                        e.preventDefault();
+                                                                        toggleSelection(o.id);
+                                                                    }}
+                                                                    onClick={() => isSelectionMode && toggleSelection(o.id)}
+                                                                >
                                                                     <div className="flex items-center gap-4">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={selectedIds.has(o.id)}
+                                                                            onChange={() => toggleSelection(o.id)}
+                                                                            className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                                        />
                                                                         <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
                                                                         <div>
                                                                             <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>

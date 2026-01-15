@@ -163,6 +163,17 @@ export async function POST(req: Request) {
 
     } catch (error: any) {
         console.error('Push Error:', error);
-        return NextResponse.json({ error: error.message || 'Failed to push record' }, { status: 500 });
+
+        let errorMessage = error.message || 'Failed to push record';
+
+        if (error.code === 403) {
+            errorMessage = 'Permission denied. Check if the service account has edit access to the sheet.';
+        } else if (error.code === 404) {
+            errorMessage = 'Spreadsheet not found. Please check the Sheet ID.';
+        } else if (error.code === 400) {
+            errorMessage = `Bad Request: ${error.message}`;
+        }
+
+        return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }
