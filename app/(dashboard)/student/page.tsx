@@ -121,6 +121,7 @@ export default function StudentDashboard() {
         inTime: ''
     });
     const [historyInTimes, setHistoryInTimes] = useState<{ [key: string]: string }>({});
+    const [historyInDates, setHistoryInDates] = useState<{ [key: string]: string }>({});
 
     // Cropping State
     const [showCropModal, setShowCropModal] = useState(false);
@@ -296,8 +297,16 @@ export default function StudentDashboard() {
 
     const handleConfirmReturn = async (outpassId: string) => {
         const inTime = historyInTimes[outpassId];
+        const inDate = historyInDates[outpassId];
+        const outpass = outpasses.find(o => o.id === outpassId);
+
         if (!inTime) {
             toast.error('Please enter in-time');
+            return;
+        }
+
+        if (outpass?.type === 'leave' && !inDate) {
+            toast.error('Please enter in-date');
             return;
         }
 
@@ -309,6 +318,7 @@ export default function StudentDashboard() {
                 body: JSON.stringify({
                     id: outpassId,
                     inTime,
+                    inDate,
                     inTimeConfirmed: true,
                     status: 'entered'
                 })
@@ -2054,9 +2064,16 @@ export default function StudentDashboard() {
                                                                             {!o.inTimeConfirmed && (
                                                                                 <div className="flex items-center gap-2 pt-2 border-t dark:border-slate-800">
                                                                                     <Input
+                                                                                        type="date"
+                                                                                        placeholder="In Date"
+                                                                                        className="h-8 text-xs w-auto"
+                                                                                        value={historyInDates[o.id] || ''}
+                                                                                        onChange={e => setHistoryInDates({ ...historyInDates, [o.id]: e.target.value })}
+                                                                                    />
+                                                                                    <Input
                                                                                         type="time"
                                                                                         placeholder="Enter In Time"
-                                                                                        className="h-8 text-xs w-32"
+                                                                                        className="h-8 text-xs w-28"
                                                                                         value={historyInTimes[o.id] || ''}
                                                                                         onChange={e => setHistoryInTimes({ ...historyInTimes, [o.id]: e.target.value })}
                                                                                     />

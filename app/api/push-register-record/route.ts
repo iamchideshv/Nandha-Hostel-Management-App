@@ -83,8 +83,8 @@ export async function POST(req: Request) {
                     valueInputOption: 'RAW',
                     requestBody: {
                         values: [[
-                            'SNO', 'DATE', 'NAME', 'HOSTEL NAME', 'ROOM NO', 'COLLEGE NAME',
-                            'YEAR & DEPT', 'OUT TIME', 'IN TIME', 'APPROVED BY'
+                            'NAME', 'HOSTEL NAME', 'ROOM NO', 'COLLEGE NAME',
+                            'YEAR & DEPT', 'OUT TIME', 'IN DATE', 'IN TIME', 'APPROVED BY'
                         ]]
                     }
                 });
@@ -106,14 +106,13 @@ export async function POST(req: Request) {
 
         // Prepare row data
         const row = [
-            sno,
-            formatDate(outpass.fromDate || outpass.createdAt.split('T')[0]),
             outpass.studentName,
             outpass.hostelName || 'N/A',
             outpass.roomNumber,
             collegeShort,
             outpass.yearAndDept,
             formatTime(outpass.outTime || 'N/A'),
+            formatDate(outpass.inDate || outpass.createdAt.split('T')[0]),
             formatTime(outpass.inTime || 'N/A'),
             adminName
         ];

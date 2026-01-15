@@ -44,6 +44,7 @@ export async function POST(req: Request) {
       hostelName, // Add this
       outTime,
       inTime,
+      inDate,
       type
     } = body;
 
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
       toDate: toDate || fromDate, // Fallback
       outTime,
       inTime,
+      inDate,
       type: type || 'outpass',
       collegeName,
       roomNumber,
