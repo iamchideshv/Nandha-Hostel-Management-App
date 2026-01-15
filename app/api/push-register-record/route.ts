@@ -122,10 +122,10 @@ export async function POST(req: Request) {
             collegeShort, // COLLEGE NAME
             outpass.yearAndDept, // YEAR & DEPT
             formatTime(outpass.outTime || 'N/A'), // OUT TIME
-            isOuting ? '' : formatDate(outpass.inDate || outpass.createdAt.split('T')[0]), // IN DATE
+            !isOuting ? formatDate(outpass.inDate || outpass.createdAt.split('T')[0]) : null, // IN DATE (Only for Leave)
             formatTime(outpass.inTime || 'N/A'), // IN TIME
             adminName // APPROVED BY
-        ];
+        ].filter(item => item !== null);
 
         // Append to sheet
         await sheets.spreadsheets.values.append({
