@@ -158,11 +158,13 @@ export const db = {
     return snap.exists() ? (snap.data() as Outpass) : null;
   },
 
-  clearOutpasses: async (hostelName?: string, studentId?: string): Promise<void> => {
+  clearOutpasses: async (hostelName?: string, studentId?: string, type?: string, collegeName?: string): Promise<void> => {
     let q = query(collection(firestore, OUTPASS_COL));
     const constraints: QueryConstraint[] = [];
     if (hostelName) constraints.push(where("hostelName", "==", hostelName));
     if (studentId) constraints.push(where("studentId", "==", studentId));
+    if (type) constraints.push(where("type", "==", type));
+    if (collegeName) constraints.push(where("collegeName", "==", collegeName));
 
     if (constraints.length > 0) {
       q = query(collection(firestore, OUTPASS_COL), ...constraints);

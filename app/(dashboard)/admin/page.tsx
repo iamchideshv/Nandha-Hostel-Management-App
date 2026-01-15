@@ -288,6 +288,26 @@ export default function AdminDashboard() {
         setLoading(false);
     };
 
+    const handleClearHistory = async (type: string, collegeName?: string) => {
+        if (!confirm(`Are you sure you want to clear ${type} history for ${collegeName || 'all colleges'}? This action cannot be undone.`)) return;
+        setLoading(true);
+        try {
+            const queryParams = new URLSearchParams();
+            if (user?.hostelName) queryParams.set('hostelName', user.hostelName);
+            if (type) queryParams.set('type', type);
+            if (collegeName) queryParams.set('collegeName', collegeName);
+
+            const res = await fetch(`/api/outpass?${queryParams.toString()}`, { method: 'DELETE' });
+            if (res.ok) {
+                toast.success(`${type} History Cleared`);
+                fetchData();
+            } else {
+                toast.error('Clear Failed');
+            }
+        } catch (e) { toast.error('Clear Failed'); }
+        setLoading(false);
+    };
+
     const handleLostFoundStatusUpdate = async (id: string, status: 'found' | 'not-found' | 'returned', message?: string) => {
         setSubmittingStatusId(id);
         try {
@@ -1921,7 +1941,20 @@ export default function AdminDashboard() {
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
+                                                        <div className="flex gap-2">
+                                                            {outpasses.filter(o => (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) && (o.collegeName === leaveCollegeFilter)).length > 0 && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                                    onClick={() => handleClearHistory('leave', leaveCollegeFilter!)}
+                                                                >
+                                                                    <XCircle className="w-4 h-4 mr-2" />
+                                                                    Clear History
+                                                                </Button>
+                                                            )}
+                                                            <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
+                                                        </div>
                                                     </div>
 
                                                     {outpasses.filter(o =>
@@ -2102,7 +2135,20 @@ export default function AdminDashboard() {
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
+                                                        <div className="flex gap-2">
+                                                            {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).length > 0 && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                                    onClick={() => handleClearHistory('outing', outingCollegeFilter!)}
+                                                                >
+                                                                    <XCircle className="w-4 h-4 mr-2" />
+                                                                    Clear History
+                                                                </Button>
+                                                            )}
+                                                            <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
+                                                        </div>
                                                     </div>
 
                                                     <div className="flex justify-between items-center px-2">

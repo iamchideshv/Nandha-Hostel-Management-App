@@ -471,6 +471,21 @@ export default function StudentDashboard() {
         setSubmitting(false);
     };
 
+    const handleClearHistory = async (type: string) => {
+        if (!confirm(`Are you sure you want to clear your ${type} history? This action cannot be undone.`)) return;
+        setSubmitting(true);
+        try {
+            const res = await fetch(`/api/outpass?studentId=${user?.id}&type=${type}`, { method: 'DELETE' });
+            if (res.ok) {
+                toast.success(`${type} History Cleared`);
+                fetchData();
+            } else {
+                toast.error('Clear Failed');
+            }
+        } catch (e) { toast.error('Clear Failed'); }
+        setSubmitting(false);
+    };
+
     const handleLostFoundSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
@@ -1999,6 +2014,17 @@ export default function StudentDashboard() {
                                                         <div className="space-y-4">
                                                             <div className="flex justify-between items-center px-2">
                                                                 <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{leaveCollegeFilter} Leave History</h4>
+                                                                {outpasses.filter(o => o.type === 'leave' && (o.collegeName === leaveCollegeFilter || !o.collegeName)).length > 0 && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 text-xs"
+                                                                        onClick={() => handleClearHistory('leave')}
+                                                                    >
+                                                                        <XCircle className="w-3 h-3 mr-1" />
+                                                                        Clear History
+                                                                    </Button>
+                                                                )}
                                                             </div>
                                                             {outpasses.filter(o => o.type === 'leave' && (o.collegeName === leaveCollegeFilter || !o.collegeName)).length === 0 ? (
                                                                 <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
@@ -2228,6 +2254,17 @@ export default function StudentDashboard() {
                                                         <div className="space-y-4">
                                                             <div className="flex justify-between items-center px-2">
                                                                 <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">{outingCollegeFilter} Outing History</h4>
+                                                                {outpasses.filter(o => o.type === 'outing' && (o.collegeName === outingCollegeFilter || !o.collegeName)).length > 0 && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 text-xs"
+                                                                        onClick={() => handleClearHistory('outing')}
+                                                                    >
+                                                                        <XCircle className="w-3 h-3 mr-1" />
+                                                                        Clear History
+                                                                    </Button>
+                                                                )}
                                                             </div>
                                                             {outpasses.filter(o => o.type === 'outing' && (o.collegeName === outingCollegeFilter || !o.collegeName)).length === 0 ? (
                                                                 <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">

@@ -93,7 +93,15 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const hostelName = searchParams.get('hostelName');
     const studentId = searchParams.get('studentId');
-    await db.clearOutpasses(hostelName || undefined, studentId || undefined);
+    const type = searchParams.get('type');
+    const collegeName = searchParams.get('collegeName');
+
+    await db.clearOutpasses(
+      hostelName || undefined,
+      studentId || undefined,
+      type || undefined,
+      collegeName || undefined
+    );
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
