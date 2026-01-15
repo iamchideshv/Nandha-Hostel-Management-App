@@ -128,7 +128,13 @@ export const db = {
     }
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => doc.data() as Outpass);
+    const docs = querySnapshot.docs.map(doc => doc.data() as Outpass);
+
+    // Filter out hidden records for students (if studentId provided but not hostelName, implies Student Dashboard)
+    if (studentId && !hostelName) {
+      return docs.filter(o => !o.studentHidden);
+    }
+    return docs;
   },
 
   addOutpass: async (outpass: Outpass): Promise<Outpass> => {
@@ -171,8 +177,16 @@ export const db = {
     }
 
     const snap = await getDocs(q);
-    const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
-    await Promise.all(deletePromises);
+
+    // If studentId is provided but NO hostelName, it's a student clearing their own history -> Soft Delete
+    if (studentId && !hostelName) {
+      const updatePromises = snap.docs.map(d => updateDoc(d.ref, { studentHidden: true }));
+      await Promise.all(updatePromises);
+    } else {
+      // Admin clearance -> Hard Delete
+      const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
+      await Promise.all(deletePromises);
+    }
   },
 
   // --- FEES ---

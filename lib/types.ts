@@ -57,6 +57,7 @@ export interface Outpass {
     approvedAt?: string;
     pushedToSheet?: boolean;
     pushedBy?: string;
+    studentHidden?: boolean;
 }
 
 export interface FeeStatus {

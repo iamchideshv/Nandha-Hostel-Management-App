@@ -838,7 +838,7 @@ export default function AdminDashboard() {
                         </CardHeader>
                         <CardContent>
                             <div className="rounded-md border dark:border-slate-800">
-                                <div className="grid grid-cols-12 gap-4 p-4 border-b dark:border-slate-800 bg-slate-50 dark:bg-slate-900 font-medium text-sm text-slate-500 dark:text-slate-400">
+                                <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b dark:border-slate-800 bg-slate-50 dark:bg-slate-900 font-medium text-sm text-slate-500 dark:text-slate-400">
                                     <div className="col-span-3">User ID</div>
                                     <div className="col-span-3">Name</div>
                                     <div className="col-span-6">Messages</div>
@@ -862,13 +862,16 @@ export default function AdminDashboard() {
 
                                                 return (
                                                     <div key={student.id} className="p-4 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                                        <div className="grid grid-cols-12 gap-4 items-center mb-2">
-                                                            <div className="col-span-3 font-mono text-xs">{student.id}</div>
-                                                            <div className="col-span-3 font-medium flex items-center gap-2">
+                                                        <div className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 items-start md:items-center mb-2">
+                                                            <div className="hidden md:block col-span-3 font-mono text-xs">{student.id}</div>
+                                                            <div className="w-full md:col-span-3 font-medium flex items-center gap-3 md:gap-2">
                                                                 {getStudentAvatar(student.id)}
-                                                                <span>{student.name}</span>
+                                                                <div className="flex flex-col md:block">
+                                                                    <span>{student.name}</span>
+                                                                    <span className="md:hidden text-xs font-mono text-slate-500">{student.id}</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="col-span-6">
+                                                            <div className="w-full md:col-span-6">
                                                                 <div className="flex justify-between items-start gap-2">
                                                                     <div className="flex-1 min-w-0">
                                                                         {latestMsg ? (
