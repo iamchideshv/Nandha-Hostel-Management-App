@@ -79,11 +79,11 @@ export async function POST(req: Request) {
                 // Add header if new sheet
                 await sheets.spreadsheets.values.append({
                     spreadsheetId: SPREADSHEET_ID,
-                    range: `${sheetTitle}!A1:H1`,
+                    range: `${sheetTitle}!A1:J1`,
                     valueInputOption: 'RAW',
                     requestBody: {
                         values: [[
-                            'SNO', 'DATE', 'NAME', 'ROOM NO', 'COLLEGE NAME',
+                            'SNO', 'DATE', 'NAME', 'HOSTEL NAME', 'ROOM NO', 'COLLEGE NAME',
                             'YEAR & DEPT', 'OUT TIME', 'IN TIME', 'APPROVED BY'
                         ]]
                     }
@@ -109,6 +109,7 @@ export async function POST(req: Request) {
             sno,
             formatDate(outpass.fromDate || outpass.createdAt.split('T')[0]),
             outpass.studentName,
+            outpass.hostelName || 'N/A',
             outpass.roomNumber,
             collegeShort,
             outpass.yearAndDept,
@@ -120,7 +121,7 @@ export async function POST(req: Request) {
         // Append to sheet
         await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${sheetTitle}!A:I`,
+            range: `${sheetTitle}!A:J`,
             valueInputOption: 'RAW',
             requestBody: {
                 values: [row]
