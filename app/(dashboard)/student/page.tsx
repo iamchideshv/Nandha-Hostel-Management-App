@@ -1808,7 +1808,12 @@ export default function StudentDashboard() {
                                             </p>
                                         </CardContent>
                                         <CardFooter>
-                                            <Button onClick={() => setRegisterSubTab('outing')} className="w-full bg-blue-600 hover:bg-blue-700">Open Register</Button>
+                                            <Button onClick={() => {
+                                                setRegisterSubTab('outing');
+                                                const today = new Date();
+                                                const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                                                setRegisterEntryForm(prev => ({ ...prev, date: localDate }));
+                                            }} className="w-full bg-blue-600 hover:bg-blue-700">Open Register</Button>
                                         </CardFooter>
                                     </Card>
 
@@ -2233,8 +2238,8 @@ export default function StudentDashboard() {
                                                                     <Input
                                                                         type="date"
                                                                         value={registerEntryForm.date}
-                                                                        onChange={e => setRegisterEntryForm({ ...registerEntryForm, date: e.target.value })}
-                                                                        className="border-blue-100 focus:border-blue-500"
+                                                                        readOnly
+                                                                        className="border-blue-100 focus:border-blue-500 bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed font-bold"
                                                                     />
                                                                 </div>
                                                                 <div className="grid grid-cols-2 gap-4">

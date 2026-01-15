@@ -122,7 +122,7 @@ export async function POST(req: Request) {
             collegeShort, // COLLEGE NAME
             outpass.yearAndDept, // YEAR & DEPT
             formatTime(outpass.outTime || 'N/A'), // OUT TIME
-            formatDate(outpass.inDate || outpass.createdAt.split('T')[0]), // IN DATE
+            isOuting ? '' : formatDate(outpass.inDate || outpass.createdAt.split('T')[0]), // IN DATE
             formatTime(outpass.inTime || 'N/A'), // IN TIME
             adminName // APPROVED BY
         ];
