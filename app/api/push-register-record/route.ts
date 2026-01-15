@@ -72,8 +72,8 @@ export async function POST(req: Request) {
                     valueInputOption: 'RAW',
                     requestBody: {
                         values: [[
-                            'Sno', 'Date', 'Room Number', 'College name',
-                            'Year&Dept', 'Out Time', 'In Time', 'Approved By'
+                            'SNO', 'DATE', 'NAME', 'ROOM NO', 'COLLEGE NAME',
+                            'YEAR & DEPT', 'OUT TIME', 'IN TIME', 'APPROVED BY'
                         ]]
                     }
                 });
@@ -97,6 +97,7 @@ export async function POST(req: Request) {
         const row = [
             sno,
             outpass.fromDate || outpass.createdAt.split('T')[0],
+            outpass.studentName,
             outpass.roomNumber,
             collegeShort,
             outpass.yearAndDept,
@@ -108,7 +109,7 @@ export async function POST(req: Request) {
         // Append to sheet
         await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${sheetTitle}!A:H`,
+            range: `${sheetTitle}!A:I`,
             valueInputOption: 'RAW',
             requestBody: {
                 values: [row]
