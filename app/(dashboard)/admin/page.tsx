@@ -2076,12 +2076,14 @@ export default function AdminDashboard() {
                                                                     onClick={() => isSelectionMode && toggleSelection(o.id)}
                                                                 >
                                                                     <div className="flex items-center gap-4">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={selectedIds.has(o.id)}
-                                                                            onChange={() => toggleSelection(o.id)}
-                                                                            className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                                                        />
+                                                                        {isSelectionMode && (
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={selectedIds.has(o.id)}
+                                                                                onChange={() => toggleSelection(o.id)}
+                                                                                className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 animate-in fade-in zoom-in duration-200"
+                                                                            />
+                                                                        )}
                                                                         {getStudentAvatar(o.studentId)}
                                                                         <div>
                                                                             <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
@@ -2340,12 +2342,14 @@ export default function AdminDashboard() {
                                                                     onClick={() => isSelectionMode && toggleSelection(o.id)}
                                                                 >
                                                                     <div className="flex items-center gap-4">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={selectedIds.has(o.id)}
-                                                                            onChange={() => toggleSelection(o.id)}
-                                                                            className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                                                        />
+                                                                        {isSelectionMode && (
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={selectedIds.has(o.id)}
+                                                                                onChange={() => toggleSelection(o.id)}
+                                                                                className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 animate-in fade-in zoom-in duration-200"
+                                                                            />
+                                                                        )}
                                                                         <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
                                                                         <div>
                                                                             <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
