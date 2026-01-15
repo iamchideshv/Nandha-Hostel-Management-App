@@ -85,15 +85,23 @@ export async function POST(req: Request) {
                 });
 
                 // Add header if new sheet
+                const headerRow = [
+                    'SNO', 'OUT DATE', 'NAME', 'HOSTEL NAME', 'ROOM NO',
+                    'COLLEGE NAME', 'YEAR & DEPT', 'OUT TIME'
+                ];
+
+                if (!isOuting) {
+                    headerRow.push('IN DATE');
+                }
+
+                headerRow.push('IN TIME', 'APPROVED BY');
+
                 await sheets.spreadsheets.values.append({
                     spreadsheetId: SPREADSHEET_ID,
-                    range: `${sheetTitle}!A1:J1`,
+                    range: `${sheetTitle}!A1`,
                     valueInputOption: 'RAW',
                     requestBody: {
-                        values: [[
-                            'SNO', 'OUT DATE', 'NAME', 'HOSTEL NAME', 'ROOM NO',
-                            'COLLEGE NAME', 'YEAR & DEPT', 'OUT TIME', 'IN DATE', 'IN TIME', 'APPROVED BY'
-                        ]]
+                        values: [headerRow]
                     }
                 });
             }
@@ -122,15 +130,23 @@ export async function POST(req: Request) {
             collegeShort, // COLLEGE NAME
             outpass.yearAndDept, // YEAR & DEPT
             formatTime(outpass.outTime || 'N/A'), // OUT TIME
-            !isOuting ? formatDate(outpass.inDate || outpass.createdAt.split('T')[0]) : null, // IN DATE (Only for Leave)
+        ];
+
+        // Conditionally add IN DATE
+        if (!isOuting) {
+            row.push(formatDate(outpass.inDate || outpass.createdAt.split('T')[0]));
+        }
+
+        // Add remaining fields
+        row.push(
             formatTime(outpass.inTime || 'N/A'), // IN TIME
             adminName // APPROVED BY
-        ].filter(item => item !== null);
+        );
 
         // Append to sheet
         await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${sheetTitle}!A:J`,
+            range: `${sheetTitle}!A:A`,
             valueInputOption: 'RAW',
             requestBody: {
                 values: [row]
