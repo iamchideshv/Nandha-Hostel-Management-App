@@ -2023,12 +2023,26 @@ export default function AdminDashboard() {
                                                                             )
                                                                         )}
                                                                     </div>
-                                                                    <div className="text-right min-w-[80px]">
-                                                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{formatDate(o.fromDate)}</p>
-                                                                        {o.outTime ? (
-                                                                            <p className="text-[10px] text-slate-400 font-medium">{formatTime(o.outTime)} - {o.inTimeConfirmed ? formatTime(o.inTime) : 'Not In'}</p>
-                                                                        ) : (
-                                                                            <p className="text-[10px] text-slate-400 font-medium">to {formatDate(o.toDate)}</p>
+                                                                    <div className="text-right min-w-[120px] flex flex-col items-end gap-1">
+                                                                        <div className="text-right">
+                                                                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">Out</p>
+                                                                            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                                                                                {formatDate(o.fromDate)}
+                                                                            </p>
+                                                                            <p className="text-[10px] font-medium text-slate-500">
+                                                                                {o.outTime ? formatTime(o.outTime) : '-'}
+                                                                            </p>
+                                                                        </div>
+                                                                        {o.inTimeConfirmed && (
+                                                                            <div className="text-right border-t dark:border-slate-800 pt-1 mt-1">
+                                                                                <p className="text-[10px] text-slate-400 uppercase tracking-wider">In</p>
+                                                                                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                                                                                    {o.inDate ? formatDate(o.inDate) : formatDate(o.toDate)}
+                                                                                </p>
+                                                                                <p className="text-[10px] font-medium text-slate-500">
+                                                                                    {formatTime(o.inTime)}
+                                                                                </p>
+                                                                            </div>
                                                                         )}
                                                                     </div>
                                                                 </div>

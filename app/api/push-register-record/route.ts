@@ -83,8 +83,8 @@ export async function POST(req: Request) {
                     valueInputOption: 'RAW',
                     requestBody: {
                         values: [[
-                            'NAME', 'HOSTEL NAME', 'ROOM NO', 'COLLEGE NAME',
-                            'YEAR & DEPT', 'OUT TIME', 'IN DATE', 'IN TIME', 'APPROVED BY'
+                            'SNO', 'OUT DATE', 'NAME', 'HOSTEL NAME', 'ROOM NO',
+                            'COLLEGE NAME', 'YEAR & DEPT', 'OUT TIME', 'IN DATE', 'IN TIME', 'APPROVED BY'
                         ]]
                     }
                 });
@@ -106,15 +106,17 @@ export async function POST(req: Request) {
 
         // Prepare row data
         const row = [
-            outpass.studentName,
-            outpass.hostelName || 'N/A',
-            outpass.roomNumber,
-            collegeShort,
-            outpass.yearAndDept,
-            formatTime(outpass.outTime || 'N/A'),
-            formatDate(outpass.inDate || outpass.createdAt.split('T')[0]),
-            formatTime(outpass.inTime || 'N/A'),
-            adminName
+            sno, // SNO
+            formatDate(outpass.fromDate), // OUT DATE
+            outpass.studentName, // NAME
+            outpass.hostelName || 'N/A', // HOSTEL NAME
+            outpass.roomNumber, // ROOM NO
+            collegeShort, // COLLEGE NAME
+            outpass.yearAndDept, // YEAR & DEPT
+            formatTime(outpass.outTime || 'N/A'), // OUT TIME
+            formatDate(outpass.inDate || outpass.createdAt.split('T')[0]), // IN DATE
+            formatTime(outpass.inTime || 'N/A'), // IN TIME
+            adminName // APPROVED BY
         ];
 
         // Append to sheet
