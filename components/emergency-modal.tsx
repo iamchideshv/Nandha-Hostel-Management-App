@@ -63,57 +63,73 @@ export function EmergencyModal({ isOpen, onClose, user }: EmergencyModalProps) {
                             <span>Call Warden Immediately</span>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
-                                <h4 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-tight">(For Boys)</h4>
+                        <div className="grid grid-cols-1 gap-3">
+                            <div className="space-y-3 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/50">
+                                <h4 className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                                    FOR BOYS HOSTEL
+                                </h4>
                                 <div className="space-y-2">
-                                    <a href="tel:8015316807" className="flex items-center gap-2 text-sm font-semibold hover:text-blue-700 transition-colors">
-                                        <div className="bg-white dark:bg-slate-800 p-1 rounded shadow-sm"><Phone className="w-3 h-3 text-blue-500" /></div>
-                                        8015316807
-                                    </a>
-                                    <a href="tel:8715432961" className="flex items-center gap-2 text-sm font-semibold hover:text-blue-700 transition-colors">
-                                        <div className="bg-white dark:bg-slate-800 p-1 rounded shadow-sm"><Phone className="w-3 h-3 text-blue-500" /></div>
-                                        8715432961
-                                    </a>
+                                    {['8015316807', '8715432961'].map((num, i) => (
+                                        <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-2 pl-3 rounded-lg shadow-sm border border-blue-50 dark:border-slate-800">
+                                            <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Warden {i + 1} - {num}</span>
+                                            <a href={`tel:${num}`} className="bg-blue-600 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-md shadow-blue-200 dark:shadow-none">
+                                                <Phone className="w-3.5 h-3.5" />
+                                            </a>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
-                            <div className="space-y-3 p-3 bg-rose-50 dark:bg-rose-900/20 rounded-xl border border-rose-100 dark:border-rose-800">
-                                <h4 className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-tight">(For Girls)</h4>
+                            <div className="space-y-3 p-4 bg-rose-50 dark:bg-rose-900/10 rounded-xl border border-rose-100 dark:border-rose-900/50">
+                                <h4 className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
+                                    FOR GIRLS HOSTEL
+                                </h4>
                                 <div className="space-y-2">
-                                    <a href="tel:7654891023" className="flex items-center gap-2 text-sm font-semibold hover:text-rose-700 transition-colors">
-                                        <div className="bg-white dark:bg-slate-800 p-1 rounded shadow-sm"><Phone className="w-3 h-3 text-rose-500" /></div>
-                                        7654891023
-                                    </a>
-                                    <a href="tel:8596453211" className="flex items-center gap-2 text-sm font-semibold hover:text-rose-700 transition-colors">
-                                        <div className="bg-white dark:bg-slate-800 p-1 rounded shadow-sm"><Phone className="w-3 h-3 text-rose-500" /></div>
-                                        8596453211
-                                    </a>
+                                    {['7654891023', '8596453211'].map((num, i) => (
+                                        <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-2 pl-3 rounded-lg shadow-sm border border-rose-50 dark:border-slate-800">
+                                            <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Warden {i + 1} - {num}</span>
+                                            <a href={`tel:${num}`} className="bg-rose-600 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-md shadow-rose-200 dark:shadow-none">
+                                                <Phone className="w-3.5 h-3.5" />
+                                            </a>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Nandha Emergency Vehicle */}
-                    <div className="p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-sm">
-                                <Car className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                            <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 text-slate-600">
+                                <Car className="w-5 h-5" />
                             </div>
                             <div>
-                                <h4 className="text-xs font-bold text-slate-500 uppercase">Emergency Vehicle</h4>
-                                <p className="text-sm font-bold">Nandha - 9967549076</p>
+                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">Emergency Vehicle</h4>
+                                <p className="text-sm font-bold text-slate-900 dark:text-white">Nandha - 9967549076</p>
                             </div>
                         </div>
-                        <a href="tel:9967549076" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-2 rounded-full hover:scale-110 transition-transform">
+                        <a href="tel:9967549076" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-2.5 rounded-full hover:scale-110 transition-transform shadow-lg">
                             <Phone className="w-4 h-4" />
                         </a>
                     </div>
 
                     {/* Serious Case */}
-                    <div className="flex items-center justify-center p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl gap-2">
-                        <AlertTriangle className="w-5 h-5 text-amber-600" />
-                        <span className="text-sm font-bold text-amber-900 dark:text-amber-100 italic">Serious Case? Call <a href="tel:108" className="underline font-black text-amber-700 dark:text-amber-400">108</a> immediately</span>
+                    <div className="flex items-center justify-between p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl shadow-sm border border-amber-100 dark:border-slate-800 text-amber-600">
+                                <AlertTriangle className="w-5 h-5" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-black text-amber-600 uppercase tracking-tighter">Government Help</span>
+                                <span className="text-sm font-black text-amber-900 dark:text-amber-100">Call 108 Immediately</span>
+                            </div>
+                        </div>
+                        <a href="tel:108" className="bg-amber-600 text-white p-2.5 rounded-full hover:scale-110 transition-transform shadow-lg shadow-amber-200 dark:shadow-none">
+                            <Phone className="w-4 h-4" />
+                        </a>
                     </div>
 
                     {/* Alert Warden Button */}
