@@ -1889,7 +1889,13 @@ export default function StudentDashboard() {
                                                             ].map((col) => (
                                                                 <button
                                                                     key={col.id}
-                                                                    onClick={() => setLeaveCollegeFilter(col.id)}
+                                                                    onClick={() => {
+                                                                        if (user?.college && user.college !== col.id) {
+                                                                            toast.error(`You Are Not The Student Of ${col.id}`);
+                                                                            return;
+                                                                        }
+                                                                        setLeaveCollegeFilter(col.id);
+                                                                    }}
                                                                     className={`group relative p-6 rounded-2xl border-2 transition-all hover:shadow-xl active:scale-95 flex flex-col items-center text-center gap-3
                                                                         ${col.color === 'blue' ? 'border-blue-100 hover:border-blue-500 bg-blue-50/50 hover:bg-blue-50' :
                                                                             col.color === 'orange' ? 'border-orange-100 hover:border-orange-500 bg-orange-50/50 hover:bg-orange-50' :
@@ -2127,7 +2133,13 @@ export default function StudentDashboard() {
                                                             ].map((col) => (
                                                                 <button
                                                                     key={col.id}
-                                                                    onClick={() => setOutingCollegeFilter(col.id)}
+                                                                    onClick={() => {
+                                                                        if (user?.college && user.college !== col.id) {
+                                                                            toast.error(`You Are Not The Student Of ${col.id}`);
+                                                                            return;
+                                                                        }
+                                                                        setOutingCollegeFilter(col.id);
+                                                                    }}
                                                                     className={`group relative p-6 rounded-2xl border-2 transition-all hover:shadow-xl active:scale-95 flex flex-col items-center text-center gap-3
                                                                         ${col.color === 'blue' ? 'border-blue-100 hover:border-blue-500 bg-blue-50/50 hover:bg-blue-50' :
                                                                             col.color === 'orange' ? 'border-orange-100 hover:border-orange-500 bg-orange-50/50 hover:bg-orange-50' :
