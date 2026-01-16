@@ -8,10 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye, ClipboardList, Thermometer, Footprints, ChevronLeft } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye, ClipboardList, Thermometer, Footprints, ChevronLeft, Siren } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
+import { EmergencyModal } from '@/components/emergency-modal';
 import { formatDate, formatTime } from '@/lib/formatters';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
@@ -97,6 +98,7 @@ export default function StudentDashboard() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [selectedItemDetail, setSelectedItemDetail] = useState<LostFound | null>(null);
     const [showAbout, setShowAbout] = useState(false);
+    const [showEmergencyModal, setShowEmergencyModal] = useState(false);
     const [uploadedMenu, setUploadedMenu] = useState<any>(null);
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [profileForm, setProfileForm] = useState({
@@ -2419,10 +2421,21 @@ export default function StudentDashboard() {
                                             <div className="grid md:grid-cols-2 gap-6">
                                                 <Card>
                                                     <CardHeader>
-                                                        <CardTitle className="flex items-center gap-2">
-                                                            <Thermometer className="w-6 h-6 text-red-600" />
-                                                            Report Medical Emergency
-                                                        </CardTitle>
+                                                        <div className="flex justify-between items-center">
+                                                            <CardTitle className="flex items-center gap-2">
+                                                                <Thermometer className="w-6 h-6 text-red-600" />
+                                                                Report Medical Emergency
+                                                            </CardTitle>
+                                                            <Button
+                                                                variant="destructive"
+                                                                size="sm"
+                                                                className="bg-red-600 hover:bg-red-700 font-bold animate-pulse shadow-lg shadow-red-500/20"
+                                                                onClick={() => setShowEmergencyModal(true)}
+                                                            >
+                                                                <Siren className="w-4 h-4 mr-2" />
+                                                                Emergency
+                                                            </Button>
+                                                        </div>
                                                         <CardDescription>Submit sick register entry with auto-filled details</CardDescription>
                                                     </CardHeader>
                                                     <CardContent>
@@ -2826,6 +2839,7 @@ export default function StudentDashboard() {
 
 
                 <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
+                <EmergencyModal isOpen={showEmergencyModal} onClose={() => setShowEmergencyModal(false)} user={user} />
             </div >
             {/* Cropping Modal */}
             {
