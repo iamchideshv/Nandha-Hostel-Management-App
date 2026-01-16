@@ -1,6 +1,7 @@
 import { db } from './db';
+import { firebaseAdmin } from './firebase-admin';
 
-const FCM_SERVER_KEY = process.env.FCM_SERVER_KEY; // I'll advise the user to add this
+
 
 export async function sendPushToUser(userId: string, title: string, body: string, data?: any) {
     const user = await db.findUser(userId);
@@ -20,45 +21,52 @@ export async function sendPushToRole(role: string, title: string, body: string, 
     return sendToTokens(allTokens, title, body, data);
 }
 
-async function sendToTokens(tokens: string[], title: string, body: string, data?: any) {
-    if (!FCM_SERVER_KEY) {
-        console.warn('FCM_SERVER_KEY is not defined in environment variables');
-        throw new Error('FCM_SERVER_KEY_MISSING');
-    }
 
-    const payload = {
-        registration_ids: tokens,
+
+async function sendToTokens(tokens: string[], title: string, body: string, data?: any) {
+    if (!tokens.length) return;
+
+    const message = {
+        tokens: tokens,
         notification: {
             title,
             body,
-            icon: '/icon-192.png',
-            click_action: '/',
         },
-        data: data || {}
+        data: data || {},
+        webpush: {
+            notification: {
+                icon: '/icon-192.png',
+            },
+            fcmOptions: {
+                link: '/'
+            }
+        },
+        android: {
+            notification: {
+                icon: '/icon-192.png',
+                clickAction: '/'
+            }
+        }
     };
 
     try {
-        const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-            method: 'POST',
-            headers: {
-                'Authorization': `key=${FCM_SERVER_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
+        const response = await firebaseAdmin.messaging().sendEachForMulticast(message);
+        console.log('FCM Send result:', response);
 
-        const result = await response.json();
-        console.log('FCM Send result:', result);
-
-        if (result.failure > 0) {
-            // Check for specific errors in results
-            const firstError = result.results.find((r: any) => r.error);
+        if (response.failureCount > 0) {
+            const firstError = response.responses.find(r => !r.success)?.error;
             if (firstError) {
-                throw new Error(`FCM_ERROR: ${firstError.error}`);
+                // Log all errors for debugging
+                response.responses.forEach((resp, idx) => {
+                    if (!resp.success) {
+                        console.error(`Error sending to token ${tokens[idx]}:`, resp.error);
+                    }
+                });
+                throw new Error(`FCM_ERROR: ${firstError.message}`);
             }
         }
 
-        return result;
+        return response;
     } catch (error) {
         console.error('Error sending FCM message:', error);
         throw error;

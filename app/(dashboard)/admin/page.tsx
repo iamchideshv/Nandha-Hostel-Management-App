@@ -728,7 +728,7 @@ export default function AdminDashboard() {
                                     toast.success('Test notification sent! Check your phone.');
                                 } else {
                                     toast.error(`Push Failed: ${data.error}`);
-                                    alert(`Push Failed: ${data.error}\n\nMake sure to add FCM_SERVER_KEY to Vercel env vars.`);
+                                    alert(`Push Failed: ${data.error}`);
                                 }
                             } catch (e: any) {
                                 toast.error('Error sending test push');
