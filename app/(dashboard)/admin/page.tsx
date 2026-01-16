@@ -1942,9 +1942,9 @@ export default function AdminDashboard() {
                                                 </div>
                                             ) : (
                                                 <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
-                                                    <div className="flex items-center justify-between mb-2 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                                                         <div className="flex items-center gap-3">
-                                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow-lg
+                                                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
                                                                 ${leaveCollegeFilter === 'NEC' ? 'bg-blue-600' :
                                                                     leaveCollegeFilter === 'NPC' ? 'bg-orange-600' :
                                                                         leaveCollegeFilter === 'NCT' ? 'bg-green-600' :
@@ -1960,8 +1960,8 @@ export default function AdminDashboard() {
                                                                 {leaveCollegeFilter}
                                                             </div>
                                                             <div>
-                                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Selected College</p>
-                                                                <p className="text-sm font-bold text-slate-900 dark:text-white">
+                                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Institution</p>
+                                                                <p className="text-base font-bold text-slate-900 dark:text-white leading-tight">
                                                                     {leaveCollegeFilter === 'NEC' ? 'Nandha Engineering College' :
                                                                         leaveCollegeFilter === 'NPC' ? 'Nandha Polytechnic College' :
                                                                             leaveCollegeFilter === 'NCT' ? 'Nandha College of Technology' :
@@ -1977,60 +1977,64 @@ export default function AdminDashboard() {
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex gap-2 items-center">
-                                                            {selectedIds.size > 0 && (
+                                                        <div className="flex flex-wrap items-center gap-3">
+                                                            <div className="flex items-center gap-2 pr-2 border-r dark:border-slate-800">
                                                                 <Button
-                                                                    variant="destructive"
+                                                                    variant="outline"
                                                                     size="sm"
-                                                                    onClick={handleDeleteSelected}
-                                                                    className="animate-in fade-in zoom-in"
+                                                                    className="h-8 w-8 p-0 rounded-full"
+                                                                    onClick={() => {
+                                                                        toast.promise(fetchData(), {
+                                                                            loading: 'Refreshing...',
+                                                                            success: 'Refreshed',
+                                                                            error: 'Failed to refresh'
+                                                                        });
+                                                                    }}
                                                                 >
-                                                                    <Trash2 className="w-4 h-4 mr-2" />
-                                                                    Delete ({selectedIds.size})
+                                                                    <RefreshCw className="w-4 h-4" />
                                                                 </Button>
-                                                            )}
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className="h-8 w-8 p-0"
-                                                                onClick={() => {
-                                                                    toast.promise(fetchData(), {
-                                                                        loading: 'Refreshing...',
-                                                                        success: 'Refreshed',
-                                                                        error: 'Failed to refresh'
-                                                                    });
-                                                                }}
-                                                            >
-                                                                <RefreshCw className="w-4 h-4" />
-                                                            </Button>
-                                                            {outpasses.filter(o => (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) && (o.collegeName === leaveCollegeFilter)).length > 0 && (
+                                                            </div>
+                                                            <div className="flex flex-wrap items-center gap-2">
+                                                                {selectedIds.size > 0 && (
+                                                                    <Button
+                                                                        variant="destructive"
+                                                                        size="sm"
+                                                                        onClick={handleDeleteSelected}
+                                                                        className="animate-in fade-in zoom-in h-8"
+                                                                    >
+                                                                        <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                                                                        Delete ({selectedIds.size})
+                                                                    </Button>
+                                                                )}
+                                                                {outpasses.filter(o => (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) && (o.collegeName === leaveCollegeFilter)).length > 0 && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="h-8 text-[10px] font-bold uppercase text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                                        onClick={() => handleClearHistory('leave', leaveCollegeFilter!)}
+                                                                    >
+                                                                        <XCircle className="w-3.5 h-3.5 mr-1.5" />
+                                                                        Clear History
+                                                                    </Button>
+                                                                )}
                                                                 <Button
-                                                                    variant="ghost"
+                                                                    onClick={() => {
+                                                                        const GIRLS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1ibukV7nGbO8B6WBxVVdOzB5Cv9bfqKQhRDDzPsWYUa0/edit?usp=sharing';
+                                                                        const BOYS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/14T2A_oGScAAbDR08P8GFjnFxZOZgisFebK3UproeaqE/edit?usp=sharing';
+
+                                                                        const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
+                                                                        const isGirlsHostel = normalizedHostel.includes('akshaya');
+
+                                                                        window.open(isGirlsHostel ? GIRLS_SHEET_URL : BOYS_SHEET_URL, '_blank');
+                                                                    }}
+                                                                    variant="outline"
                                                                     size="sm"
-                                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                                    onClick={() => handleClearHistory('leave', leaveCollegeFilter!)}
+                                                                    className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
                                                                 >
-                                                                    <XCircle className="w-4 h-4 mr-2" />
-                                                                    Clear History
+                                                                    <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                 </Button>
-                                                            )}
-                                                            <Button
-                                                                onClick={() => {
-                                                                    const GIRLS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1ibukV7nGbO8B6WBxVVdOzB5Cv9bfqKQhRDDzPsWYUa0/edit?usp=sharing';
-                                                                    const BOYS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/14T2A_oGScAAbDR08P8GFjnFxZOZgisFebK3UproeaqE/edit?usp=sharing';
-
-                                                                    const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
-                                                                    const isGirlsHostel = normalizedHostel.includes('akshaya');
-
-                                                                    window.open(isGirlsHostel ? GIRLS_SHEET_URL : BOYS_SHEET_URL, '_blank');
-                                                                }}
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
-                                                            >
-                                                                <FileText className="w-4 h-4 mr-2" /> View Report
-                                                            </Button>
-                                                            <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
+                                                                <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -2049,94 +2053,104 @@ export default function AdminDashboard() {
                                                             ).map(o => (
                                                                 <div
                                                                     key={o.id}
-                                                                    className={`p-4 rounded-xl border flex justify-between items-center group
+                                                                    className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
                                                                         ${selectedIds.has(o.id)
-                                                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                                                            : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950'}`}
+                                                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md ring-1 ring-blue-500'
+                                                                            : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-200 dark:hover:border-slate-700 shadow-sm'}`}
                                                                     onContextMenu={(e) => {
                                                                         e.preventDefault();
                                                                         toggleSelection(o.id);
                                                                     }}
                                                                     onClick={() => isSelectionMode && toggleSelection(o.id)}
                                                                 >
-                                                                    <div className="flex items-center gap-4">
+                                                                    <div className="flex items-center gap-4 flex-1">
                                                                         {isSelectionMode && (
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                checked={selectedIds.has(o.id)}
-                                                                                onChange={() => toggleSelection(o.id)}
-                                                                                className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 animate-in fade-in zoom-in duration-200"
-                                                                            />
-                                                                        )}
-                                                                        {getStudentAvatar(o.studentId)}
-                                                                        <div>
-                                                                            <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
-                                                                            <p className="text-xs text-slate-500 font-medium">Reason: {o.reason}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="flex items-center gap-1.5 shrink-0 ml-4 transition-opacity">
-                                                                        {!o.inTimeConfirmed ? (
-                                                                            <>
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    variant="outline"
-                                                                                    className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
-                                                                                    onClick={() => {
-                                                                                        setReplyingTo(o.studentId);
-                                                                                        setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for the leave starting on ${formatDate(o.fromDate)}. Please update your in-time.`);
-                                                                                    }}
-                                                                                >
-                                                                                    <MessageSquare className="w-4 h-4" />
-                                                                                </Button>
-                                                                                {users.find(u => u.id === o.studentId)?.phoneNumber && (
-                                                                                    <a
-                                                                                        href={`tel:${users.find(u => u.id === o.studentId)?.phoneNumber}`}
-                                                                                        className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors"
-                                                                                    >
-                                                                                        <Phone className="w-4 h-4" />
-                                                                                    </a>
-                                                                                )}
-                                                                            </>
-                                                                        ) : (
-                                                                            !o.pushedToSheet ? (
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    variant="outline"
-                                                                                    className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all"
-                                                                                    onClick={() => handlePushToSheet(o)}
-                                                                                >
-                                                                                    <Upload className="w-3 h-3 mr-1" />
-                                                                                    Push Record
-                                                                                </Button>
-                                                                            ) : (
-                                                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
-                                                                                    <BadgeCheck className="w-3 h-3" />
-                                                                                    Pushed
-                                                                                </div>
-                                                                            )
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="text-right min-w-[120px] flex flex-col items-end gap-1">
-                                                                        <div className="text-right">
-                                                                            <p className="text-[10px] text-slate-400 uppercase tracking-wider">Out</p>
-                                                                            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                                                                                {formatDate(o.fromDate)}
-                                                                            </p>
-                                                                            <p className="text-[10px] font-medium text-slate-500">
-                                                                                {o.outTime ? formatTime(o.outTime) : '-'}
-                                                                            </p>
-                                                                        </div>
-                                                                        {o.inTimeConfirmed && (
-                                                                            <div className="text-right border-t dark:border-slate-800 pt-1 mt-1">
-                                                                                <p className="text-[10px] text-slate-400 uppercase tracking-wider">In</p>
-                                                                                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                                                                                    {o.inDate ? formatDate(o.inDate) : formatDate(o.toDate)}
-                                                                                </p>
-                                                                                <p className="text-[10px] font-medium text-slate-500">
-                                                                                    {formatTime(o.inTime)}
-                                                                                </p>
+                                                                            <div className="shrink-0">
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    checked={selectedIds.has(o.id)}
+                                                                                    onChange={() => toggleSelection(o.id)}
+                                                                                    className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 animate-in fade-in zoom-in duration-200"
+                                                                                />
                                                                             </div>
                                                                         )}
+                                                                        {getStudentAvatar(o.studentId)}
+                                                                        <div className="min-w-0">
+                                                                            <p className="font-bold text-slate-900 dark:text-white truncate">{o.studentName}</p>
+                                                                            <p className="text-xs text-slate-500 font-medium truncate">Reason: {o.reason}</p>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+                                                                        <div className="flex items-center gap-2">
+                                                                            {!o.inTimeConfirmed ? (
+                                                                                <div className="flex gap-1.5">
+                                                                                    <Button
+                                                                                        size="sm"
+                                                                                        variant="outline"
+                                                                                        className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                                                                        onClick={() => {
+                                                                                            setReplyingTo(o.studentId);
+                                                                                            setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for the leave starting on ${formatDate(o.fromDate)}. Please update your in-time.`);
+                                                                                        }}
+                                                                                    >
+                                                                                        <MessageSquare className="w-4 h-4" />
+                                                                                    </Button>
+                                                                                    {users.find(u => u.id === o.studentId)?.phoneNumber && (
+                                                                                        <a
+                                                                                            href={`tel:${users.find(u => u.id === o.studentId)?.phoneNumber}`}
+                                                                                            className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors shadow-sm"
+                                                                                        >
+                                                                                            <Phone className="w-3.5 h-3.5" />
+                                                                                        </a>
+                                                                                    )}
+                                                                                </div>
+                                                                            ) : (
+                                                                                !o.pushedToSheet ? (
+                                                                                    <Button
+                                                                                        size="sm"
+                                                                                        variant="outline"
+                                                                                        className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all shadow-sm"
+                                                                                        onClick={() => handlePushToSheet(o)}
+                                                                                    >
+                                                                                        <Upload className="w-3 h-3 mr-1" />
+                                                                                        Push
+                                                                                    </Button>
+                                                                                ) : (
+                                                                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase shadow-sm whitespace-nowrap">
+                                                                                        <BadgeCheck className="w-3.5 h-3.5" />
+                                                                                        Pushed
+                                                                                    </div>
+                                                                                )
+                                                                            )}
+                                                                        </div>
+
+                                                                        <div className="flex flex-col items-end shrink-0 min-w-[100px]">
+                                                                            <div className="text-right">
+                                                                                <div className="flex items-center justify-end gap-1.5">
+                                                                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">OUT</span>
+                                                                                    <p className="text-xs font-black text-slate-700 dark:text-slate-300">
+                                                                                        {formatDate(o.fromDate)}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <p className="text-[10px] font-medium text-slate-500 leading-none">
+                                                                                    {o.outTime ? formatTime(o.outTime) : '-'}
+                                                                                </p>
+                                                                            </div>
+                                                                            {o.inTimeConfirmed && (
+                                                                                <div className="text-right mt-1 pt-1 border-t border-slate-100 dark:border-slate-800 w-full">
+                                                                                    <div className="flex items-center justify-end gap-1.5">
+                                                                                        <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">IN</span>
+                                                                                        <p className="text-xs font-black text-emerald-700 dark:text-emerald-400">
+                                                                                            {o.inDate ? formatDate(o.inDate) : formatDate(o.toDate)}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <p className="text-[10px] font-medium text-emerald-600/70 leading-none">
+                                                                                        {formatTime(o.inTime)}
+                                                                                    </p>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             ))}
@@ -2210,9 +2224,9 @@ export default function AdminDashboard() {
                                                 </div>
                                             ) : (
                                                 <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
-                                                    <div className="flex items-center justify-between mb-2 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                                                         <div className="flex items-center gap-3">
-                                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow-lg
+                                                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
                                                                 ${outingCollegeFilter === 'NEC' ? 'bg-blue-600' :
                                                                     outingCollegeFilter === 'NPC' ? 'bg-orange-600' :
                                                                         outingCollegeFilter === 'NCT' ? 'bg-green-600' :
@@ -2228,8 +2242,8 @@ export default function AdminDashboard() {
                                                                 {outingCollegeFilter}
                                                             </div>
                                                             <div>
-                                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Selected College</p>
-                                                                <p className="text-sm font-bold text-slate-900 dark:text-white">
+                                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Institution</p>
+                                                                <p className="text-base font-bold text-slate-900 dark:text-white leading-tight">
                                                                     {outingCollegeFilter === 'NEC' ? 'Nandha Engineering College' :
                                                                         outingCollegeFilter === 'NPC' ? 'Nandha Polytechnic College' :
                                                                             outingCollegeFilter === 'NCT' ? 'Nandha College of Technology' :
@@ -2245,60 +2259,68 @@ export default function AdminDashboard() {
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex gap-2 items-center">
-                                                            {selectedIds.size > 0 && (
+                                                        <div className="flex flex-wrap items-center gap-3">
+                                                            <div className="flex items-center gap-2 pr-2 border-r dark:border-slate-800">
                                                                 <Button
-                                                                    variant="destructive"
+                                                                    variant="outline"
                                                                     size="sm"
-                                                                    onClick={handleDeleteSelected}
-                                                                    className="animate-in fade-in zoom-in"
+                                                                    className="h-8 w-8 p-0 rounded-full"
+                                                                    onClick={() => {
+                                                                        toast.promise(fetchData(), {
+                                                                            loading: 'Refreshing...',
+                                                                            success: 'Refreshed',
+                                                                            error: 'Failed to refresh'
+                                                                        });
+                                                                    }}
                                                                 >
-                                                                    <Trash2 className="w-4 h-4 mr-2" />
-                                                                    Delete ({selectedIds.size})
+                                                                    <RefreshCw className="w-4 h-4" />
                                                                 </Button>
-                                                            )}
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className="h-8 w-8 p-0"
-                                                                onClick={() => {
-                                                                    toast.promise(fetchData(), {
-                                                                        loading: 'Refreshing...',
-                                                                        success: 'Refreshed',
-                                                                        error: 'Failed to refresh'
-                                                                    });
-                                                                }}
-                                                            >
-                                                                <RefreshCw className="w-4 h-4" />
-                                                            </Button>
-                                                            {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).length > 0 && (
+                                                            </div>
+                                                            <div className="flex flex-wrap items-center gap-2">
+                                                                {selectedIds.size > 0 && (
+                                                                    <Button
+                                                                        variant="destructive"
+                                                                        size="sm"
+                                                                        onClick={handleDeleteSelected}
+                                                                        className="animate-in fade-in zoom-in h-8"
+                                                                    >
+                                                                        <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                                                                        Delete ({selectedIds.size})
+                                                                    </Button>
+                                                                )}
+                                                                {outpasses.filter(o => (o.type === 'outing' || (!o.reason.toLowerCase().includes('leave') && !o.reason.toLowerCase().includes('vacation'))) && (o.collegeName === outingCollegeFilter)).length > 0 && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="h-8 text-[10px] font-bold uppercase text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                                        onClick={() => handleClearHistory('outing', outingCollegeFilter!)}
+                                                                    >
+                                                                        <XCircle className="w-3.5 h-3.5 mr-1.5" />
+                                                                        Clear History
+                                                                    </Button>
+                                                                )}
                                                                 <Button
-                                                                    variant="ghost"
+                                                                    onClick={() => {
+                                                                        const GIRLS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/1_T0P1WqI-gY_I7u9mFmFjP9pX_v1S8vV1X_v1S8vV1X/edit?usp=sharing'; // Placeholder if needed
+                                                                        const BOYS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/1vA5W3z25-4K6-8C8yP7S5R-H-S-v1S8vV1X_v1S8vV1X/edit?usp=sharing'; // Placeholder if needed
+
+                                                                        const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
+                                                                        const isGirlsHostel = normalizedHostel.includes('akshaya');
+
+                                                                        // Assuming same leave sheet IDs for now or until provided specific outing ones
+                                                                        const GIRLS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1ibukV7nGbO8B6WBxVVdOzB5Cv9bfqKQhRDDzPsWYUa0/edit?usp=sharing';
+                                                                        const BOYS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/14T2A_oGScAAbDR08P8GFjnFxZOZgisFebK3UproeaqE/edit?usp=sharing';
+
+                                                                        window.open(isGirlsHostel ? GIRLS_SHEET_URL : BOYS_SHEET_URL, '_blank');
+                                                                    }}
+                                                                    variant="outline"
                                                                     size="sm"
-                                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                                    onClick={() => handleClearHistory('outing', outingCollegeFilter!)}
+                                                                    className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
                                                                 >
-                                                                    <XCircle className="w-4 h-4 mr-2" />
-                                                                    Clear History
+                                                                    <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                 </Button>
-                                                            )}
-                                                            <Button
-                                                                onClick={() => {
-                                                                    const GIRLS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/15VxATYHLpnJiJL9L8lmkmMLS2RUc4IXxodbOc7v_XIo/edit?usp=sharing';
-                                                                    const BOYS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/1gZJ_MKdbDpHtJQhNSi2RL4AFtAlbLamxd8L_cnw2T1I/edit?usp=sharing';
-
-                                                                    const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
-                                                                    const isGirlsHostel = normalizedHostel.includes('akshaya');
-
-                                                                    window.open(isGirlsHostel ? GIRLS_OUTING_SHEET : BOYS_OUTING_SHEET, '_blank');
-                                                                }}
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
-                                                            >
-                                                                <FileText className="w-4 h-4 mr-2" /> View Report
-                                                            </Button>
-                                                            <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back to Selection</Button>
+                                                                <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -2312,37 +2334,40 @@ export default function AdminDashboard() {
                                                         </div>
                                                     ) : (
                                                         <div className="grid gap-3">
-                                                            {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).map(o => (
-                                                                <div
-                                                                    key={o.id}
-                                                                    className={`p-4 rounded-xl border flex justify-between items-center transition-colors
-                                                                        ${selectedIds.has(o.id)
-                                                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                                                            : 'border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10'}`}
-                                                                    onContextMenu={(e) => {
-                                                                        e.preventDefault();
-                                                                        toggleSelection(o.id);
-                                                                    }}
-                                                                    onClick={() => isSelectionMode && toggleSelection(o.id)}
-                                                                >
-                                                                    <div className="flex items-center gap-4">
-                                                                        {isSelectionMode && (
+                                                            {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).map(o => <div
+                                                                key={o.id}
+                                                                className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
+                                                                            ${selectedIds.has(o.id)
+                                                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md ring-1 ring-blue-500'
+                                                                        : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-200 dark:hover:border-slate-700 shadow-sm'}`}
+                                                                onContextMenu={(e) => {
+                                                                    e.preventDefault();
+                                                                    toggleSelection(o.id);
+                                                                }}
+                                                                onClick={() => isSelectionMode && toggleSelection(o.id)}
+                                                            >
+                                                                <div className="flex items-center gap-4 flex-1">
+                                                                    {isSelectionMode && (
+                                                                        <div className="shrink-0">
                                                                             <input
                                                                                 type="checkbox"
                                                                                 checked={selectedIds.has(o.id)}
                                                                                 onChange={() => toggleSelection(o.id)}
                                                                                 className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 animate-in fade-in zoom-in duration-200"
                                                                             />
-                                                                        )}
-                                                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                                                                        <div>
-                                                                            <p className="font-bold text-slate-900 dark:text-white">{o.studentName}</p>
-                                                                            <p className="text-xs text-slate-500">{o.reason}</p>
                                                                         </div>
+                                                                    )}
+                                                                    {getStudentAvatar(o.studentId)}
+                                                                    <div className="min-w-0">
+                                                                        <p className="font-bold text-slate-900 dark:text-white truncate">{o.studentName}</p>
+                                                                        <p className="text-xs text-slate-500 font-medium truncate">Reason: {o.reason}</p>
                                                                     </div>
-                                                                    <div className="flex items-center gap-1.5 shrink-0 ml-4 transition-opacity">
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+                                                                    <div className="flex items-center gap-2">
                                                                         {!o.inTimeConfirmed ? (
-                                                                            <>
+                                                                            <div className="flex gap-1.5">
                                                                                 <Button
                                                                                     size="sm"
                                                                                     variant="outline"
@@ -2357,38 +2382,45 @@ export default function AdminDashboard() {
                                                                                 {users.find(u => u.id === o.studentId)?.phoneNumber && (
                                                                                     <a
                                                                                         href={`tel:${users.find(u => u.id === o.studentId)?.phoneNumber}`}
-                                                                                        className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors"
+                                                                                        className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors shadow-sm"
                                                                                     >
                                                                                         <Phone className="w-4 h-4" />
                                                                                     </a>
                                                                                 )}
-                                                                            </>
+                                                                            </div>
                                                                         ) : (
                                                                             !o.pushedToSheet ? (
                                                                                 <Button
                                                                                     size="sm"
                                                                                     variant="outline"
-                                                                                    className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all"
+                                                                                    className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all shadow-sm"
                                                                                     onClick={() => handlePushToSheet(o)}
                                                                                 >
                                                                                     <Upload className="w-3 h-3 mr-1" />
-                                                                                    Push Record
+                                                                                    Push
                                                                                 </Button>
                                                                             ) : (
-                                                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
-                                                                                    <BadgeCheck className="w-3 h-3" />
+                                                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase shadow-sm whitespace-nowrap">
+                                                                                    <BadgeCheck className="w-3.5 h-3.5" />
                                                                                     Pushed
                                                                                 </div>
                                                                             )
                                                                         )}
                                                                     </div>
-                                                                    <div className="text-right min-w-[100px]">
-                                                                        <p className={`text-[10px] font-black uppercase ${o.inTimeConfirmed ? 'text-emerald-600 dark:text-emerald-400' : o.type === 'outing' ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
-                                                                            {o.inTimeConfirmed ? 'Returned Hostel' : (o.type === 'outing' ? 'Intimation' : 'Currently Out')}
-                                                                        </p>
-                                                                        <p className="text-xs font-medium text-slate-500">{o.outTime ? `${o.outTime} - ${o.inTimeConfirmed ? o.inTime : 'Not In'}` : `Return by: ${o.toDate}`}</p>
+
+                                                                    <div className="flex flex-col items-end shrink-0 min-w-[100px]">
+                                                                        <div className="text-right">
+                                                                            <p className={`text-[10px] font-black uppercase leading-none mb-1 ${o.inTimeConfirmed ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                                                                                {o.inTimeConfirmed ? 'Returned' : 'Out Now'}
+                                                                            </p>
+                                                                            <div className="flex items-center justify-end gap-1 text-[10px] font-medium text-slate-500 leading-none">
+                                                                                <Clock className="w-3 h-3" />
+                                                                                <span>{o.outTime ? `${formatTime(o.outTime)} - ${o.inTimeConfirmed ? formatTime(o.inTime) : 'Pending'}` : `Due: ${o.toDate}`}</span>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
                                                             ))}
                                                         </div>
                                                     )}
@@ -2399,23 +2431,33 @@ export default function AdminDashboard() {
 
                                     {registerSubTab === 'sick' && (
                                         <div className="space-y-4">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Medical Emergency Log</h3>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-8 w-8 p-0"
-                                                        onClick={() => {
-                                                            toast.promise(fetchData(), {
-                                                                loading: 'Refreshing...',
-                                                                success: 'Refreshed',
-                                                                error: 'Failed to refresh'
-                                                            });
-                                                        }}
-                                                    >
-                                                        <RefreshCw className="w-4 h-4" />
-                                                    </Button>
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold shadow-lg shrink-0">
+                                                        <Thermometer className="w-6 h-6" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Module</p>
+                                                        <p className="text-base font-bold text-slate-900 dark:text-white leading-tight">Medical Emergency Log</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-wrap items-center gap-3">
+                                                    <div className="flex items-center gap-2 pr-2 border-r dark:border-slate-800">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-8 w-8 p-0 rounded-full"
+                                                            onClick={() => {
+                                                                toast.promise(fetchData(), {
+                                                                    loading: 'Refreshing...',
+                                                                    success: 'Refreshed',
+                                                                    error: 'Failed to refresh'
+                                                                });
+                                                            }}
+                                                        >
+                                                            <RefreshCw className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
                                                     <Button
                                                         onClick={() => {
                                                             const GIRLS_SICK_SHEET = 'https://docs.google.com/spreadsheets/d/1LIVmp3dUkHUy-gMvuFatrRMgvPX4qBXj2EProRMGMZE/edit?usp=sharing';
@@ -2428,9 +2470,9 @@ export default function AdminDashboard() {
                                                         }}
                                                         variant="outline"
                                                         size="sm"
-                                                        className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                                                        className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
                                                     >
-                                                        <FileText className="w-4 h-4 mr-2" /> View Report
+                                                        <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                     </Button>
                                                 </div>
                                             </div>
@@ -2444,83 +2486,80 @@ export default function AdminDashboard() {
                                                     {[...sickRegisters].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(entry => (
                                                         <div
                                                             key={entry.id}
-                                                            className={`p-4 rounded-xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors
+                                                            className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
                                                                 ${entry.status === 'pending'
-                                                                    ? 'border-red-100 dark:border-red-900/30 bg-red-50/20 dark:bg-red-900/5'
-                                                                    : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950'}`}
+                                                                    ? 'border-red-200 dark:border-red-900/30 bg-red-50/20 dark:bg-red-900/5 shadow-sm'
+                                                                    : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-200 shadow-sm'}`}
                                                         >
-                                                            <div className="flex items-center gap-4">
-                                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0
-                                                                    ${entry.status === 'pending' ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'}`}>
-                                                                    <Thermometer className="w-6 h-6" />
-                                                                </div>
-                                                                <div>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <p className="font-bold text-slate-900 dark:text-white">{entry.studentName}</p>
-                                                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase
+                                                            <div className="flex items-center gap-4 flex-1">
+                                                                {getStudentAvatar(entry.studentId)}
+                                                                <div className="min-w-0">
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <p className="font-bold text-slate-900 dark:text-white truncate">{entry.studentName}</p>
+                                                                        <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase shrink-0
                                                                             ${entry.status === 'pushed' ? 'bg-emerald-100 text-emerald-700' :
                                                                                 entry.status === 'cared' ? 'bg-blue-100 text-blue-700' :
-                                                                                    'bg-red-100 text-red-700'}`}>
+                                                                                    'bg-red-100 text-red-700 animate-pulse'}`}>
                                                                             {entry.status}
                                                                         </span>
                                                                     </div>
-                                                                    <p className="text-xs text-slate-500 font-medium">
-                                                                        {entry.collegeName} • Room {entry.roomNumber} • {formatDate(entry.date)}
+                                                                    <p className="text-xs text-slate-500 font-medium truncate">
+                                                                        {entry.collegeName} • Room {entry.roomNumber}
                                                                     </p>
-                                                                    <p className="text-sm text-slate-700 dark:text-slate-300 mt-1 italic">
+                                                                    <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 italic line-clamp-1">
                                                                         "{entry.reason}"
                                                                     </p>
                                                                 </div>
                                                             </div>
 
-                                                            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                                                                {entry.status === 'pending' && (
+                                                            <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+                                                                <div className="flex flex-col items-start sm:items-end">
+                                                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Reported At</p>
+                                                                    <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{formatDate(entry.date)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center gap-2">
+                                                                    {entry.status === 'pending' && (
+                                                                        <Button
+                                                                            size="sm"
+                                                                            className="bg-red-600 hover:bg-red-700 text-white h-8 text-[10px] font-bold uppercase"
+                                                                            onClick={() => handleMarkAsCared(entry.id)}
+                                                                        >
+                                                                            Mark Cared
+                                                                        </Button>
+                                                                    )}
+
+                                                                    {entry.status === 'cared' && (
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant="outline"
+                                                                            className="h-8 text-[10px] font-bold uppercase border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                                                            onClick={() => handlePushSickRegisterToSheet(entry)}
+                                                                        >
+                                                                            <Upload className="w-3 h-3 mr-1.5" />
+                                                                            Push
+                                                                        </Button>
+                                                                    )}
+
+                                                                    {entry.status === 'pushed' && (
+                                                                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase whitespace-nowrap">
+                                                                            <Check className="w-3.5 h-3.5" />
+                                                                            Synced
+                                                                        </div>
+                                                                    )}
+
                                                                     <Button
                                                                         size="sm"
-                                                                        className="bg-red-600 hover:bg-red-700 text-white"
-                                                                        onClick={() => handleMarkAsCared(entry.id)}
+                                                                        variant="ghost"
+                                                                        className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                                                        onClick={() => {
+                                                                            setReplyingTo(entry.studentId);
+                                                                            setReplyMessage(`Hi ${entry.studentName}, regarding your medical emergency report: `);
+                                                                        }}
                                                                     >
-                                                                        Mark as Cared
+                                                                        <MessageSquare className="w-4 h-4" />
                                                                     </Button>
-                                                                )}
-
-                                                                {entry.status === 'cared' && (
-                                                                    <div className="flex flex-col items-end mr-2">
-                                                                        <p className="text-[10px] text-slate-400 uppercase">Cared By</p>
-                                                                        <p className="text-xs font-bold text-slate-600 dark:text-slate-400">{entry.caredBy || 'Admin'}</p>
-                                                                    </div>
-                                                                )}
-
-                                                                {entry.status === 'cared' && (
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="outline"
-                                                                        className="border-emerald-200 text-emerald-600 hover:bg-emerald-50"
-                                                                        onClick={() => handlePushSickRegisterToSheet(entry)}
-                                                                    >
-                                                                        <Upload className="w-3 h-3 mr-1" />
-                                                                        Push to Sheet
-                                                                    </Button>
-                                                                )}
-
-                                                                {entry.status === 'pushed' && (
-                                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">
-                                                                        <Check className="w-4 h-4" />
-                                                                        Synced to Sheets
-                                                                    </div>
-                                                                )}
-
-                                                                <Button
-                                                                    size="sm"
-                                                                    variant="ghost"
-                                                                    className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
-                                                                    onClick={() => {
-                                                                        setReplyingTo(entry.studentId);
-                                                                        setReplyMessage(`Hi ${entry.studentName}, regarding your medical emergency report: `);
-                                                                    }}
-                                                                >
-                                                                    <MessageSquare className="w-4 h-4" />
-                                                                </Button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     ))}
