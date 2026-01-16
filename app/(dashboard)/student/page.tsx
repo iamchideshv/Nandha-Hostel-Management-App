@@ -125,32 +125,39 @@ export default function StudentDashboard() {
     const NotificationBadge = ({ count }: { count: number }) => {
         if (count <= 0) return null;
         return (
-            <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-white transition-all animate-in zoom-in">
+            <div className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-white shadow-md animate-in zoom-in duration-300">
                 {count > 9 ? '9+' : count}
             </div>
         );
     };
 
-    const [lastViewed, setLastViewed] = useState<{ [key: string]: number }>({});
-
-    useEffect(() => {
-        const saved = localStorage.getItem('student_lastViewed');
-        if (saved) {
-            try {
-                setLastViewed(JSON.parse(saved));
-            } catch (e) { }
+    const [lastViewed, setLastViewed] = useState<{ [key: string]: number }>(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('student_lastViewed');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    return {};
+                }
+            }
         }
-    }, []);
+        return {};
+    });
 
     useEffect(() => {
         if (activeTab) {
-            const now = Date.now();
-            const updated = { ...lastViewed, [activeTab]: now };
-            if (activeTab === 'register' && registerSubTab) {
-                updated[`register_${registerSubTab}`] = now;
-            }
-            setLastViewed(updated);
-            localStorage.setItem('student_lastViewed', JSON.stringify(updated));
+            setLastViewed(prev => {
+                const now = Date.now();
+                const updated = { ...prev, [activeTab]: now };
+                if (activeTab === 'register' && registerSubTab) {
+                    updated[`register_${registerSubTab}`] = now;
+                }
+
+                // Save to localStorage immediately
+                localStorage.setItem('student_lastViewed', JSON.stringify(updated));
+                return updated;
+            });
         }
     }, [activeTab, registerSubTab]);
 
@@ -1895,9 +1902,11 @@ export default function StudentDashboard() {
                                                 Log medical issues or requests to visit the hospital/infirmary.
                                             </p>
                                         </CardContent>
-                                        <CardFooter className="relative">
-                                            <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
-                                            <NotificationBadge count={pendingCounts.sick} />
+                                        <CardFooter>
+                                            <div className="relative w-full">
+                                                <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
+                                                <NotificationBadge count={pendingCounts.sick} />
+                                            </div>
                                         </CardFooter>
                                     </Card>
 
@@ -1914,9 +1923,11 @@ export default function StudentDashboard() {
                                                 Submit complaints regarding food, room maintenance, water, or other issues.
                                             </p>
                                         </CardContent>
-                                        <CardFooter className="relative">
-                                            <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
-                                            <NotificationBadge count={pendingCounts.complaints} />
+                                        <CardFooter>
+                                            <div className="relative w-full">
+                                                <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
+                                                <NotificationBadge count={pendingCounts.complaints} />
+                                            </div>
                                         </CardFooter>
                                     </Card>
                                 </div>
