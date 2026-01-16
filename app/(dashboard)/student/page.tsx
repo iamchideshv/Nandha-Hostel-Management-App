@@ -198,7 +198,7 @@ export default function StudentDashboard() {
     }, [user?.id, messHostelType]);
 
     useEffect(() => {
-        if (user) {
+        if (user && !showProfileModal) {
             setProfileForm({
                 name: user.name || '',
                 department: user.department || '',
@@ -219,16 +219,27 @@ export default function StudentDashboard() {
                 }
             }
         }
-    }, [user, completion, loadingData]);
+    }, [user, completion, loadingData, showProfileModal]);
 
     useEffect(() => {
         if (searchParams.get('editProfile') === 'true') {
+            if (user) {
+                setProfileForm({
+                    name: user.name || '',
+                    department: user.department || '',
+                    roomNumber: user.roomNumber || '',
+                    email: user.email || '',
+                    phoneNumber: user.phoneNumber || '',
+                    college: user.college || '',
+                    profileImage: user.profileImage || ''
+                });
+            }
             setShowProfileModal(true);
             // Clear the param after showing
             const newPath = window.location.pathname;
             router.replace(newPath);
         }
-    }, [searchParams, router]);
+    }, [searchParams, router, user]);
 
     useEffect(() => {
         if (user) {
@@ -796,7 +807,20 @@ export default function StudentDashboard() {
                                 <p className="text-slate-500 text-sm">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
                                 <div className="flex items-center gap-3 mt-1">
                                     <button
-                                        onClick={() => setShowProfileModal(true)}
+                                        onClick={() => {
+                                            if (user) {
+                                                setProfileForm({
+                                                    name: user.name || '',
+                                                    department: user.department || '',
+                                                    roomNumber: user.roomNumber || '',
+                                                    email: user.email || '',
+                                                    phoneNumber: user.phoneNumber || '',
+                                                    college: user.college || '',
+                                                    profileImage: user.profileImage || ''
+                                                });
+                                            }
+                                            setShowProfileModal(true);
+                                        }}
                                         className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
                                     >
                                         <UserCircle className="w-4 h-4" />
@@ -816,7 +840,7 @@ export default function StudentDashboard() {
                         <Info className="w-4 h-4 mr-2" />
                         About App
                     </Button>
-                </header>
+                </header >
 
 
 
@@ -2521,172 +2545,178 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Lost Found Detail Modal */}
-                {selectedItemDetail && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSelectedItemDetail(null)}>
-                        <Card className="w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
-                            <CardHeader>
-                                <div className="flex justify-between items-start">
-                                    <CardTitle>{selectedItemDetail.productName}</CardTitle>
-                                    <Button variant="ghost" size="sm" onClick={() => setSelectedItemDetail(null)}>
-                                        <XCircle className="w-5 h-5" />
-                                    </Button>
-                                </div>
-                                <CardDescription>Report details</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {selectedItemDetail.image && (
-                                    <div className="aspect-video w-full rounded-lg border overflow-hidden bg-slate-50">
-                                        <img src={selectedItemDetail.image} alt={selectedItemDetail.productName} className="w-full h-full object-contain" />
+                {
+                    selectedItemDetail && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setSelectedItemDetail(null)}>
+                            <Card className="w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+                                <CardHeader>
+                                    <div className="flex justify-between items-start">
+                                        <CardTitle>{selectedItemDetail.productName}</CardTitle>
+                                        <Button variant="ghost" size="sm" onClick={() => setSelectedItemDetail(null)}>
+                                            <XCircle className="w-5 h-5" />
+                                        </Button>
                                     </div>
-                                )}
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                    <div className="col-span-2">
-                                        <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Identification</p>
-                                        <p className="font-medium p-2 bg-slate-50 dark:bg-black rounded mt-1">{selectedItemDetail.identification}</p>
-                                    </div>
-                                    {selectedItemDetail.adminMessage && (
+                                    <CardDescription>Report details</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {selectedItemDetail.image && (
+                                        <div className="aspect-video w-full rounded-lg border overflow-hidden bg-slate-50">
+                                            <img src={selectedItemDetail.image} alt={selectedItemDetail.productName} className="w-full h-full object-contain" />
+                                        </div>
+                                    )}
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
                                         <div className="col-span-2">
-                                            <p className="text-blue-500 dark:text-blue-400 text-[10px] uppercase font-bold">Admin Message</p>
-                                            <p className="font-medium p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded mt-1 border border-blue-100 dark:border-blue-800">{selectedItemDetail.adminMessage}</p>
+                                            <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Identification</p>
+                                            <p className="font-medium p-2 bg-slate-50 dark:bg-black rounded mt-1">{selectedItemDetail.identification}</p>
                                         </div>
-                                    )}
-                                    <div>
-                                        <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Status</p>
-                                        <p className={`font-bold capitalize ${selectedItemDetail.status === 'not-found' ? 'text-red-500' :
-                                            (selectedItemDetail.status === 'found' || selectedItemDetail.status === 'returned') ? 'text-green-500' :
-                                                ''
-                                            }`}>
-                                            {selectedItemDetail.status === 'not-found' ? 'Not Found' : selectedItemDetail.status}
-                                        </p>
-                                    </div>
-                                    {selectedItemDetail.adminMessage && (
-                                        <div className="col-span-2 p-2 bg-slate-50 dark:bg-black/50 rounded border border-slate-100 dark:border-slate-800">
-                                            <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold mb-1">Admin Message</p>
-                                            <p className="text-sm italic text-slate-700 dark:text-slate-300">"{selectedItemDetail.adminMessage}"</p>
-                                        </div>
-                                    )}
-                                    <div>
-                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Location</p>
-                                        <p className="font-medium">{selectedItemDetail.location}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Room Number</p>
-                                        <p className="font-medium">{selectedItemDetail.roomNumber || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-slate-500 text-[10px] uppercase font-bold">Time & Date</p>
-                                        <p className="font-medium">{selectedItemDetail.timeAndDate}</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
-
-                {/* Simple Image Lightbox */}
-                {selectedImage && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 p-4" onClick={() => setSelectedImage(null)}>
-                        <img src={selectedImage} alt="Full size" className="max-w-full max-h-full object-contain" />
-                        <button className="absolute top-4 right-4 text-white" onClick={() => setSelectedImage(null)}>
-                            <XCircle className="w-8 h-8" />
-                        </button>
-                    </div>
-                )}
-
-                {selectedQr && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedQr(null)}>
-                        <div className="bg-white dark:bg-black rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
-                            {/* The Printable A6 Area */}
-                            <div className="overflow-auto max-h-[80vh]">
-                                <div id="outpass-to-download" className="bg-white p-6 flex flex-col items-center w-[400px] h-[564px] mx-auto shadow-sm">
-                                    {/* Header - More Compact */}
-                                    <div className="w-full text-center border-b-2 border-indigo-600 pb-2 mb-4">
-                                        <h2 className="text-lg font-bold text-indigo-950 tracking-tight uppercase">NEI Smart Hostel</h2>
-                                        <p className="text-[9px] text-indigo-600 font-bold tracking-widest uppercase">Authorized Digital Outpass</p>
-                                    </div>
-
-                                    {/* QR Code Container - Slightly smaller to save space */}
-                                    <div className="bg-slate-50 p-3 border border-slate-200 rounded-2xl mb-4 shadow-sm">
-                                        <QRCode
-                                            value={JSON.stringify({
-                                                id: selectedQr.id,
-                                                student: selectedQr.studentName,
-                                                collegeName: selectedQr.collegeName,
-                                                hostelName: selectedQr.hostelName,
-                                                roomNumber: selectedQr.roomNumber,
-                                                yearAndDept: selectedQr.yearAndDept,
-                                                reason: selectedQr.reason,
-                                                valid: `${selectedQr.fromDate} to ${selectedQr.toDate}`,
-                                                status: 'APPROVED'
-                                            })}
-                                            size={150}
-                                            style={{ height: "auto", maxWidth: "100%", width: "150px" }}
-                                        />
-                                    </div>
-
-                                    {/* Status Badge - Smaller margin */}
-                                    <div className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 mb-4 border border-emerald-200">
-                                        <BadgeCheck className="w-3.5 h-3.5" />
-                                        Approved
-                                    </div>
-
-                                    {/* Details List - More compact gaps */}
-                                    <div className="w-full flex flex-col gap-y-3 text-left px-8">
-                                        <div className="border-l-2 border-indigo-100 pl-3">
-                                            <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Student Name</p>
-                                            <p className="text-sm font-bold text-indigo-950 uppercase leading-tight">{selectedQr.studentName}</p>
-                                        </div>
-                                        <div className="border-l-2 border-indigo-100 pl-3">
-                                            <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Pass ID & Room</p>
-                                            <p className="text-sm font-bold text-indigo-950">#{selectedQr.id.slice(-6).toUpperCase()} • RM {selectedQr.roomNumber}</p>
-                                        </div>
-                                        <div className="border-l-2 border-indigo-100 pl-3">
-                                            <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Pass Reason</p>
-                                            <p className="text-[11px] font-semibold text-slate-600 uppercase leading-snug">{selectedQr.reason}</p>
-                                        </div>
-                                        {selectedQr.approvedAt && (
-                                            <div className="border-l-2 border-indigo-100 pl-3">
-                                                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Approved At</p>
-                                                <p className="text-[11px] font-bold text-indigo-950 uppercase">
-                                                    {new Date(selectedQr.approvedAt).toLocaleString('en-IN', {
-                                                        day: '2-digit',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        hour12: true
-                                                    })}
-                                                </p>
+                                        {selectedItemDetail.adminMessage && (
+                                            <div className="col-span-2">
+                                                <p className="text-blue-500 dark:text-blue-400 text-[10px] uppercase font-bold">Admin Message</p>
+                                                <p className="font-medium p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded mt-1 border border-blue-100 dark:border-blue-800">{selectedItemDetail.adminMessage}</p>
                                             </div>
                                         )}
+                                        <div>
+                                            <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">Status</p>
+                                            <p className={`font-bold capitalize ${selectedItemDetail.status === 'not-found' ? 'text-red-500' :
+                                                (selectedItemDetail.status === 'found' || selectedItemDetail.status === 'returned') ? 'text-green-500' :
+                                                    ''
+                                                }`}>
+                                                {selectedItemDetail.status === 'not-found' ? 'Not Found' : selectedItemDetail.status}
+                                            </p>
+                                        </div>
+                                        {selectedItemDetail.adminMessage && (
+                                            <div className="col-span-2 p-2 bg-slate-50 dark:bg-black/50 rounded border border-slate-100 dark:border-slate-800">
+                                                <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold mb-1">Admin Message</p>
+                                                <p className="text-sm italic text-slate-700 dark:text-slate-300">"{selectedItemDetail.adminMessage}"</p>
+                                            </div>
+                                        )}
+                                        <div>
+                                            <p className="text-slate-500 text-[10px] uppercase font-bold">Location</p>
+                                            <p className="font-medium">{selectedItemDetail.location}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-500 text-[10px] uppercase font-bold">Room Number</p>
+                                            <p className="font-medium">{selectedItemDetail.roomNumber || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-500 text-[10px] uppercase font-bold">Time & Date</p>
+                                            <p className="font-medium">{selectedItemDetail.timeAndDate}</p>
+                                        </div>
                                     </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )
+                }
 
-                                    {/* Validity Footer - Centered and Smaller Width */}
-                                    <div className="mt-auto w-3/4 bg-indigo-900 py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-100 flex items-center justify-between">
-                                        <p className="text-[8px] uppercase font-bold text-indigo-300 tracking-widest">VALID TILL</p>
-                                        <p className="text-sm font-black text-white tracking-wide">
-                                            {selectedQr.toDate}
-                                        </p>
+                {/* Simple Image Lightbox */}
+                {
+                    selectedImage && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 p-4" onClick={() => setSelectedImage(null)}>
+                            <img src={selectedImage} alt="Full size" className="max-w-full max-h-full object-contain" />
+                            <button className="absolute top-4 right-4 text-white" onClick={() => setSelectedImage(null)}>
+                                <XCircle className="w-8 h-8" />
+                            </button>
+                        </div>
+                    )
+                }
+
+                {
+                    selectedQr && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedQr(null)}>
+                            <div className="bg-white dark:bg-black rounded-3xl max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                                {/* The Printable A6 Area */}
+                                <div className="overflow-auto max-h-[80vh]">
+                                    <div id="outpass-to-download" className="bg-white p-6 flex flex-col items-center w-[400px] h-[564px] mx-auto shadow-sm">
+                                        {/* Header - More Compact */}
+                                        <div className="w-full text-center border-b-2 border-indigo-600 pb-2 mb-4">
+                                            <h2 className="text-lg font-bold text-indigo-950 tracking-tight uppercase">NEI Smart Hostel</h2>
+                                            <p className="text-[9px] text-indigo-600 font-bold tracking-widest uppercase">Authorized Digital Outpass</p>
+                                        </div>
+
+                                        {/* QR Code Container - Slightly smaller to save space */}
+                                        <div className="bg-slate-50 p-3 border border-slate-200 rounded-2xl mb-4 shadow-sm">
+                                            <QRCode
+                                                value={JSON.stringify({
+                                                    id: selectedQr.id,
+                                                    student: selectedQr.studentName,
+                                                    collegeName: selectedQr.collegeName,
+                                                    hostelName: selectedQr.hostelName,
+                                                    roomNumber: selectedQr.roomNumber,
+                                                    yearAndDept: selectedQr.yearAndDept,
+                                                    reason: selectedQr.reason,
+                                                    valid: `${selectedQr.fromDate} to ${selectedQr.toDate}`,
+                                                    status: 'APPROVED'
+                                                })}
+                                                size={150}
+                                                style={{ height: "auto", maxWidth: "100%", width: "150px" }}
+                                            />
+                                        </div>
+
+                                        {/* Status Badge - Smaller margin */}
+                                        <div className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 mb-4 border border-emerald-200">
+                                            <BadgeCheck className="w-3.5 h-3.5" />
+                                            Approved
+                                        </div>
+
+                                        {/* Details List - More compact gaps */}
+                                        <div className="w-full flex flex-col gap-y-3 text-left px-8">
+                                            <div className="border-l-2 border-indigo-100 pl-3">
+                                                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Student Name</p>
+                                                <p className="text-sm font-bold text-indigo-950 uppercase leading-tight">{selectedQr.studentName}</p>
+                                            </div>
+                                            <div className="border-l-2 border-indigo-100 pl-3">
+                                                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Pass ID & Room</p>
+                                                <p className="text-sm font-bold text-indigo-950">#{selectedQr.id.slice(-6).toUpperCase()} • RM {selectedQr.roomNumber}</p>
+                                            </div>
+                                            <div className="border-l-2 border-indigo-100 pl-3">
+                                                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Pass Reason</p>
+                                                <p className="text-[11px] font-semibold text-slate-600 uppercase leading-snug">{selectedQr.reason}</p>
+                                            </div>
+                                            {selectedQr.approvedAt && (
+                                                <div className="border-l-2 border-indigo-100 pl-3">
+                                                    <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Approved At</p>
+                                                    <p className="text-[11px] font-bold text-indigo-950 uppercase">
+                                                        {new Date(selectedQr.approvedAt).toLocaleString('en-IN', {
+                                                            day: '2-digit',
+                                                            month: 'short',
+                                                            year: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                            hour12: true
+                                                        })}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Validity Footer - Centered and Smaller Width */}
+                                        <div className="mt-auto w-3/4 bg-indigo-900 py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-100 flex items-center justify-between">
+                                            <p className="text-[8px] uppercase font-bold text-indigo-300 tracking-widest">VALID TILL</p>
+                                            <p className="text-sm font-black text-white tracking-wide">
+                                                {selectedQr.toDate}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Modal Action Footer */}
-                            <div className="p-6 bg-slate-50 border-t flex flex-col gap-3">
-                                <Button
-                                    className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 shadow-md shadow-indigo-100 flex items-center justify-center gap-2 text-base font-bold transition-all active:scale-95"
-                                    onClick={handleDownloadPass}
-                                >
-                                    <Download className="w-5 h-5" />
-                                    Download PDF Pass
-                                </Button>
-                                <Button variant="ghost" className="w-full text-slate-500 hover:text-slate-700" onClick={() => setSelectedQr(null)}>
-                                    Close Window
-                                </Button>
+                                {/* Modal Action Footer */}
+                                <div className="p-6 bg-slate-50 border-t flex flex-col gap-3">
+                                    <Button
+                                        className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 shadow-md shadow-indigo-100 flex items-center justify-center gap-2 text-base font-bold transition-all active:scale-95"
+                                        onClick={handleDownloadPass}
+                                    >
+                                        <Download className="w-5 h-5" />
+                                        Download PDF Pass
+                                    </Button>
+                                    <Button variant="ghost" className="w-full text-slate-500 hover:text-slate-700" onClick={() => setSelectedQr(null)}>
+                                        Close Window
+                                    </Button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )
+                }
 
 
 
@@ -2758,7 +2788,8 @@ export default function StudentDashboard() {
                             </div>
                         </div>
                     </div>
-                )}
+                )
+            }
         </>
     );
 }

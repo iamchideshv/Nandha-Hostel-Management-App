@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { User, UserRole } from './types';
 import { auth } from './firebase';
 import { signOut } from 'firebase/auth';
@@ -43,8 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('hostel_user');
     };
 
+    const value = useMemo(() => ({
+        user,
+        login,
+        logout,
+        isLoading
+    }), [user, isLoading]);
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );
