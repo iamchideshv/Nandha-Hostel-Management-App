@@ -2334,93 +2334,94 @@ export default function AdminDashboard() {
                                                         </div>
                                                     ) : (
                                                         <div className="grid gap-3">
-                                                            {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).map(o => <div
-                                                                key={o.id}
-                                                                className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
-                                                                            ${selectedIds.has(o.id)
-                                                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md ring-1 ring-blue-500'
-                                                                        : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-200 dark:hover:border-slate-700 shadow-sm'}`}
-                                                                onContextMenu={(e) => {
-                                                                    e.preventDefault();
-                                                                    toggleSelection(o.id);
-                                                                }}
-                                                                onClick={() => isSelectionMode && toggleSelection(o.id)}
-                                                            >
-                                                                <div className="flex items-center gap-4 flex-1">
-                                                                    {isSelectionMode && (
-                                                                        <div className="shrink-0">
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                checked={selectedIds.has(o.id)}
-                                                                                onChange={() => toggleSelection(o.id)}
-                                                                                className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 animate-in fade-in zoom-in duration-200"
-                                                                            />
-                                                                        </div>
-                                                                    )}
-                                                                    {getStudentAvatar(o.studentId)}
-                                                                    <div className="min-w-0">
-                                                                        <p className="font-bold text-slate-900 dark:text-white truncate">{o.studentName}</p>
-                                                                        <p className="text-xs text-slate-500 font-medium truncate">Reason: {o.reason}</p>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
-                                                                    <div className="flex items-center gap-2">
-                                                                        {!o.inTimeConfirmed ? (
-                                                                            <div className="flex gap-1.5">
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    variant="outline"
-                                                                                    className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
-                                                                                    onClick={() => {
-                                                                                        setReplyingTo(o.studentId);
-                                                                                        setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for your outing today. Please update your in-time.`);
-                                                                                    }}
-                                                                                >
-                                                                                    <MessageSquare className="w-4 h-4" />
-                                                                                </Button>
-                                                                                {users.find(u => u.id === o.studentId)?.phoneNumber && (
-                                                                                    <a
-                                                                                        href={`tel:${users.find(u => u.id === o.studentId)?.phoneNumber}`}
-                                                                                        className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors shadow-sm"
-                                                                                    >
-                                                                                        <Phone className="w-4 h-4" />
-                                                                                    </a>
-                                                                                )}
+                                                            {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).map((o) => (
+                                                                <div
+                                                                    key={o.id}
+                                                                    className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
+                                                                        ${selectedIds.has(o.id)
+                                                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md ring-1 ring-blue-500'
+                                                                            : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-200 dark:hover:border-slate-700 shadow-sm'}`}
+                                                                    onContextMenu={(e) => {
+                                                                        e.preventDefault();
+                                                                        toggleSelection(o.id);
+                                                                    }}
+                                                                    onClick={() => isSelectionMode && toggleSelection(o.id)}
+                                                                >
+                                                                    <div className="flex items-center gap-4 flex-1">
+                                                                        {isSelectionMode && (
+                                                                            <div className="shrink-0">
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    checked={selectedIds.has(o.id)}
+                                                                                    onChange={() => toggleSelection(o.id)}
+                                                                                    className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 animate-in fade-in zoom-in duration-200"
+                                                                                />
                                                                             </div>
-                                                                        ) : (
-                                                                            !o.pushedToSheet ? (
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    variant="outline"
-                                                                                    className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all shadow-sm"
-                                                                                    onClick={() => handlePushToSheet(o)}
-                                                                                >
-                                                                                    <Upload className="w-3 h-3 mr-1" />
-                                                                                    Push
-                                                                                </Button>
-                                                                            ) : (
-                                                                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase shadow-sm whitespace-nowrap">
-                                                                                    <BadgeCheck className="w-3.5 h-3.5" />
-                                                                                    Pushed
-                                                                                </div>
-                                                                            )
                                                                         )}
+                                                                        {getStudentAvatar(o.studentId)}
+                                                                        <div className="min-w-0">
+                                                                            <p className="font-bold text-slate-900 dark:text-white truncate">{o.studentName}</p>
+                                                                            <p className="text-xs text-slate-500 font-medium truncate">Reason: {o.reason}</p>
+                                                                        </div>
                                                                     </div>
 
-                                                                    <div className="flex flex-col items-end shrink-0 min-w-[100px]">
-                                                                        <div className="text-right">
-                                                                            <p className={`text-[10px] font-black uppercase leading-none mb-1 ${o.inTimeConfirmed ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}`}>
-                                                                                {o.inTimeConfirmed ? 'Returned' : 'Out Now'}
-                                                                            </p>
-                                                                            <div className="flex items-center justify-end gap-1 text-[10px] font-medium text-slate-500 leading-none">
-                                                                                <Clock className="w-3 h-3" />
-                                                                                <span>{o.outTime ? `${formatTime(o.outTime)} - ${o.inTimeConfirmed ? formatTime(o.inTime) : 'Pending'}` : `Due: ${o.toDate}`}</span>
+                                                                    <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+                                                                        <div className="flex items-center gap-2">
+                                                                            {!o.inTimeConfirmed ? (
+                                                                                <div className="flex gap-1.5">
+                                                                                    <Button
+                                                                                        size="sm"
+                                                                                        variant="outline"
+                                                                                        className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                                                                        onClick={() => {
+                                                                                            setReplyingTo(o.studentId);
+                                                                                            setReplyMessage(`Hi ${o.studentName}, you haven't confirmed your return for your outing today. Please update your in-time.`);
+                                                                                        }}
+                                                                                    >
+                                                                                        <MessageSquare className="w-4 h-4" />
+                                                                                    </Button>
+                                                                                    {users.find(u => u.id === o.studentId)?.phoneNumber && (
+                                                                                        <a
+                                                                                            href={`tel:${users.find(u => u.id === o.studentId)?.phoneNumber}`}
+                                                                                            className="h-8 w-8 rounded-full border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors shadow-sm"
+                                                                                        >
+                                                                                            <Phone className="w-4 h-4" />
+                                                                                        </a>
+                                                                                    )}
+                                                                                </div>
+                                                                            ) : (
+                                                                                !o.pushedToSheet ? (
+                                                                                    <Button
+                                                                                        size="sm"
+                                                                                        variant="outline"
+                                                                                        className="text-[10px] h-7 px-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50 font-bold uppercase transition-all shadow-sm"
+                                                                                        onClick={() => handlePushToSheet(o)}
+                                                                                    >
+                                                                                        <Upload className="w-3 h-3 mr-1" />
+                                                                                        Push
+                                                                                    </Button>
+                                                                                ) : (
+                                                                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase shadow-sm whitespace-nowrap">
+                                                                                        <BadgeCheck className="w-3.5 h-3.5" />
+                                                                                        Pushed
+                                                                                    </div>
+                                                                                )
+                                                                            )}
+                                                                        </div>
+
+                                                                        <div className="flex flex-col items-end shrink-0 min-w-[100px]">
+                                                                            <div className="text-right">
+                                                                                <p className={`text-[10px] font-black uppercase leading-none mb-1 ${o.inTimeConfirmed ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                                                                                    {o.inTimeConfirmed ? 'Returned' : 'Out Now'}
+                                                                                </p>
+                                                                                <div className="flex items-center justify-end gap-1 text-[10px] font-medium text-slate-500 leading-none">
+                                                                                    <Clock className="w-3 h-3" />
+                                                                                    <span>{o.outTime ? `${formatTime(o.outTime)} - ${o.inTimeConfirmed ? formatTime(o.inTime) : 'Pending'}` : `Due: ${o.toDate}`}</span>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
                                                             ))}
                                                         </div>
                                                     )}
