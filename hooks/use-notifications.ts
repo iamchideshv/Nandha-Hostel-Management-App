@@ -27,6 +27,8 @@ export function useNotifications() {
                     return;
                 }
 
+                if (!messaging) return;
+
                 // 2. Get Token
                 const token = await getToken(messaging, {
                     vapidKey: VAPID_KEY
