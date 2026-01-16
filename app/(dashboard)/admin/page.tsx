@@ -707,6 +707,38 @@ export default function AdminDashboard() {
                         <Info className="w-4 h-4 mr-2" />
                         About App
                     </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={async () => {
+                            if (!confirm('Send a test push notification to yourself?')) return;
+                            try {
+                                const res = await fetch('/api/push', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        userId: user?.id,
+                                        title: 'Test Notification',
+                                        body: 'If you see this, push notifications are working!',
+                                        data: { url: '/admin' }
+                                    })
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                    toast.success('Test notification sent! Check your phone.');
+                                } else {
+                                    toast.error(`Push Failed: ${data.error}`);
+                                    alert(`Push Failed: ${data.error}\n\nMake sure to add FCM_SERVER_KEY to Vercel env vars.`);
+                                }
+                            } catch (e: any) {
+                                toast.error('Error sending test push');
+                            }
+                        }}
+                        className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                    >
+                        <Send className="w-4 h-4 mr-2" />
+                        Test Push
+                    </Button>
                 </header>
 
                 {/* Tabs */}

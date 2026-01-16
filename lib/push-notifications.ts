@@ -4,7 +4,9 @@ const FCM_SERVER_KEY = process.env.FCM_SERVER_KEY; // I'll advise the user to ad
 
 export async function sendPushToUser(userId: string, title: string, body: string, data?: any) {
     const user = await db.findUser(userId);
-    if (!user || !user.fcmTokens || user.fcmTokens.length === 0) return;
+    if (!user || !user.fcmTokens || user.fcmTokens.length === 0) {
+        throw new Error('NO_DEVICE_TOKENS_FOUND');
+    }
 
     return sendToTokens(user.fcmTokens, title, body, data);
 }
@@ -21,7 +23,7 @@ export async function sendPushToRole(role: string, title: string, body: string, 
 async function sendToTokens(tokens: string[], title: string, body: string, data?: any) {
     if (!FCM_SERVER_KEY) {
         console.warn('FCM_SERVER_KEY is not defined in environment variables');
-        return;
+        throw new Error('FCM_SERVER_KEY_MISSING');
     }
 
     const payload = {
@@ -47,8 +49,18 @@ async function sendToTokens(tokens: string[], title: string, body: string, data?
 
         const result = await response.json();
         console.log('FCM Send result:', result);
+
+        if (result.failure > 0) {
+            // Check for specific errors in results
+            const firstError = result.results.find((r: any) => r.error);
+            if (firstError) {
+                throw new Error(`FCM_ERROR: ${firstError.error}`);
+            }
+        }
+
         return result;
     } catch (error) {
         console.error('Error sending FCM message:', error);
+        throw error;
     }
 }
