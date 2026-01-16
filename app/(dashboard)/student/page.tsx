@@ -266,6 +266,12 @@ export default function StudentDashboard() {
 
     const handleRegisterIntimation = async (type: 'leave' | 'outing') => {
         if (!user) return;
+
+        if (!registerEntryForm.outTime) {
+            toast.error("Enter valid Timing");
+            return;
+        }
+
         setSubmitting(true);
         try {
             const res = await fetch('/api/outpass', {
@@ -282,9 +288,9 @@ export default function StudentDashboard() {
                     fromDate: registerEntryForm.date,
                     toDate: registerEntryForm.date,
                     outTime: registerEntryForm.outTime,
-                    inTime: registerEntryForm.inTime,
+                    inTime: '',
                     type: type,
-                    inTimeConfirmed: !!registerEntryForm.inTime
+                    inTimeConfirmed: false
                 })
             });
             if (res.ok) {
