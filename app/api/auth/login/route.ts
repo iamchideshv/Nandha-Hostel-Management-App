@@ -26,8 +26,8 @@ export async function POST(req: Request) {
         const { password: _, ...userWithoutPassword } = user;
 
         return NextResponse.json(userWithoutPassword);
-    } catch (error) {
+    } catch (error: any) {
         console.error('Login API Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: `Internal Server Error: ${error.message || 'Unknown'}` }, { status: 500 });
     }
 }
