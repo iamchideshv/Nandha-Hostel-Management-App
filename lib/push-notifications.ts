@@ -24,6 +24,15 @@ export async function sendPushToRole(role: string, title: string, body: string, 
 
 
 async function sendToTokens(tokens: string[], title: string, body: string, data?: any) {
+    if (!firebaseAdmin.apps.length) {
+        const missing = [];
+        if (!process.env.FIREBASE_PROJECT_ID) missing.push('FIREBASE_PROJECT_ID');
+        if (!process.env.FIREBASE_CLIENT_EMAIL) missing.push('FIREBASE_CLIENT_EMAIL');
+        if (!process.env.FIREBASE_PRIVATE_KEY) missing.push('FIREBASE_PRIVATE_KEY');
+
+        throw new Error(`Server Config Error: Firebase Admin not initialized. Missing env vars: ${missing.join(', ') || 'Unknown error'}`);
+    }
+
     if (!tokens.length) return;
 
     const message = {
