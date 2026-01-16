@@ -63,35 +63,35 @@ export function EmergencyModal({ isOpen, onClose, user }: EmergencyModalProps) {
                             <span>Call Warden Immediately</span>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-3">
-                            <div className="space-y-3 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/50">
-                                <h4 className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-                                    FOR BOYS HOSTEL
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2 p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/50">
+                                <h4 className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <span className="w-1 h-1 rounded-full bg-blue-600 animate-pulse" />
+                                    BOYS
                                 </h4>
-                                <div className="space-y-2">
+                                <div className="space-y-1.5">
                                     {['8015316807', '8715432961'].map((num, i) => (
-                                        <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-2 pl-3 rounded-lg shadow-sm border border-blue-50 dark:border-slate-800">
-                                            <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Warden {i + 1} - {num}</span>
-                                            <a href={`tel:${num}`} className="bg-blue-600 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-md shadow-blue-200 dark:shadow-none">
-                                                <Phone className="w-3.5 h-3.5" />
+                                        <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-1.5 pl-2 rounded-lg shadow-sm border border-blue-50 dark:border-slate-800">
+                                            <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200">W{i + 1}</span>
+                                            <a href={`tel:${num}`} className="bg-blue-600 text-white p-1.5 rounded-full hover:scale-105 transition-transform shadow-sm">
+                                                <Phone className="w-2.5 h-2.5" />
                                             </a>
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="space-y-3 p-4 bg-rose-50 dark:bg-rose-900/10 rounded-xl border border-rose-100 dark:border-rose-900/50">
-                                <h4 className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
-                                    FOR GIRLS HOSTEL
+                            <div className="space-y-2 p-3 bg-rose-50 dark:bg-rose-900/10 rounded-xl border border-rose-100 dark:border-rose-900/50">
+                                <h4 className="text-[9px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <span className="w-1 h-1 rounded-full bg-rose-600 animate-pulse" />
+                                    GIRLS
                                 </h4>
-                                <div className="space-y-2">
+                                <div className="space-y-1.5">
                                     {['7654891023', '8596453211'].map((num, i) => (
-                                        <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-2 pl-3 rounded-lg shadow-sm border border-rose-50 dark:border-slate-800">
-                                            <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Warden {i + 1} - {num}</span>
-                                            <a href={`tel:${num}`} className="bg-rose-600 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-md shadow-rose-200 dark:shadow-none">
-                                                <Phone className="w-3.5 h-3.5" />
+                                        <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-1.5 pl-2 rounded-lg shadow-sm border border-rose-50 dark:border-slate-800">
+                                            <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200">W{i + 1}</span>
+                                            <a href={`tel:${num}`} className="bg-rose-600 text-white p-1.5 rounded-full hover:scale-105 transition-transform shadow-sm">
+                                                <Phone className="w-2.5 h-2.5" />
                                             </a>
                                         </div>
                                     ))}
@@ -101,34 +101,34 @@ export function EmergencyModal({ isOpen, onClose, user }: EmergencyModalProps) {
                     </div>
 
                     {/* Nandha Emergency Vehicle */}
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 text-slate-600">
-                                <Car className="w-5 h-5" />
+                    <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-sm border border-slate-100 dark:border-slate-800 text-slate-600">
+                                <Car className="w-4 h-4" />
                             </div>
                             <div>
-                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">Emergency Vehicle</h4>
-                                <p className="text-sm font-bold text-slate-900 dark:text-white">Nandha - 9967549076</p>
+                                <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">Emergency Van</h4>
+                                <p className="text-[11px] font-bold text-slate-900 dark:text-white">9967549076</p>
                             </div>
                         </div>
-                        <a href="tel:9967549076" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-2.5 rounded-full hover:scale-110 transition-transform shadow-lg">
-                            <Phone className="w-4 h-4" />
+                        <a href="tel:9967549076" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-2 rounded-full hover:scale-105 transition-transform shadow-md">
+                            <Phone className="w-3.5 h-3.5" />
                         </a>
                     </div>
 
                     {/* Serious Case */}
-                    <div className="flex items-center justify-between p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl shadow-sm border border-amber-100 dark:border-slate-800 text-amber-600">
-                                <AlertTriangle className="w-5 h-5" />
+                    <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl shadow-sm">
+                        <div className="flex items-center gap-2">
+                            <div className="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-sm border border-amber-100 dark:border-slate-800 text-amber-600">
+                                <AlertTriangle className="w-4 h-4" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black text-amber-600 uppercase tracking-tighter">Government Help</span>
-                                <span className="text-sm font-black text-amber-900 dark:text-amber-100">Call 108 Immediately</span>
+                                <span className="text-[9px] font-black text-amber-600 uppercase tracking-tighter">Serious Case</span>
+                                <span className="text-[11px] font-black text-amber-900 dark:text-amber-100">Call 108</span>
                             </div>
                         </div>
-                        <a href="tel:108" className="bg-amber-600 text-white p-2.5 rounded-full hover:scale-110 transition-transform shadow-lg shadow-amber-200 dark:shadow-none">
-                            <Phone className="w-4 h-4" />
+                        <a href="tel:108" className="bg-amber-600 text-white p-2 rounded-full hover:scale-105 transition-transform shadow-md">
+                            <Phone className="w-3.5 h-3.5" />
                         </a>
                     </div>
 
