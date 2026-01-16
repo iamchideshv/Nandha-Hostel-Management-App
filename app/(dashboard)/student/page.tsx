@@ -2004,25 +2004,14 @@ export default function StudentDashboard() {
                                                                         className="border-blue-100 focus:border-blue-500"
                                                                     />
                                                                 </div>
-                                                                <div className="grid grid-cols-2 gap-4">
-                                                                    <div className="space-y-2">
-                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Out Time</Label>
-                                                                        <Input
-                                                                            type="time"
-                                                                            value={registerEntryForm.outTime}
-                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, outTime: e.target.value })}
-                                                                            className="border-blue-100 focus:border-blue-500"
-                                                                        />
-                                                                    </div>
-                                                                    <div className="space-y-2">
-                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">In Time</Label>
-                                                                        <Input
-                                                                            type="time"
-                                                                            value={registerEntryForm.inTime}
-                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, inTime: e.target.value })}
-                                                                            className="border-blue-100 focus:border-blue-500"
-                                                                        />
-                                                                    </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Out Time</Label>
+                                                                    <Input
+                                                                        type="time"
+                                                                        value={registerEntryForm.outTime}
+                                                                        onChange={e => setRegisterEntryForm({ ...registerEntryForm, outTime: e.target.value })}
+                                                                        className="border-blue-100 focus:border-blue-500"
+                                                                    />
                                                                 </div>
                                                             </div>
                                                             <div className="pt-4 flex gap-4">
@@ -2253,25 +2242,14 @@ export default function StudentDashboard() {
                                                                         className="border-blue-100 focus:border-blue-500 bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed font-bold"
                                                                     />
                                                                 </div>
-                                                                <div className="grid grid-cols-2 gap-4">
-                                                                    <div className="space-y-2">
-                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Out Time</Label>
-                                                                        <Input
-                                                                            type="time"
-                                                                            value={registerEntryForm.outTime}
-                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, outTime: e.target.value })}
-                                                                            className="border-blue-100 focus:border-blue-500"
-                                                                        />
-                                                                    </div>
-                                                                    <div className="space-y-2">
-                                                                        <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">In Time</Label>
-                                                                        <Input
-                                                                            type="time"
-                                                                            value={registerEntryForm.inTime}
-                                                                            onChange={e => setRegisterEntryForm({ ...registerEntryForm, inTime: e.target.value })}
-                                                                            className="border-blue-100 focus:border-blue-500"
-                                                                        />
-                                                                    </div>
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Out Time</Label>
+                                                                    <Input
+                                                                        type="time"
+                                                                        value={registerEntryForm.outTime}
+                                                                        onChange={e => setRegisterEntryForm({ ...registerEntryForm, outTime: e.target.value })}
+                                                                        className="border-blue-100 focus:border-blue-500"
+                                                                    />
                                                                 </div>
                                                             </div>
                                                             <Button
