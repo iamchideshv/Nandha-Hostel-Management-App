@@ -32,8 +32,10 @@ export interface Complaint {
     description: string;
     status: ComplaintStatus;
     pushedToSheet?: boolean;
+    pushedProgress?: 'In-Process' | 'Resolved';
     createdAt: string;
 }
+
 
 
 export type OutpassStatus = 'pending' | 'approved' | 'rejected' | 'exited' | 'entered' | 'expired';

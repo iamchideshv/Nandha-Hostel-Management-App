@@ -75,7 +75,7 @@ export async function POST(req: Request) {
                 // Add header if new sheet
                 const headerRow = [
                     'Sno', 'Date', 'Name', 'Hostel Name', 'Room No',
-                    'College Name', 'Issue Type', 'Description', 'Progress(Resolved or In-Process)', 'Complaint ID'
+                    'College Name', 'Issue Type', 'TITLE', 'Description', 'Progress'
                 ];
 
                 await sheets.spreadsheets.values.append({
@@ -95,17 +95,23 @@ export async function POST(req: Request) {
         const collegeShort = collegeMap[complaint.collegeName] || complaint.collegeName;
         const progress = complaint.status === 'resolved' ? 'Resolved' : 'In-Process';
 
-        // Check if complaint ID already exists in the sheet
+        // Find row to update (since ID is removed, match by Name, Title, Description)
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: `${sheetTitle}!J:J`,
+            range: `${sheetTitle}!A:I`, // Get columns up to Description
         });
-        const ids = response.data.values || [];
-        const rowIndex = ids.findIndex(row => row[0] === complaint.id);
+
+        const rows = response.data.values || [];
+        // Match by Name (index 2), Title (index 7), and Description (index 8)
+        const rowIndex = rows.findIndex(row =>
+            row[2] === complaint.studentName &&
+            row[7] === complaint.title &&
+            row[8] === complaint.description
+        );
 
         if (rowIndex !== -1) {
-            // Update existing row (specifically the progress column which is I, index 8)
-            const range = `${sheetTitle}!I${rowIndex + 1}`;
+            // Update existing row (Progress column is J, index 9)
+            const range = `${sheetTitle}!J${rowIndex + 1}`;
             await sheets.spreadsheets.values.update({
                 spreadsheetId: SPREADSHEET_ID,
                 range: range,
@@ -116,14 +122,9 @@ export async function POST(req: Request) {
             });
         } else {
             // Get the next Sno
-            const snoResponse = await sheets.spreadsheets.values.get({
-                spreadsheetId: SPREADSHEET_ID,
-                range: `${sheetTitle}!A:A`,
-            });
-            const sno = (snoResponse.data.values?.length || 0);
+            const sno = rows.length;
 
             // Prepare row data
-            // Sno, Date, Name, Hostel Name, Room No, College Name, Issuse Type, Description, Progress, ID
             const row = [
                 sno,
                 formatDate(complaint.createdAt.split('T')[0]),
@@ -132,9 +133,9 @@ export async function POST(req: Request) {
                 complaint.roomNumber,
                 collegeShort,
                 complaint.type,
+                complaint.title,
                 complaint.description,
-                progress,
-                complaint.id
+                progress
             ];
 
             // Append to sheet
@@ -150,8 +151,10 @@ export async function POST(req: Request) {
 
         // Update local database to mark as pushed
         await db.updateComplaint(complaint.id, {
-            pushedToSheet: true
+            pushedToSheet: true,
+            pushedProgress: progress as any
         });
+
 
         return NextResponse.json({ success: true });
 
