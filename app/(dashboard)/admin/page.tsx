@@ -124,6 +124,27 @@ export default function AdminDashboard() {
     const [menuUploadSuccess, setMenuUploadSuccess] = useState(false);
     const [timingsUploadSuccess, setTimingsUploadSuccess] = useState(false);
 
+    const NotificationBadge = ({ count }: { count: number }) => {
+        if (count <= 0) return null;
+        return (
+            <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-white transition-all animate-in zoom-in">
+                {count > 9 ? '9+' : count}
+            </div>
+        );
+    };
+
+    const pendingCounts = {
+        outpass: outpasses.filter(o => o.status === 'pending').length,
+        fees: fees.filter(f => f.status === 'pending_request').length,
+        messages: messages.filter(m => m.senderRole === 'student').length,
+        lostFound: lostItems.filter(i => i.status === 'pending').length,
+        register: complaints.filter(c => c.status === 'pending').length + sickRegisters.filter(s => s.status === 'pending').length + outpasses.filter(o => o.status === 'pending' && (o.type === 'leave' || o.type === 'outing')).length,
+        leave: outpasses.filter(o => o.status === 'pending' && o.type === 'leave').length,
+        outing: outpasses.filter(o => o.status === 'pending' && o.type === 'outing').length,
+        sick: sickRegisters.filter(s => s.status === 'pending').length,
+        complaints: complaints.filter(c => c.status === 'pending').length
+    };
+
     // Messages State
 
     const hostelsList = [
@@ -574,33 +595,38 @@ export default function AdminDashboard() {
                         </div>
                         <nav className="p-4 space-y-2">
 
-                            <button onClick={() => { setActiveTab('outpass'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('outpass'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <FileText className="w-5 h-5" />
-                                <span>Outpass</span>
+                                <span className="flex-1">Outpass</span>
+                                <NotificationBadge count={pendingCounts.outpass} />
                             </button>
-                            <button onClick={() => { setActiveTab('fees'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'fees' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('fees'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'fees' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <IndianRupee className="w-5 h-5" />
-                                <span>Fees</span>
+                                <span className="flex-1">Fees</span>
+                                <NotificationBadge count={pendingCounts.fees} />
                             </button>
                             <button onClick={() => { setActiveTab('mess'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'mess' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <Utensils className="w-5 h-5" />
                                 <span>Mess</span>
                             </button>
-                            <button onClick={() => { setActiveTab('messages'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('messages'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <Send className="w-5 h-5" />
-                                <span>Messages</span>
+                                <span className="flex-1">Messages</span>
+                                <NotificationBadge count={pendingCounts.messages} />
                             </button>
-                            <button onClick={() => { setActiveTab('lost-found'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'lost-found' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('lost-found'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'lost-found' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <Search className="w-5 h-5" />
-                                <span>Lost & Found</span>
+                                <span className="flex-1">Lost & Found</span>
+                                <NotificationBadge count={pendingCounts.lostFound} />
                             </button>
                             <button onClick={() => { setActiveTab('student-details'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'student-details' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <Users className="w-5 h-5" />
                                 <span>Student Details</span>
                             </button>
-                            <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <ClipboardList className="w-5 h-5" />
-                                <span>Register</span>
+                                <span className="flex-1">Register</span>
+                                <NotificationBadge count={pendingCounts.register} />
                             </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
@@ -645,17 +671,19 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
                     <button
                         onClick={() => setActiveTab('outpass')}
-                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'outpass' ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 shadow-lg shadow-blue-100 dark:shadow-blue-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-blue-300 hover:shadow-md'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 relative ${activeTab === 'outpass' ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 shadow-lg shadow-blue-100 dark:shadow-blue-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-blue-300 hover:shadow-md'}`}
                     >
                         <FileText className={`w-6 h-6 mb-2 ${activeTab === 'outpass' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`} />
                         <span className={`text-xs font-semibold text-center ${activeTab === 'outpass' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-600 dark:text-slate-400'}`}>Outpass<br />Verification</span>
+                        <NotificationBadge count={pendingCounts.outpass} />
                     </button>
                     <button
                         onClick={() => setActiveTab('fees')}
-                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'fees' ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 shadow-lg shadow-emerald-100 dark:shadow-emerald-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-emerald-300 hover:shadow-md'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 relative ${activeTab === 'fees' ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 shadow-lg shadow-emerald-100 dark:shadow-emerald-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-emerald-300 hover:shadow-md'}`}
                     >
                         <IndianRupee className={`w-6 h-6 mb-2 ${activeTab === 'fees' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`} />
                         <span className={`text-xs font-semibold text-center ${activeTab === 'fees' ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-600 dark:text-slate-400'}`}>Fee<br />Pending</span>
+                        <NotificationBadge count={pendingCounts.fees} />
                     </button>
                     <button
                         onClick={() => setActiveTab('mess')}
@@ -666,17 +694,19 @@ export default function AdminDashboard() {
                     </button>
                     <button
                         onClick={() => setActiveTab('messages')}
-                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'messages' ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-500 shadow-lg shadow-purple-100 dark:shadow-purple-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-purple-300 hover:shadow-md'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 relative ${activeTab === 'messages' ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-500 shadow-lg shadow-purple-100 dark:shadow-purple-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-purple-300 hover:shadow-md'}`}
                     >
                         <Send className={`w-6 h-6 mb-2 ${activeTab === 'messages' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-500 dark:text-slate-400'}`} />
                         <span className={`text-xs font-semibold text-center ${activeTab === 'messages' ? 'text-purple-700 dark:text-purple-300' : 'text-slate-600 dark:text-slate-400'}`}>Messages</span>
+                        <NotificationBadge count={pendingCounts.messages} />
                     </button>
                     <button
                         onClick={() => setActiveTab('lost-found')}
-                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'lost-found' ? 'bg-pink-50 dark:bg-pink-900/20 border-pink-500 shadow-lg shadow-pink-100 dark:shadow-pink-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-pink-300 hover:shadow-md'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 relative ${activeTab === 'lost-found' ? 'bg-pink-50 dark:bg-pink-900/20 border-pink-500 shadow-lg shadow-pink-100 dark:shadow-pink-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-pink-300 hover:shadow-md'}`}
                     >
                         <Search className={`w-6 h-6 mb-2 ${activeTab === 'lost-found' ? 'text-pink-600 dark:text-pink-400' : 'text-slate-500 dark:text-slate-400'}`} />
                         <span className={`text-xs font-semibold text-center ${activeTab === 'lost-found' ? 'text-pink-700 dark:text-pink-300' : 'text-slate-600 dark:text-slate-400'}`}>Lost &<br />Found</span>
+                        <NotificationBadge count={pendingCounts.lostFound} />
                     </button>
                     <button
                         onClick={() => setActiveTab('student-details')}
@@ -687,10 +717,11 @@ export default function AdminDashboard() {
                     </button>
                     <button
                         onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }}
-                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'register' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 shadow-lg shadow-indigo-100 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:shadow-md'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 relative ${activeTab === 'register' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 shadow-lg shadow-indigo-100 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:shadow-md'}`}
                     >
                         <ClipboardList className={`w-6 h-6 mb-2 ${activeTab === 'register' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`} />
                         <span className={`text-xs font-semibold text-center ${activeTab === 'register' ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-600 dark:text-slate-400'}`}>Register</span>
+                        <NotificationBadge count={pendingCounts.register} />
                     </button>
                 </div>
 
@@ -1838,7 +1869,10 @@ export default function AdminDashboard() {
                                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                         Manage student leave records
                                     </p>
-                                    <Button onClick={() => setRegisterSubTab('leave')} className="w-full bg-orange-600 hover:bg-orange-700">View Register</Button>
+                                    <div className="relative">
+                                        <Button onClick={() => setRegisterSubTab('leave')} className="w-full bg-orange-600 hover:bg-orange-700">View Register</Button>
+                                        <NotificationBadge count={pendingCounts.leave} />
+                                    </div>
                                 </div>
 
                                 <div className="border bg-white dark:bg-slate-950 rounded-lg p-6 hover:shadow-lg transition-all border-l-4 border-l-blue-500">
@@ -1851,7 +1885,10 @@ export default function AdminDashboard() {
                                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                         Track daily outings
                                     </p>
-                                    <Button onClick={() => setRegisterSubTab('outing')} className="w-full bg-blue-600 hover:bg-blue-700">View Register</Button>
+                                    <div className="relative">
+                                        <Button onClick={() => setRegisterSubTab('outing')} className="w-full bg-blue-600 hover:bg-blue-700">View Register</Button>
+                                        <NotificationBadge count={pendingCounts.outing} />
+                                    </div>
                                 </div>
 
                                 <div className="border bg-white dark:bg-slate-950 rounded-lg p-6 hover:shadow-lg transition-all border-l-4 border-l-red-500">
@@ -1864,7 +1901,10 @@ export default function AdminDashboard() {
                                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                         Medical emergency logs
                                     </p>
-                                    <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">View Register</Button>
+                                    <div className="relative">
+                                        <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">View Register</Button>
+                                        <NotificationBadge count={pendingCounts.sick} />
+                                    </div>
                                 </div>
 
                                 <div className="border bg-white dark:bg-slate-950 rounded-lg p-6 hover:shadow-lg transition-all border-l-4 border-l-purple-500">
@@ -1877,7 +1917,10 @@ export default function AdminDashboard() {
                                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                         View and manage student complaints
                                     </p>
-                                    <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-purple-600 hover:bg-purple-700">View Register</Button>
+                                    <div className="relative">
+                                        <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-purple-600 hover:bg-purple-700">View Register</Button>
+                                        <NotificationBadge count={pendingCounts.complaints} />
+                                    </div>
                                 </div>
                             </div>
                         )}

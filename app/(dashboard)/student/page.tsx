@@ -118,6 +118,24 @@ export default function StudentDashboard() {
         dinner: '7:30 PM - 9:00 PM'
     });
 
+    const NotificationBadge = ({ count }: { count: number }) => {
+        if (count <= 0) return null;
+        return (
+            <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-white transition-all animate-in zoom-in">
+                {count > 9 ? '9+' : count}
+            </div>
+        );
+    };
+
+    const pendingCounts = {
+        outpass: outpasses.filter(o => o.status === 'approved' || o.status === 'rejected').length,
+        messages: messages.filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))).length,
+        fees: feeStatus?.status === 'unpaid' ? 1 : 0,
+        register: complaints.filter(c => c.status !== 'pending').length + sickRegisters.filter(s => s.status !== 'pending' && s.status !== 'pushed').length,
+        sick: sickRegisters.filter(s => s.status !== 'pending' && s.status !== 'pushed').length,
+        complaints: complaints.filter(c => c.status !== 'pending').length
+    };
+
     const [submitting, setSubmitting] = useState(false);
     const [imageUploaded, setImageUploaded] = useState(false);
     const [registerEntryForm, setRegisterEntryForm] = useState({
@@ -755,25 +773,29 @@ export default function StudentDashboard() {
                                 <Utensils className="w-5 h-5" />
                                 <span>Mess Details</span>
                             </button>
-                            <button onClick={() => { setActiveTab('outpass'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('outpass'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <FileText className="w-5 h-5" />
-                                <span>Outpass</span>
+                                <span className="flex-1">Outpass</span>
+                                <NotificationBadge count={pendingCounts.outpass} />
                             </button>
-                            <button onClick={() => { setActiveTab('fees'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'fees' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('fees'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'fees' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <BadgeCheck className="w-5 h-5" />
-                                <span>Fees</span>
+                                <span className="flex-1">Fees</span>
+                                <NotificationBadge count={pendingCounts.fees} />
                             </button>
-                            <button onClick={() => { setActiveTab('messages'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('messages'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <Send className="w-5 h-5" />
-                                <span>Messages</span>
+                                <span className="flex-1">Messages</span>
+                                <NotificationBadge count={pendingCounts.messages} />
                             </button>
                             <button onClick={() => { setActiveTab('lost-found'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'lost-found' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <Search className="w-5 h-5" />
                                 <span>Lost & Found</span>
                             </button>
-                            <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                            <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 relative ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <ClipboardList className="w-5 h-5" />
-                                <span>Register</span>
+                                <span className="flex-1">Register</span>
+                                <NotificationBadge count={pendingCounts.register} />
                             </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
@@ -851,27 +873,31 @@ export default function StudentDashboard() {
                         <Utensils className="h-6 w-6 text-blue-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
                     </button>
-                    <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all relative ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <FileText className="h-6 w-6 text-green-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Outpass</h3>
+                        <NotificationBadge count={pendingCounts.outpass} />
                     </button>
-                    <button onClick={() => setActiveTab('messages')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'messages' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => setActiveTab('messages')} className={`p-4 rounded-xl border text-left transition-all relative ${activeTab === 'messages' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Send className="h-6 w-6 text-purple-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Messages</h3>
+                        <NotificationBadge count={pendingCounts.messages} />
                     </button>
                     <div
                         onClick={() => setActiveTab('fees')}
-                        className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                        className={`p-4 rounded-xl border text-left cursor-pointer transition-all relative ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                     >
                         <BadgeCheck className={`h-6 w-6 mb-2 ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-400'}`} />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Fees Status</h3>
                         <p className={`text-xs font-bold mt-1 uppercase ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-500'}`}>
                             {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                         </p>
+                        <NotificationBadge count={pendingCounts.fees} />
                     </div>
-                    <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                    <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }} className={`p-4 rounded-xl border text-left transition-all relative ${activeTab === 'register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <ClipboardList className="h-6 w-6 text-indigo-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Register</h3>
+                        <NotificationBadge count={pendingCounts.register} />
                     </button>
 
 
@@ -1831,8 +1857,9 @@ export default function StudentDashboard() {
                                                 Log medical issues or requests to visit the hospital/infirmary.
                                             </p>
                                         </CardContent>
-                                        <CardFooter>
+                                        <CardFooter className="relative">
                                             <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
+                                            <NotificationBadge count={pendingCounts.sick} />
                                         </CardFooter>
                                     </Card>
 
@@ -1849,8 +1876,9 @@ export default function StudentDashboard() {
                                                 Submit complaints regarding food, room maintenance, water, or other issues.
                                             </p>
                                         </CardContent>
-                                        <CardFooter>
+                                        <CardFooter className="relative">
                                             <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
+                                            <NotificationBadge count={pendingCounts.complaints} />
                                         </CardFooter>
                                     </Card>
                                 </div>
