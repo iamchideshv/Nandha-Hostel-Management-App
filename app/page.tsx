@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { ContactModal } from '@/components/contact-modal';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -9,7 +11,19 @@ import { Building, ShieldCheck, User, Users } from 'lucide-react';
 import { InstallPrompt } from '@/components/InstallPrompt';
 
 export default function Home() {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
   const [isContactOpen, setIsContactOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      if (user.role === 'admin') router.push('/admin');
+      else if (user.role === 'authority') router.push('/authority');
+      else if (user.role === 'send-off') router.push('/send-off');
+      else if (user.role === 'devops') router.push('/devops');
+      else router.push('/student');
+    }
+  }, [user, isLoading, router]);
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-500">
       <header className="p-4 md:p-6 flex justify-between items-center max-w-7xl mx-auto w-full gap-2">

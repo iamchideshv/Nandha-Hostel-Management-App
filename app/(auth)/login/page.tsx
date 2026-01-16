@@ -17,7 +17,7 @@ import confetti from 'canvas-confetti';
 
 export default function LoginPage() {
     const router = useRouter();
-    const { login } = useAuth();
+    const { user, login, isLoading: authLoading } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
     const [error, setError] = useState('');
@@ -54,6 +54,16 @@ export default function LoginPage() {
             setIsRegisterPage(true);
         }
     }, []);
+
+    useEffect(() => {
+        if (!authLoading && user) {
+            if (user.role === 'admin') router.push('/admin');
+            else if (user.role === 'authority') router.push('/authority');
+            else if (user.role === 'send-off') router.push('/send-off');
+            else if (user.role === 'devops') router.push('/devops');
+            else router.push('/student');
+        }
+    }, [user, authLoading, router]);
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
