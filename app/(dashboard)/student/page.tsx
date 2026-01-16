@@ -1890,7 +1890,7 @@ export default function StudentDashboard() {
                                                                 <button
                                                                     key={col.id}
                                                                     onClick={() => {
-                                                                        if (user?.college && user.college !== col.id) {
+                                                                        if (user?.college && user.college !== col.id && user.college !== col.name) {
                                                                             toast.error(`You Are Not The Student Of ${col.id}`);
                                                                             return;
                                                                         }
@@ -2134,7 +2134,7 @@ export default function StudentDashboard() {
                                                                 <button
                                                                     key={col.id}
                                                                     onClick={() => {
-                                                                        if (user?.college && user.college !== col.id) {
+                                                                        if (user?.college && user.college !== col.id && user.college !== col.name) {
                                                                             toast.error(`You Are Not The Student Of ${col.id}`);
                                                                             return;
                                                                         }
