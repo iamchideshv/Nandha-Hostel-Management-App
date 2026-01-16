@@ -263,6 +263,8 @@ export default function StudentDashboard() {
                     studentId: user?.id,
                     studentName: user?.name,
                     hostelName: user?.hostelName,
+                    roomNumber: user?.roomNumber,
+                    collegeName: user?.college,
                     ...complaintForm
                 })
             });
@@ -2475,6 +2477,20 @@ export default function StudentDashboard() {
                                                         </CardHeader>
                                                         <CardContent>
                                                             <form onSubmit={handleComplaintSubmit} className="space-y-4">
+                                                                <div className="grid grid-cols-2 gap-4">
+                                                                    <div className="space-y-2">
+                                                                        <Label>Date</Label>
+                                                                        <Input value={new Date().toLocaleDateString()} readOnly className="bg-slate-50" />
+                                                                    </div>
+                                                                    <div className="space-y-2">
+                                                                        <Label>Name</Label>
+                                                                        <Input value={user?.name || ''} readOnly className="bg-slate-50" />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label>College Name</Label>
+                                                                    <Input value={user?.college || ''} readOnly className="bg-slate-50" />
+                                                                </div>
                                                                 <div className="space-y-2">
                                                                     <Label>Issue Type</Label>
                                                                     <select

@@ -25,12 +25,16 @@ export interface Complaint {
     studentId: string;
     studentName: string;
     hostelName?: string;
+    roomNumber: string;
+    collegeName: string;
     type: ComplaintType;
     title: string;
     description: string;
     status: ComplaintStatus;
+    pushedToSheet?: boolean;
     createdAt: string;
 }
+
 
 export type OutpassStatus = 'pending' | 'approved' | 'rejected' | 'exited' | 'entered' | 'expired';
 

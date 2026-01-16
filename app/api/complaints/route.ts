@@ -26,19 +26,23 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { studentId, studentName, hostelName, type, title, description } = body;
+        const { studentId, studentName, hostelName, type, title, description, roomNumber, collegeName } = body;
 
         const newComplaint: Complaint = {
             id: uuidv4(),
             studentId,
             studentName,
             hostelName,
+            roomNumber: roomNumber || '',
+            collegeName: collegeName || '',
             type,
             title,
             description,
             status: 'pending',
+            pushedToSheet: false,
             createdAt: new Date().toISOString(),
         };
+
 
         await db.addComplaint(newComplaint);
         return NextResponse.json(newComplaint);

@@ -107,6 +107,17 @@ export const db = {
     return snap.exists() ? (snap.data() as Complaint) : null;
   },
 
+  updateComplaint: async (id: string, data: Partial<Complaint>): Promise<Complaint | null> => {
+    const ref = doc(firestore, COMPLAINTS_COL, id);
+    const cleanData = Object.fromEntries(
+      Object.entries(data).filter(([_, v]) => v !== undefined)
+    );
+    await updateDoc(ref, cleanData);
+    const snap = await getDoc(ref);
+    return snap.exists() ? (snap.data() as Complaint) : null;
+  },
+
+
   clearComplaints: async (hostelName?: string): Promise<void> => {
     let q = query(collection(firestore, COMPLAINTS_COL));
     if (hostelName) {

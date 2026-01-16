@@ -203,6 +203,26 @@ export default function AdminDashboard() {
         }
     };
 
+    const handlePushComplaintToSheet = async (complaint: Complaint) => {
+        try {
+            const res = await fetch('/api/complaints/push-to-sheets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ complaint, adminName: user?.name || 'Admin' })
+            });
+
+            if (res.ok) {
+                toast.success('Complaint pushed to Google Sheet successfully');
+                fetchData();
+            } else {
+                const errorData = await res.json();
+                toast.error(errorData.error || 'Failed to push complaint');
+            }
+        } catch (error) {
+            toast.error('Error pushing complaint');
+        }
+    };
+
     const fetchData = async () => {
         setLoading(true);
         try {
@@ -2605,14 +2625,45 @@ export default function AdminDashboard() {
                                                                         <CardTitle className="text-lg">{c.title}</CardTitle>
                                                                         <div className="flex items-start space-x-2 mt-1">
                                                                             <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
-                                                                            <CardDescription className="flex items-center gap-2 mt-1">
-                                                                                {getStudentAvatar(c.studentId)}
-                                                                                <span>{new Date(c.createdAt).toLocaleDateString()} • {c.studentName}</span>
-                                                                            </CardDescription>
+                                                                            <div className="flex flex-col gap-1">
+                                                                                <CardDescription className="flex items-center gap-2 mt-1">
+                                                                                    {getStudentAvatar(c.studentId)}
+                                                                                    <span className="font-bold text-slate-900 dark:text-white">{c.studentName}</span>
+                                                                                </CardDescription>
+                                                                                <div className="text-[10px] text-slate-500 font-medium ml-8">
+                                                                                    {c.collegeName} • Room {c.roomNumber} • {new Date(c.createdAt).toLocaleDateString()}
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
-                                                                        {c.status}
+                                                                    <div className="flex flex-col items-end gap-2">
+                                                                        <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
+                                                                            {c.status}
+                                                                        </div>
+                                                                        {c.pushedToSheet ? (
+                                                                            <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 uppercase">
+                                                                                <BadgeCheck className="w-3 h-3" /> Pushed
+                                                                            </div>
+                                                                        ) : (
+                                                                            <Button
+                                                                                size="sm"
+                                                                                variant="outline"
+                                                                                className="h-7 text-[10px] font-bold uppercase border-amber-200 text-amber-600 hover:bg-amber-50"
+                                                                                onClick={() => handlePushComplaintToSheet(c)}
+                                                                            >
+                                                                                Push Record
+                                                                            </Button>
+                                                                        )}
+                                                                        {c.pushedToSheet && c.status === 'resolved' && (
+                                                                            <Button
+                                                                                size="sm"
+                                                                                variant="outline"
+                                                                                className="h-7 text-[10px] font-bold uppercase border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                                                                onClick={() => handlePushComplaintToSheet(c)}
+                                                                            >
+                                                                                Update Sheet
+                                                                            </Button>
+                                                                        )}
                                                                     </div>
                                                                 </div>
                                                             </CardHeader>
