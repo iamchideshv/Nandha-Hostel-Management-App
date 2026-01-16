@@ -141,6 +141,7 @@ export interface LostFound {
     createdAt: string;
 }
 
+
 export interface Feedback {
     id: string;
     studentId: string;
@@ -150,3 +151,21 @@ export interface Feedback {
     message: string;
     createdAt: string;
 }
+
+export interface SickRegister {
+    id: string;
+    studentId: string;
+    studentName: string;
+    hostelName: string;
+    roomNumber: string;
+    collegeName: string;
+    date: string;
+    reason: string;
+    status: 'pending' | 'cared' | 'pushed';
+    caredBy?: string;
+    caredAt?: string;
+    pushedToSheet: boolean;
+    pushedAt?: string;
+    createdAt: string;
+}
+

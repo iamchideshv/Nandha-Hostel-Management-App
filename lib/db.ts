@@ -22,6 +22,7 @@ const FEES_COL = 'fees';
 const MESS_MENU_COL = 'messMenus';
 const LOST_FOUND_COL = 'lostFound';
 const FEEDBACK_COL = 'feedback';
+const SICK_REGISTER_COL = 'sickRegister';
 
 export const db = {
   // --- USERS ---
@@ -433,5 +434,48 @@ export const db = {
 
   deleteProfileUpdateRequest: async (id: string): Promise<void> => {
     await deleteDoc(doc(firestore, 'profileUpdateRequests', id));
+  },
+
+  // --- SICK REGISTER ---
+  getSickRegisters: async (studentId?: string, hostelName?: string): Promise<any[]> => {
+    let q = query(collection(firestore, SICK_REGISTER_COL));
+    const constraints: QueryConstraint[] = [];
+    if (studentId) constraints.push(where("studentId", "==", studentId));
+    if (hostelName) constraints.push(where("hostelName", "==", hostelName));
+
+    if (constraints.length > 0) {
+      q = query(collection(firestore, SICK_REGISTER_COL), ...constraints);
+    }
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  addSickRegister: async (entry: any): Promise<void> => {
+    const cleanData = Object.fromEntries(
+      Object.entries(entry).filter(([_, v]) => v !== undefined)
+    );
+    await setDoc(doc(firestore, SICK_REGISTER_COL, entry.id), cleanData);
+  },
+
+  updateSickRegister: async (id: string, data: any): Promise<any | null> => {
+    const ref = doc(firestore, SICK_REGISTER_COL, id);
+    const cleanData = Object.fromEntries(
+      Object.entries(data).filter(([_, v]) => v !== undefined)
+    );
+    await updateDoc(ref, cleanData);
+    const snap = await getDoc(ref);
+    return snap.exists() ? snap.data() : null;
+  },
+
+  clearSickRegisters: async (hostelName?: string): Promise<void> => {
+    let q = query(collection(firestore, SICK_REGISTER_COL));
+    if (hostelName) {
+      q = query(collection(firestore, SICK_REGISTER_COL), where("hostelName", "==", hostelName));
+    }
+    const snap = await getDocs(q);
+    const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
+    await Promise.all(deletePromises);
   },
 };

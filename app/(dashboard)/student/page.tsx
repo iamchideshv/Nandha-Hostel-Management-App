@@ -43,7 +43,7 @@ interface OutpassData {
 
 export default function StudentDashboard() {
     const { user, login } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
+    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register' | 'sick-register'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick' | 'complaints'>('main');
@@ -58,6 +58,7 @@ export default function StudentDashboard() {
     const [outpasses, setOutpasses] = useState<OutpassData[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [lostItems, setLostItems] = useState<LostFound[]>([]);
+    const [sickRegisters, setSickRegisters] = useState<any[]>([]);
     const [feeStatus, setFeeStatus] = useState<any>(null);
     const [loadingData, setLoadingData] = useState(false);
 
@@ -81,6 +82,10 @@ export default function StudentDashboard() {
         timeAndDate: '',
         image: '',
         images: [] as string[]
+    });
+
+    const [sickRegisterForm, setSickRegisterForm] = useState({
+        reason: ''
     });
 
 
@@ -158,6 +163,7 @@ export default function StudentDashboard() {
                 fetchAndSet(`/api/outpass?studentId=${user.id}`, setOutpasses, 'Outpasses fetch error'),
                 fetchAndSet(`/api/fees?studentId=${user.id}`, (d) => setFeeStatus(d.status === 'none' ? null : d), 'Fees fetch error'),
                 fetchAndSet(`/api/lost-found?studentId=${user.id}`, setLostItems, 'Lost & Found fetch error'),
+                fetchAndSet(`/api/sick-register?studentId=${user.id}`, setSickRegisters, 'Sick Register fetch error'),
                 fetchAndSet(`/api/mess-menu?type=${messHostelType}`, setUploadedMenu, 'Menu fetch error'),
                 fetchAndSet(`/api/vending-status`, setVendingStatus, 'Vending fetch error'),
                 fetchAndSet(`/api/mess-timings?type=${messHostelType}`, setMessTimings, 'Timings fetch error'),
@@ -538,6 +544,40 @@ export default function StudentDashboard() {
         }
     };
 
+    const handleSickRegisterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!sickRegisterForm.reason.trim()) {
+            toast.error('Please enter a reason');
+            return;
+        }
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/sick-register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    studentId: user?.id,
+                    studentName: user?.name,
+                    hostelName: user?.hostelName,
+                    roomNumber: user?.roomNumber,
+                    collegeName: user?.college,
+                    reason: sickRegisterForm.reason
+                })
+            });
+            if (res.ok) {
+                toast.success('Sick Register Entry Submitted');
+                setSickRegisterForm({ reason: '' });
+                fetchData();
+            } else {
+                toast.error('Failed to submit entry');
+            }
+        } catch (e) {
+            toast.error('Error submitting entry');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files && files.length > 0) {
@@ -780,7 +820,7 @@ export default function StudentDashboard() {
 
 
 
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                     <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Utensils className="h-6 w-6 text-blue-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
@@ -806,6 +846,10 @@ export default function StudentDashboard() {
                     <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <ClipboardList className="h-6 w-6 text-indigo-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Register</h3>
+                    </button>
+                    <button onClick={() => setActiveTab('sick-register')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'sick-register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+                        <Thermometer className="h-6 w-6 text-red-600 mb-2" />
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Sick Register</h3>
                     </button>
 
                     {/* Profile Modal */}
@@ -2546,6 +2590,124 @@ export default function StudentDashboard() {
                     </div>
                 )}
 
+                {/* Sick Register Tab */}
+                {activeTab === 'sick-register' && (
+                    <div className="space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Thermometer className="w-5 h-5 text-red-600" />
+                                    Report Medical Emergency
+                                </CardTitle>
+                                <CardDescription>Submit sick register entry with auto-filled details</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <form onSubmit={handleSickRegisterSubmit} className="space-y-4">
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Date</Label>
+                                            <Input
+                                                value={new Date().toLocaleDateString('en-CA')}
+                                                readOnly
+                                                className="bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Student Name</Label>
+                                            <Input
+                                                value={user?.name || ''}
+                                                readOnly
+                                                className="bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Hostel</Label>
+                                            <Input
+                                                value={user?.hostelName || ''}
+                                                readOnly
+                                                className="bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Room Number</Label>
+                                            <Input
+                                                value={user?.roomNumber || ''}
+                                                readOnly
+                                                className="bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="space-y-2 md:col-span-2">
+                                            <Label>College</Label>
+                                            <Input
+                                                value={user?.college || ''}
+                                                readOnly
+                                                className="bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="space-y-2 md:col-span-2">
+                                            <Label>Reason for Medical Emergency *</Label>
+                                            <textarea
+                                                className="w-full min-h-[100px] px-3 py-2 rounded-md border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                value={sickRegisterForm.reason}
+                                                onChange={(e) => setSickRegisterForm({ reason: e.target.value })}
+                                                placeholder="Describe your medical condition or emergency..."
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <Button type="submit" disabled={submitting} className="w-full">
+                                        {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                        Submit Sick Register Entry
+                                    </Button>
+                                </form>
+                            </CardContent>
+                        </Card>
+
+                        {/* Sick Register History */}
+                        <Card>
+                            <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <CardTitle>Your Sick Register History</CardTitle>
+                                        <CardDescription>View your submitted medical emergency reports</CardDescription>
+                                    </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3">
+                                    {sickRegisters.length === 0 ? (
+                                        <p className="text-sm text-slate-500 text-center py-8">No sick register entries found.</p>
+                                    ) : (
+                                        sickRegisters.map((entry) => (
+                                            <div key={entry.id} className="p-4 rounded-lg border bg-white dark:bg-slate-900 space-y-2">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex items-center gap-2">
+                                                        <Thermometer className="w-4 h-4 text-red-600" />
+                                                        <span className="font-semibold text-sm">{new Date(entry.date).toLocaleDateString()}</span>
+                                                    </div>
+                                                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${entry.status === 'pushed' ? 'bg-green-100 text-green-700' :
+                                                            entry.status === 'cared' ? 'bg-blue-100 text-blue-700' :
+                                                                'bg-yellow-100 text-yellow-700'
+                                                        }`}>
+                                                        {entry.status === 'pushed' ? 'Completed' : entry.status === 'cared' ? 'Cared' : 'Pending'}
+                                                    </span>
+                                                </div>
+                                                <div className="text-sm text-slate-600 dark:text-slate-400">
+                                                    <p><strong>Reason:</strong> {entry.reason}</p>
+                                                    {entry.caredBy && (
+                                                        <p className="text-xs text-green-600 mt-1">
+                                                            <strong>Cared by:</strong> {entry.caredBy}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
 
                 <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />

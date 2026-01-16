@@ -76,6 +76,7 @@ export default function AdminDashboard() {
     const [fees, setFees] = useState<FeeStatus[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [lostItems, setLostItems] = useState<LostFound[]>([]);
+    const [sickRegisters, setSickRegisters] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -206,7 +207,7 @@ export default function AdminDashboard() {
         setLoading(true);
         try {
             const hostelQuery = user?.hostelName ? `?hostelName=${user.hostelName}` : '';
-            const [compRes, outRes, feeRes, messRes, timingsRes, lostRes, msgRes, usersRes] = await Promise.all([
+            const [compRes, outRes, feeRes, messRes, timingsRes, lostRes, msgRes, usersRes, sickRes] = await Promise.all([
                 fetch(`/api/complaints${hostelQuery}`, { cache: 'no-store' }),
                 fetch(`/api/outpass${hostelQuery}`, { cache: 'no-store' }),
                 fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`, { cache: 'no-store' }),
@@ -214,7 +215,8 @@ export default function AdminDashboard() {
                 fetch(`/api/mess-timings?type=${messHostelType}`, { cache: 'no-store' }),
                 fetch(`/api/lost-found${hostelQuery}`, { cache: 'no-store' }),
                 fetch(`/api/messages${hostelQuery}`, { cache: 'no-store' }),
-                fetch(`/api/users`, { cache: 'no-store' })
+                fetch(`/api/users`, { cache: 'no-store' }),
+                fetch(`/api/sick-register${hostelQuery}`, { cache: 'no-store' })
             ]);
             const cData = await compRes.json();
             const oData = await outRes.json();
@@ -225,6 +227,7 @@ export default function AdminDashboard() {
             const msgData = await msgRes.json();
 
             const usersData = await usersRes.json();
+            const sickData = await sickRes.json();
 
             setComplaints(cData.complaints || cData);
             setOutpasses(oData);
@@ -234,6 +237,7 @@ export default function AdminDashboard() {
             setLostItems(lData);
             setMessages(msgData);
             setUsers(usersData);
+            setSickRegisters(sickData);
         } catch (e) {
             toast.error('Failed to load dashboard data');
         } finally {
@@ -495,6 +499,45 @@ export default function AdminDashboard() {
                 toast.error('Failed to send message');
             }
         } catch (e) { toast.error('Error sending private message'); }
+    };
+
+    const handleMarkAsCared = async (id: string) => {
+        try {
+            const res = await fetch('/api/sick-register/care', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, adminName: user?.name || 'Admin' })
+            });
+
+            if (res.ok) {
+                toast.success('Marked as cared');
+                fetchData();
+            } else {
+                toast.error('Failed to mark as cared');
+            }
+        } catch (e) {
+            toast.error('Error marking as cared');
+        }
+    };
+
+    const handlePushSickRegisterToSheet = async (entry: any) => {
+        try {
+            const res = await fetch('/api/sick-register/push-to-sheets', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entry, adminName: user?.name || 'Admin' })
+            });
+
+            if (res.ok) {
+                toast.success('Record pushed to Google Sheet successfully');
+                fetchData();
+            } else {
+                const errorData = await res.json();
+                toast.error(errorData.error || 'Failed to push record');
+            }
+        } catch (error) {
+            toast.error('Error pushing record');
+        }
     };
 
 
@@ -2356,25 +2399,128 @@ export default function AdminDashboard() {
 
                                     {registerSubTab === 'sick' && (
                                         <div className="space-y-4">
-                                            {complaints.filter(c => c.title.toLowerCase().includes('sick') || c.title.toLowerCase().includes('health') || c.title.toLowerCase().includes('medical')).length === 0 ? (
+                                            <div className="flex justify-between items-center mb-2">
+                                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Medical Emergency Log</h3>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-8 w-8 p-0"
+                                                        onClick={() => {
+                                                            toast.promise(fetchData(), {
+                                                                loading: 'Refreshing...',
+                                                                success: 'Refreshed',
+                                                                error: 'Failed to refresh'
+                                                            });
+                                                        }}
+                                                    >
+                                                        <RefreshCw className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => {
+                                                            const GIRLS_SICK_SHEET = 'https://docs.google.com/spreadsheets/d/1LIVmp3dUkHUy-gMvuFatrRMgvPX4qBXj2EProRMGMZE/edit?usp=sharing';
+                                                            const BOYS_SICK_SHEET = 'https://docs.google.com/spreadsheets/d/1juK0cw8OIMyFECYwOexkvkCBdn1NBQTrY-4YDWgS-nk/edit?usp=sharing';
+
+                                                            const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
+                                                            const isGirlsHostel = normalizedHostel.includes('akshaya');
+
+                                                            window.open(isGirlsHostel ? GIRLS_SICK_SHEET : BOYS_SICK_SHEET, '_blank');
+                                                        }}
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                                                    >
+                                                        <FileText className="w-4 h-4 mr-2" /> View Report
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {sickRegisters.length === 0 ? (
                                                 <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
-                                                    No medical alerts found.
+                                                    No medical emergency entries found.
                                                 </div>
                                             ) : (
                                                 <div className="space-y-3">
-                                                    {complaints.filter(c => c.title.toLowerCase().includes('sick') || c.title.toLowerCase().includes('health') || c.title.toLowerCase().includes('medical')).map(c => (
-                                                        <div key={c.id} className="p-4 rounded-xl border border-red-100 dark:border-red-900/30 bg-red-50/30 dark:bg-red-900/10 flex justify-between items-center">
+                                                    {[...sickRegisters].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(entry => (
+                                                        <div
+                                                            key={entry.id}
+                                                            className={`p-4 rounded-xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors
+                                                                ${entry.status === 'pending'
+                                                                    ? 'border-red-100 dark:border-red-900/30 bg-red-50/20 dark:bg-red-900/5'
+                                                                    : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950'}`}
+                                                        >
                                                             <div className="flex items-center gap-4">
-                                                                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600 dark:text-red-400">
+                                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0
+                                                                    ${entry.status === 'pending' ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'}`}>
                                                                     <Thermometer className="w-6 h-6" />
                                                                 </div>
                                                                 <div>
-                                                                    <p className="font-bold text-slate-900 dark:text-white">{c.studentName}</p>
-                                                                    <p className="text-xs text-red-600 dark:text-red-400 font-medium">{c.title}</p>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <p className="font-bold text-slate-900 dark:text-white">{entry.studentName}</p>
+                                                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase
+                                                                            ${entry.status === 'pushed' ? 'bg-emerald-100 text-emerald-700' :
+                                                                                entry.status === 'cared' ? 'bg-blue-100 text-blue-700' :
+                                                                                    'bg-red-100 text-red-700'}`}>
+                                                                            {entry.status}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="text-xs text-slate-500 font-medium">
+                                                                        {entry.collegeName} • Room {entry.roomNumber} • {formatDate(entry.date)}
+                                                                    </p>
+                                                                    <p className="text-sm text-slate-700 dark:text-slate-300 mt-1 italic">
+                                                                        "{entry.reason}"
+                                                                    </p>
                                                                 </div>
                                                             </div>
-                                                            <div className="text-right">
-                                                                <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-100" onClick={() => setRegisterSubTab('complaints')}>View Detail</Button>
+
+                                                            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+                                                                {entry.status === 'pending' && (
+                                                                    <Button
+                                                                        size="sm"
+                                                                        className="bg-red-600 hover:bg-red-700 text-white"
+                                                                        onClick={() => handleMarkAsCared(entry.id)}
+                                                                    >
+                                                                        Mark as Cared
+                                                                    </Button>
+                                                                )}
+
+                                                                {entry.status === 'cared' && (
+                                                                    <div className="flex flex-col items-end mr-2">
+                                                                        <p className="text-[10px] text-slate-400 uppercase">Cared By</p>
+                                                                        <p className="text-xs font-bold text-slate-600 dark:text-slate-400">{entry.caredBy || 'Admin'}</p>
+                                                                    </div>
+                                                                )}
+
+                                                                {entry.status === 'cared' && (
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="outline"
+                                                                        className="border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                                                        onClick={() => handlePushSickRegisterToSheet(entry)}
+                                                                    >
+                                                                        <Upload className="w-3 h-3 mr-1" />
+                                                                        Push to Sheet
+                                                                    </Button>
+                                                                )}
+
+                                                                {entry.status === 'pushed' && (
+                                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                                                                        <Check className="w-4 h-4" />
+                                                                        Synced to Sheets
+                                                                    </div>
+                                                                )}
+
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                                                    onClick={() => {
+                                                                        setReplyingTo(entry.studentId);
+                                                                        setReplyMessage(`Hi ${entry.studentName}, regarding your medical emergency report: `);
+                                                                    }}
+                                                                >
+                                                                    <MessageSquare className="w-4 h-4" />
+                                                                </Button>
                                                             </div>
                                                         </div>
                                                     ))}
