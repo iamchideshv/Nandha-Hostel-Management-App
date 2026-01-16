@@ -43,10 +43,10 @@ interface OutpassData {
 
 export default function StudentDashboard() {
     const { user, login } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
+    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
-    const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick'>('main');
+    const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick' | 'complaints'>('main');
     const [leaveCollegeFilter, setLeaveCollegeFilter] = useState<string | null>(null);
     const [outingCollegeFilter, setOutingCollegeFilter] = useState<string | null>(null);
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -702,10 +702,6 @@ export default function StudentDashboard() {
                                 <Utensils className="w-5 h-5" />
                                 <span>Mess Details</span>
                             </button>
-                            <button onClick={() => { setActiveTab('complaints'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'complaints' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
-                                <AlertCircle className="w-5 h-5" />
-                                <span>Complaints</span>
-                            </button>
                             <button onClick={() => { setActiveTab('outpass'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <FileText className="w-5 h-5" />
                                 <span>Outpass</span>
@@ -788,10 +784,6 @@ export default function StudentDashboard() {
                     <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <Utensils className="h-6 w-6 text-blue-600 mb-2" />
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
-                    </button>
-                    <button onClick={() => setActiveTab('complaints')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'complaints' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
-                        <AlertCircle className="h-6 w-6 text-orange-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Complaints</h3>
                     </button>
                     <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <FileText className="h-6 w-6 text-green-600 mb-2" />
@@ -1143,75 +1135,6 @@ export default function StudentDashboard() {
                         </Card>
                     )}
 
-                    {activeTab === 'complaints' && (
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Register Complaint</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <form onSubmit={handleComplaintSubmit} className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Issue Type</Label>
-                                            <select
-                                                className="flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-black text-slate-900 dark:text-white px-3 py-2 text-sm"
-                                                value={complaintForm.type}
-                                                onChange={(e) => setComplaintForm({ ...complaintForm, type: e.target.value })}
-                                            >
-                                                <option value="misc">Miscellaneous (Room, Water, etc)</option>
-                                                <option value="food">Food / Mess</option>
-                                            </select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Title</Label>
-                                            <Input
-                                                placeholder="Tube light not working"
-                                                value={complaintForm.title}
-                                                onChange={(e) => setComplaintForm({ ...complaintForm, title: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Description</Label>
-                                            <textarea
-                                                className="flex w-full rounded-md border border-slate-300 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm min-h-[100px]"
-                                                placeholder="Details about the issue..."
-                                                value={complaintForm.description}
-                                                onChange={(e) => setComplaintForm({ ...complaintForm, description: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <Button type="submit" disabled={submitting}> Register Complaint </Button>
-                                    </form>
-                                </CardContent>
-                            </Card>
-
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>My Complaints</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-3">
-                                        {!complaints.length ? <p className="text-sm text-slate-500">No active complaints.</p> :
-                                            complaints.map((c) => (
-                                                <div key={c.id} className="p-3 border rounded-lg flex justify-between items-center bg-white dark:bg-black">
-                                                    <div>
-                                                        <p className="font-medium text-sm">{c.title}</p>
-                                                        <p className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</p>
-                                                    </div>
-                                                    <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium
-                                            ${c.status === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}
-                                        `}>
-                                                        {c.status}
-                                                    </div>
-                                                </div>
-                                            ))
-                                        }
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
 
                     {activeTab === 'messages' && (
                         <div className="space-y-6">
@@ -1845,6 +1768,24 @@ export default function StudentDashboard() {
                                             <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
                                         </CardFooter>
                                     </Card>
+
+                                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-600">
+                                        <CardHeader>
+                                            <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
+                                                <AlertCircle className="w-6 h-6" />
+                                            </div>
+                                            <CardTitle>Complaint Register</CardTitle>
+                                            <CardDescription>Register your issues or complaints</CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                Submit complaints regarding food, room maintenance, water, or other issues.
+                                            </p>
+                                        </CardContent>
+                                        <CardFooter>
+                                            <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
+                                        </CardFooter>
+                                    </Card>
                                 </div>
                             )}
 
@@ -2358,6 +2299,78 @@ export default function StudentDashboard() {
                                                 </div>
                                             </div>
                                         )}
+
+                                        {registerSubTab === 'complaints' && (
+                                            <div className="space-y-6">
+                                                <div className="grid md:grid-cols-2 gap-6">
+                                                    <Card>
+                                                        <CardHeader>
+                                                            <CardTitle>Register Complaint</CardTitle>
+                                                        </CardHeader>
+                                                        <CardContent>
+                                                            <form onSubmit={handleComplaintSubmit} className="space-y-4">
+                                                                <div className="space-y-2">
+                                                                    <Label>Issue Type</Label>
+                                                                    <select
+                                                                        className="flex h-10 w-full rounded-md border border-slate-300 bg-white dark:bg-black text-slate-900 dark:text-white px-3 py-2 text-sm"
+                                                                        value={complaintForm.type}
+                                                                        onChange={(e) => setComplaintForm({ ...complaintForm, type: e.target.value })}
+                                                                    >
+                                                                        <option value="misc">Miscellaneous (Room, Water, etc)</option>
+                                                                        <option value="food">Food / Mess</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label>Title</Label>
+                                                                    <Input
+                                                                        placeholder="Tube light not working"
+                                                                        value={complaintForm.title}
+                                                                        onChange={(e) => setComplaintForm({ ...complaintForm, title: e.target.value })}
+                                                                        required
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <Label>Description</Label>
+                                                                    <textarea
+                                                                        className="flex w-full rounded-md border border-slate-300 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-3 py-2 text-sm min-h-[100px]"
+                                                                        placeholder="Details about the issue..."
+                                                                        value={complaintForm.description}
+                                                                        onChange={(e) => setComplaintForm({ ...complaintForm, description: e.target.value })}
+                                                                        required
+                                                                    />
+                                                                </div>
+                                                                <Button type="submit" disabled={submitting}> Register Complaint </Button>
+                                                            </form>
+                                                        </CardContent>
+                                                    </Card>
+
+                                                    <Card>
+                                                        <CardHeader>
+                                                            <CardTitle>My Complaints History</CardTitle>
+                                                        </CardHeader>
+                                                        <CardContent>
+                                                            <div className="space-y-3">
+                                                                {!complaints.length ? <p className="text-sm text-slate-500">No active complaints history.</p> :
+                                                                    complaints.map((c) => (
+                                                                        <div key={c.id} className="p-3 border rounded-lg flex justify-between items-center bg-white dark:bg-black">
+                                                                            <div>
+                                                                                <p className="font-medium text-sm">{c.title}</p>
+                                                                                <p className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</p>
+                                                                            </div>
+                                                                            <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium
+                                                                                ${c.status === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}
+                                                                            `}>
+                                                                                {c.status}
+                                                                            </div>
+                                                                        </div>
+                                                                    ))
+                                                                }
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                </div>
+                                            </div>
+                                        )}
                                     </CardContent>
                                 </Card>
                             )}
@@ -2602,9 +2615,7 @@ export default function StudentDashboard() {
                             </div>
                         </div>
                     </div>
-                )
-            }
-
+                )}
         </>
     );
 }
