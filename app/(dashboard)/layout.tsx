@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogOut, Menu, UserCircle, Home } from 'lucide-react';
@@ -147,7 +147,9 @@ export default function DashboardLayout({
 
             {/* Main Content */}
             <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-                {children}
+                <Suspense fallback={<div className="flex h-full items-center justify-center p-4 text-slate-500">Loading Dashboard...</div>}>
+                    {children}
+                </Suspense>
             </main>
 
             {/* Go to Home Confirmation Modal */}

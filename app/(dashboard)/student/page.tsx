@@ -116,10 +116,16 @@ export default function StudentDashboard() {
     const [submitting, setSubmitting] = useState(false);
     const [imageUploaded, setImageUploaded] = useState(false);
     const [registerEntryForm, setRegisterEntryForm] = useState({
-        date: new Date().toISOString().split('T')[0],
+        date: '',
         outTime: '',
         inTime: ''
     });
+
+    useEffect(() => {
+        const today = new Date();
+        const localDate = today.toISOString().split('T')[0];
+        setRegisterEntryForm(prev => ({ ...prev, date: localDate }));
+    }, []);
     const [historyInTimes, setHistoryInTimes] = useState<{ [key: string]: string }>({});
     const [historyInDates, setHistoryInDates] = useState<{ [key: string]: string }>({});
 

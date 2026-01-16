@@ -29,6 +29,7 @@ export default function SendOffDashboard() {
     const [showAbout, setShowAbout] = useState(false);
     const [isPushed, setIsPushed] = useState(false);
     const [isExpired, setIsExpired] = useState(false);
+    const [currentTime, setCurrentTime] = useState<string>('');
 
     // Scanner Ref
     const scannerRef = useRef<Html5Qrcode | null>(null);
@@ -38,7 +39,15 @@ export default function SendOffDashboard() {
             // Optional: Redirect
         }
 
+
+
+        setCurrentTime(new Date().toLocaleString());
+        const timer = setInterval(() => {
+            setCurrentTime(new Date().toLocaleString());
+        }, 1000);
+
         return () => {
+            clearInterval(timer);
             if (scannerRef.current && scannerRef.current.getState() === 2) {
                 scannerRef.current.stop().then(() => {
                     scannerRef.current?.clear();
@@ -345,7 +354,7 @@ export default function SendOffDashboard() {
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-slate-500">Time</span>
-                                        <span className="font-semibold text-xs">{new Date().toLocaleString()}</span>
+                                        <span className="font-semibold text-xs">{currentTime}</span>
                                     </div>
                                 </div>
 
