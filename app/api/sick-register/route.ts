@@ -79,8 +79,9 @@ export async function DELETE(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const hostelName = searchParams.get('hostelName');
+        const studentId = searchParams.get('studentId');
 
-        await db.clearSickRegisters(hostelName || undefined);
+        await db.clearSickRegisters(hostelName || undefined, studentId || undefined);
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Sick Register DELETE Error:', error);

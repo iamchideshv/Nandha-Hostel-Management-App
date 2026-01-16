@@ -34,6 +34,7 @@ export interface Complaint {
     pushedToSheet?: boolean;
     pushedProgress?: 'In-Process' | 'Resolved';
     createdAt: string;
+    studentHidden?: boolean;
 }
 
 
@@ -173,5 +174,6 @@ export interface SickRegister {
     pushedToSheet: boolean;
     pushedAt?: string;
     createdAt: string;
+    studentHidden?: boolean;
 }
 

@@ -89,7 +89,12 @@ export const db = {
     }
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => doc.data() as Complaint);
+    const docs = querySnapshot.docs.map(doc => doc.data() as Complaint);
+
+    if (studentId && !hostelName) {
+      return docs.filter(c => !c.studentHidden);
+    }
+    return docs;
   },
 
   addComplaint: async (complaint: Complaint): Promise<Complaint> => {
@@ -118,14 +123,24 @@ export const db = {
   },
 
 
-  clearComplaints: async (hostelName?: string): Promise<void> => {
+  clearComplaints: async (hostelName?: string, studentId?: string): Promise<void> => {
     let q = query(collection(firestore, COMPLAINTS_COL));
-    if (hostelName) {
-      q = query(collection(firestore, COMPLAINTS_COL), where("hostelName", "==", hostelName));
+    const constraints: QueryConstraint[] = [];
+    if (hostelName) constraints.push(where("hostelName", "==", hostelName));
+    if (studentId) constraints.push(where("studentId", "==", studentId));
+
+    if (constraints.length > 0) {
+      q = query(collection(firestore, COMPLAINTS_COL), ...constraints);
     }
+
     const snap = await getDocs(q);
-    const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
-    await Promise.all(deletePromises);
+    if (studentId && !hostelName) {
+      const updatePromises = snap.docs.map(d => updateDoc(d.ref, { studentHidden: true }));
+      await Promise.all(updatePromises);
+    } else {
+      const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
+      await Promise.all(deletePromises);
+    }
   },
 
   // --- OUTPASSES ---
@@ -459,8 +474,12 @@ export const db = {
     }
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const docs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+
+    if (studentId && !hostelName) {
+      return docs.filter(s => !s.studentHidden);
+    }
+    return docs.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   },
 
   addSickRegister: async (entry: any): Promise<void> => {
@@ -480,13 +499,23 @@ export const db = {
     return snap.exists() ? snap.data() : null;
   },
 
-  clearSickRegisters: async (hostelName?: string): Promise<void> => {
+  clearSickRegisters: async (hostelName?: string, studentId?: string): Promise<void> => {
     let q = query(collection(firestore, SICK_REGISTER_COL));
-    if (hostelName) {
-      q = query(collection(firestore, SICK_REGISTER_COL), where("hostelName", "==", hostelName));
+    const constraints: QueryConstraint[] = [];
+    if (hostelName) constraints.push(where("hostelName", "==", hostelName));
+    if (studentId) constraints.push(where("studentId", "==", studentId));
+
+    if (constraints.length > 0) {
+      q = query(collection(firestore, SICK_REGISTER_COL), ...constraints);
     }
+
     const snap = await getDocs(q);
-    const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
-    await Promise.all(deletePromises);
+    if (studentId && !hostelName) {
+      const updatePromises = snap.docs.map(d => updateDoc(d.ref, { studentHidden: true }));
+      await Promise.all(updatePromises);
+    } else {
+      const deletePromises = snap.docs.map(d => deleteDoc(d.ref));
+      await Promise.all(deletePromises);
+    }
   },
 };

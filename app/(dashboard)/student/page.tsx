@@ -565,7 +565,11 @@ export default function StudentDashboard() {
         if (!confirm(`Are you sure you want to clear your ${type} history? This action cannot be undone.`)) return;
         setSubmitting(true);
         try {
-            const res = await fetch(`/api/outpass?studentId=${user?.id}&type=${type}`, { method: 'DELETE' });
+            let url = `/api/outpass?studentId=${user?.id}&type=${type}`;
+            if (type === 'sick') url = `/api/sick-register?studentId=${user?.id}`;
+            if (type === 'complaints') url = `/api/complaints?studentId=${user?.id}`;
+
+            const res = await fetch(url, { method: 'DELETE' });
             if (res.ok) {
                 toast.success(`${type} History Cleared`);
                 fetchData();
@@ -2490,6 +2494,17 @@ export default function StudentDashboard() {
                                                                 <CardTitle>Your Sick Register History</CardTitle>
                                                                 <CardDescription>View your submitted medical emergency reports</CardDescription>
                                                             </div>
+                                                            {sickRegisters.length > 0 && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 text-xs font-semibold"
+                                                                    onClick={() => handleClearHistory('sick')}
+                                                                >
+                                                                    <XCircle className="w-3.5 h-3.5 mr-1.5" />
+                                                                    Clear History
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </CardHeader>
                                                     <CardContent>
@@ -2588,7 +2603,20 @@ export default function StudentDashboard() {
 
                                                     <Card>
                                                         <CardHeader>
-                                                            <CardTitle>My Complaints History</CardTitle>
+                                                            <div className="flex justify-between items-center">
+                                                                <CardTitle>My Complaints History</CardTitle>
+                                                                {complaints.length > 0 && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 text-xs font-semibold"
+                                                                        onClick={() => handleClearHistory('complaints')}
+                                                                    >
+                                                                        <XCircle className="w-3.5 h-3.5 mr-1.5" />
+                                                                        Clear History
+                                                                    </Button>
+                                                                )}
+                                                            </div>
                                                         </CardHeader>
                                                         <CardContent>
                                                             <div className="space-y-3">
