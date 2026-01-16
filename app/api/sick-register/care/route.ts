@@ -20,6 +20,14 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Entry not found' }, { status: 404 });
         }
 
+        // Send Push Notification
+        try {
+            const { sendPushToUser } = await import('@/lib/push-notifications');
+            await sendPushToUser(updated.studentId, `Medical Alert Update`, `The warden has updated your medical emergency status to: CARED.`);
+        } catch (pushError) {
+            console.error('Failed to send push notification:', pushError);
+        }
+
         return NextResponse.json({ success: true, entry: updated });
     } catch (error) {
         console.error('Mark as Cared Error:', error);

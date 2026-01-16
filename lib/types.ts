@@ -15,6 +15,7 @@ export interface User {
     department?: string;
     college?: string;
     phoneNumber?: string;
+    fcmTokens?: string[];
 }
 
 export type ComplaintType = 'food' | 'misc';

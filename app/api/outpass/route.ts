@@ -84,6 +84,22 @@ export async function PATCH(req: Request) {
     if (!updated) {
       return NextResponse.json({ error: 'Outpass not found' }, { status: 404 });
     }
+
+    // Send Push Notification on status change or approval
+    try {
+      if (updateData.status || updateData.approvedAt) {
+        const { sendPushToUser } = await import('@/lib/push-notifications');
+        const statusMsg = updateData.status === 'approved' ? 'APPROVED! 🎉' :
+          updateData.status === 'rejected' ? 'REJECTED ❌' :
+            updateData.status === 'exited' ? 'MARKED AS EXITED' :
+              updateData.status;
+
+        await sendPushToUser(updated.studentId, `Outpass Update`, `Your outpass request has been ${statusMsg}.`);
+      }
+    } catch (pushError) {
+      console.error('Failed to send push notification:', pushError);
+    }
+
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

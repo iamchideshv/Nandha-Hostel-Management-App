@@ -11,9 +11,11 @@ import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, 
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 import { formatDate, formatTime } from '@/lib/formatters';
+import { useNotifications } from '@/hooks/use-notifications';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
+    useNotifications();
     const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register'>('register');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');

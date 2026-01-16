@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp } from "firebase/app";
+import { getMessaging, Messaging } from "firebase/messaging";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -18,6 +19,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Initialize Messaging conditionally (only supported in browser environments)
+let messaging: Messaging | undefined;
+if (typeof window !== "undefined") {
+    try {
+        messaging = getMessaging(app);
+    } catch (e) {
+        console.warn("Firebase Messaging not supported in this browser");
+    }
+}
 
 // Initialize Analytics conditionally (only supported in browser environments)
 let analytics;
@@ -29,5 +41,4 @@ if (typeof window !== "undefined") {
     });
 }
 
-export const db = getFirestore(app);
-export { app, analytics, auth };
+export { app, analytics, auth, db, messaging };

@@ -18,6 +18,7 @@ import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
 import { Mail, UserCircle, Upload, Camera, Crop } from 'lucide-react';
 import Cropper from 'react-easy-crop';
+import { useNotifications } from '@/hooks/use-notifications';
 
 interface ComplaintData {
     id: string;
@@ -46,6 +47,7 @@ interface OutpassData {
 
 export default function StudentDashboard() {
     const { user, login } = useAuth();
+    useNotifications();
     const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');

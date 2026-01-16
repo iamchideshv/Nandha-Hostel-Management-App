@@ -34,6 +34,20 @@ export async function POST(req: NextRequest) {
             targetStudentId: targetStudentId || null,
             hostelName: hostelName || null // Ensure null if undefined, Firestore crashes on undefined
         });
+
+        // Send Push Notification if urgent or private
+        try {
+            const { sendPushToUser, sendPushToRole } = await import('@/lib/push-notifications');
+            if (targetStudentId) {
+                await sendPushToUser(targetStudentId, `Message from ${senderName}`, message);
+            } else if (type === 'urgent') {
+                await sendPushToRole('admin', `URGENT: ${senderName}`, message);
+                await sendPushToRole('authority', `URGENT: ${senderName}`, message);
+            }
+        } catch (pushError) {
+            console.error('Failed to send push notification:', pushError);
+        }
+
         return NextResponse.json({ success: true, message: 'Message sent successfully' });
     } catch (error) {
         console.error('Error sending message:', error);
