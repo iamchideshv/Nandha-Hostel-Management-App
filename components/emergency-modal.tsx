@@ -72,7 +72,10 @@ export function EmergencyModal({ isOpen, onClose, user }: EmergencyModalProps) {
                                 <div className="space-y-1.5">
                                     {['8015316807', '8715432961'].map((num, i) => (
                                         <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-1.5 pl-2 rounded-lg shadow-sm border border-blue-50 dark:border-slate-800">
-                                            <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200">W{i + 1}</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-[7px] font-black text-blue-600/60 uppercase">Warden {i + 1}</span>
+                                                <span className="text-[9px] font-bold text-slate-700 dark:text-slate-200 leading-tight">{num}</span>
+                                            </div>
                                             <a href={`tel:${num}`} className="bg-blue-600 text-white p-1.5 rounded-full hover:scale-105 transition-transform shadow-sm">
                                                 <Phone className="w-2.5 h-2.5" />
                                             </a>
@@ -89,7 +92,10 @@ export function EmergencyModal({ isOpen, onClose, user }: EmergencyModalProps) {
                                 <div className="space-y-1.5">
                                     {['7654891023', '8596453211'].map((num, i) => (
                                         <div key={num} className="flex items-center justify-between bg-white dark:bg-slate-900 p-1.5 pl-2 rounded-lg shadow-sm border border-rose-50 dark:border-slate-800">
-                                            <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200">W{i + 1}</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-[7px] font-black text-rose-600/60 uppercase">Warden {i + 1}</span>
+                                                <span className="text-[9px] font-bold text-slate-700 dark:text-slate-200 leading-tight">{num}</span>
+                                            </div>
                                             <a href={`tel:${num}`} className="bg-rose-600 text-white p-1.5 rounded-full hover:scale-105 transition-transform shadow-sm">
                                                 <Phone className="w-2.5 h-2.5" />
                                             </a>
