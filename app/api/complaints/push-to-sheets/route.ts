@@ -91,8 +91,9 @@ export async function POST(req: Request) {
             console.error('Error checking/creating sheet:', error);
         }
 
-        // Map college name to short form
+        // Map college name and issue type to full/short forms
         const collegeShort = collegeMap[complaint.collegeName] || complaint.collegeName;
+        const issueTypeFull = complaint.type === 'food' ? 'Mess' : (complaint.type === 'misc' ? 'Miscellaneous' : complaint.type);
         const progress = complaint.status === 'resolved' ? 'Resolved' : 'In-Process';
 
         // Find row to update (since ID is removed, match by Name, Title, Description)
@@ -132,7 +133,7 @@ export async function POST(req: Request) {
                 complaint.hostelName || 'N/A',
                 complaint.roomNumber,
                 collegeShort,
-                complaint.type,
+                issueTypeFull,
                 complaint.title,
                 complaint.description,
                 progress
