@@ -46,7 +46,7 @@ interface OutpassData {
 }
 
 export default function StudentDashboard() {
-    const { user, login } = useAuth();
+    const { user, login, logout } = useAuth();
     useNotifications();
     const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
@@ -850,7 +850,7 @@ export default function StudentDashboard() {
                                 <Home className="w-5 h-5" />
                                 <span>Go to Home</span>
                             </button>
-                            <button onClick={() => { if (confirm('Sign out?')) { window.location.href = '/'; } setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950">
+                            <button onClick={() => { if (confirm('Sign out?')) { logout(); router.push('/'); } setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950">
                                 <LogOut className="w-5 h-5" />
                                 <span>Sign Out</span>
                             </button>
