@@ -133,16 +133,49 @@ export default function AdminDashboard() {
         );
     };
 
+    const [lastViewed, setLastViewed] = useState<{ [key: string]: number }>({});
+
+    useEffect(() => {
+        const saved = localStorage.getItem('admin_lastViewed');
+        if (saved) {
+            try {
+                setLastViewed(JSON.parse(saved));
+            } catch (e) {
+                console.error('Failed to parse lastViewed', e);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (activeTab) {
+            const now = Date.now();
+            const updated = { ...lastViewed, [activeTab]: now };
+            if (activeTab === 'register' && registerSubTab) {
+                updated[`register_${registerSubTab}`] = now;
+            }
+            setLastViewed(updated);
+            localStorage.setItem('admin_lastViewed', JSON.stringify(updated));
+        }
+    }, [activeTab, registerSubTab]);
+
+    const isNew = (timestamp: string | undefined, tab: string) => {
+        if (!timestamp) return true;
+        const time = new Date(timestamp).getTime();
+        return time > (lastViewed[tab] || 0);
+    };
+
     const pendingCounts = {
-        outpass: outpasses.filter(o => o.status === 'pending').length,
-        fees: fees.filter(f => f.status === 'pending_request').length,
-        messages: messages.filter(m => m.senderRole === 'student').length,
-        lostFound: lostItems.filter(i => i.status === 'pending').length,
-        register: complaints.filter(c => c.status === 'pending').length + sickRegisters.filter(s => s.status === 'pending').length + outpasses.filter(o => o.status === 'pending' && (o.type === 'leave' || o.type === 'outing')).length,
-        leave: outpasses.filter(o => o.status === 'pending' && o.type === 'leave').length,
-        outing: outpasses.filter(o => o.status === 'pending' && o.type === 'outing').length,
-        sick: sickRegisters.filter(s => s.status === 'pending').length,
-        complaints: complaints.filter(c => c.status === 'pending').length
+        outpass: outpasses.filter(o => o.status === 'pending' && isNew(o.createdAt, 'outpass')).length,
+        fees: fees.filter(f => f.status === 'pending_request' && isNew(f.lastUpdated, 'fees')).length,
+        messages: messages.filter(m => m.senderRole === 'student' && isNew(m.timestamp, 'messages')).length,
+        lostFound: lostItems.filter(i => i.status === 'pending' && isNew(i.createdAt, 'lost-found')).length,
+        register: (complaints.filter(c => c.status === 'pending' && isNew(c.createdAt, 'register_complaints')).length +
+            sickRegisters.filter(s => s.status === 'pending' && isNew(s.createdAt, 'register_sick')).length +
+            outpasses.filter(o => o.status === 'pending' && (o.type === 'leave' || o.type === 'outing') && isNew(o.createdAt, o.type === 'leave' ? 'register_leave' : 'register_outing')).length),
+        leave: outpasses.filter(o => o.status === 'pending' && o.type === 'leave' && isNew(o.createdAt, 'register_leave')).length,
+        outing: outpasses.filter(o => o.status === 'pending' && o.type === 'outing' && isNew(o.createdAt, 'register_outing')).length,
+        sick: sickRegisters.filter(s => s.status === 'pending' && isNew(s.createdAt, 'register_sick')).length,
+        complaints: complaints.filter(c => c.status === 'pending' && isNew(c.createdAt, 'register_complaints')).length
     };
 
     // Messages State

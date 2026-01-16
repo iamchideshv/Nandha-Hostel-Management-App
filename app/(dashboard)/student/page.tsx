@@ -127,13 +127,43 @@ export default function StudentDashboard() {
         );
     };
 
+    const [lastViewed, setLastViewed] = useState<{ [key: string]: number }>({});
+
+    useEffect(() => {
+        const saved = localStorage.getItem('student_lastViewed');
+        if (saved) {
+            try {
+                setLastViewed(JSON.parse(saved));
+            } catch (e) { }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (activeTab) {
+            const now = Date.now();
+            const updated = { ...lastViewed, [activeTab]: now };
+            if (activeTab === 'register' && registerSubTab) {
+                updated[`register_${registerSubTab}`] = now;
+            }
+            setLastViewed(updated);
+            localStorage.setItem('student_lastViewed', JSON.stringify(updated));
+        }
+    }, [activeTab, registerSubTab]);
+
+    const isNew = (timestamp: string | undefined, tab: string) => {
+        if (!timestamp) return true;
+        const time = new Date(timestamp).getTime();
+        return time > (lastViewed[tab] || 0);
+    };
+
     const pendingCounts = {
-        outpass: outpasses.filter(o => o.status === 'approved' || o.status === 'rejected').length,
-        messages: messages.filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))).length,
-        fees: feeStatus?.status === 'unpaid' ? 1 : 0,
-        register: complaints.filter(c => c.status !== 'pending').length + sickRegisters.filter(s => s.status !== 'pending' && s.status !== 'pushed').length,
-        sick: sickRegisters.filter(s => s.status !== 'pending' && s.status !== 'pushed').length,
-        complaints: complaints.filter(c => c.status !== 'pending').length
+        outpass: outpasses.filter(o => (o.status === 'approved' || o.status === 'rejected') && isNew(o.approvedAt || o.createdAt, 'outpass')).length,
+        messages: messages.filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))) && isNew(m.timestamp, 'messages')).length,
+        fees: feeStatus?.status === 'unpaid' && isNew(feeStatus.lastUpdated, 'fees') ? 1 : 0,
+        register: (complaints.filter(c => c.status !== 'pending' && isNew(c.createdAt, 'register_complaints')).length +
+            sickRegisters.filter(s => (s.status === 'cared' || s.status === 'pushed') && isNew(s.caredAt || s.createdAt, 'register_sick')).length),
+        sick: sickRegisters.filter(s => (s.status === 'cared' || s.status === 'pushed') && isNew(s.caredAt || s.createdAt, 'register_sick')).length,
+        complaints: complaints.filter(c => c.status !== 'pending' && isNew(c.createdAt, 'register_complaints')).length
     };
 
     const [submitting, setSubmitting] = useState(false);
