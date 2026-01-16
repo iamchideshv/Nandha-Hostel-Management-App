@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Complaint, Outpass, User, FeeStatus, Message, LostFound } from '@/lib/types';
-import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer, MessageSquare, RefreshCw, Trash2 } from 'lucide-react';
+import { AlertCircle, FileText, CheckCircle, XCircle, Clock, IndianRupee, Info, Utensils, Upload, Check, Send, Menu, LogOut, Home, Search, Eye, BadgeCheck, ChevronLeft, ChevronRight, Users, MoreVertical, UserCircle, Mail, Phone, MapPin, User as UserIcon, ClipboardList, Footprints, Thermometer, MessageSquare, RefreshCw, Trash2, RotateCw, ExternalLink } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 import { formatDate, formatTime } from '@/lib/formatters';
@@ -2591,9 +2591,33 @@ export default function AdminDashboard() {
 
                                     {registerSubTab === 'complaints' && (
                                         <div className="space-y-4">
-                                            <div className="flex justify-end space-x-2">
+                                            <div className="flex flex-wrap items-center justify-end gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => fetchData()}
+                                                    className="gap-2 h-8"
+                                                >
+                                                    <RotateCw className="w-3.5 h-3.5" />
+                                                    Refresh
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        const isBoys = user?.hostelName?.toLowerCase().includes('nri');
+                                                        const url = isBoys
+                                                            ? 'https://docs.google.com/spreadsheets/d/1jNomFfmrPaYkzNnTj59Jz3qNBuk7Jc3rewqStczE6js/edit'
+                                                            : 'https://docs.google.com/spreadsheets/d/1EH3gEaA7R7Zhq7rWSS3l4ZfSDLzR27DPIEujDyPGuLk/edit';
+                                                        window.open(url, '_blank');
+                                                    }}
+                                                    className="gap-2 h-8"
+                                                >
+                                                    <ExternalLink className="w-3.5 h-3.5" />
+                                                    View Report
+                                                </Button>
                                                 <select
-                                                    className="border rounded-md px-3 py-1 text-sm bg-white dark:bg-black text-slate-900 dark:text-white border-slate-200 dark:border-slate-800"
+                                                    className="border rounded-md px-3 py-1 text-sm bg-white dark:bg-black text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 h-8"
                                                     value={filter}
                                                     onChange={(e) => setFilter(e.target.value as any)}
                                                 >
@@ -2604,6 +2628,7 @@ export default function AdminDashboard() {
                                                 <Button
                                                     variant="destructive"
                                                     size="sm"
+                                                    className="h-8"
                                                     onClick={async () => {
                                                         if (confirm('Are you sure you want to clear all complaints history for your hostel? This cannot be undone.')) {
                                                             await fetch(`/api/complaints?hostelName=${user?.hostelName || ''}`, { method: 'DELETE' });
@@ -2642,7 +2667,7 @@ export default function AdminDashboard() {
                                                                         </div>
 
                                                                         {/* Button Logic based on pushedProgress */}
-                                                                        {!c.pushedProgress ? (
+                                                                        {!c.pushedProgress && c.status === 'in-progress' ? (
                                                                             <Button
                                                                                 size="default"
                                                                                 className="h-9 px-4 text-xs font-bold uppercase bg-red-600 hover:bg-red-700 text-white shadow-md transition-all active:scale-95"
