@@ -2291,10 +2291,10 @@ export default function StudentDashboard() {
                                                 </div>
                                                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Medical Sick Register</h3>
                                                 <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8">
-                                                    Emergency reporting is being integrated. In case of emergency, please contact the warden directly or use the "Complaints" tab for minor health-related issues.
+                                                    Emergency reporting is being integrated. In case of emergency, please contact the warden directly or use the "Complaint Register" for minor health-related issues.
                                                 </p>
                                                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                                    <Button onClick={() => setActiveTab('complaints')} className="bg-red-600 hover:bg-red-700 h-11 px-8 rounded-lg shadow-lg shadow-red-100">Report Health Issue</Button>
+                                                    <Button onClick={() => setRegisterSubTab('complaints')} className="bg-red-600 hover:bg-red-700 h-11 px-8 rounded-lg shadow-lg shadow-red-100">Report Health Issue</Button>
                                                     <Button variant="outline" onClick={() => window.open('tel:+910000000000')} className="h-11 px-8 border-slate-300">Call Warden Emergency</Button>
                                                 </div>
                                             </div>
