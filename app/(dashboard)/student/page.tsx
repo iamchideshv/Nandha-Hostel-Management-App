@@ -39,6 +39,8 @@ interface OutpassData {
     inTime?: string;
     inTimeConfirmed?: boolean;
     type?: 'outpass' | 'leave' | 'outing' | 'sick';
+    createdAt?: string;
+    approvedAt?: string;
 }
 
 export default function StudentDashboard() {
