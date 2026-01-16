@@ -579,55 +579,55 @@ export default function AdminDashboard() {
                 </header>
 
                 {/* Tabs */}
-                <div className="flex space-x-2 border-b border-slate-200 pb-4 mb-6 overflow-x-auto">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
                     <button
                         onClick={() => setActiveTab('outpass')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'outpass' ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 shadow-lg shadow-blue-100 dark:shadow-blue-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-blue-300 hover:shadow-md'}`}
                     >
-                        <FileText className="w-4 h-4 mr-2" />
-                        Outpass Verification
+                        <FileText className={`w-6 h-6 mb-2 ${activeTab === 'outpass' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span className={`text-xs font-semibold text-center ${activeTab === 'outpass' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-600 dark:text-slate-400'}`}>Outpass<br />Verification</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('fees')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'fees' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'fees' ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 shadow-lg shadow-emerald-100 dark:shadow-emerald-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-emerald-300 hover:shadow-md'}`}
                     >
-                        <IndianRupee className="w-4 h-4 mr-2" />
-                        Fee Pending
+                        <IndianRupee className={`w-6 h-6 mb-2 ${activeTab === 'fees' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span className={`text-xs font-semibold text-center ${activeTab === 'fees' ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-600 dark:text-slate-400'}`}>Fee<br />Pending</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('mess')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'mess' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'mess' ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500 shadow-lg shadow-orange-100 dark:shadow-orange-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-orange-300 hover:shadow-md'}`}
                     >
-                        <Utensils className="w-4 h-4 mr-2" />
-                        Mess Details
+                        <Utensils className={`w-6 h-6 mb-2 ${activeTab === 'mess' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span className={`text-xs font-semibold text-center ${activeTab === 'mess' ? 'text-orange-700 dark:text-orange-300' : 'text-slate-600 dark:text-slate-400'}`}>Mess<br />Details</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('messages')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'messages' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'messages' ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-500 shadow-lg shadow-purple-100 dark:shadow-purple-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-purple-300 hover:shadow-md'}`}
                     >
-                        <Send className="w-4 h-4 mr-2" />
-                        Messages
+                        <Send className={`w-6 h-6 mb-2 ${activeTab === 'messages' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span className={`text-xs font-semibold text-center ${activeTab === 'messages' ? 'text-purple-700 dark:text-purple-300' : 'text-slate-600 dark:text-slate-400'}`}>Messages</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('lost-found')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'lost-found' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'lost-found' ? 'bg-pink-50 dark:bg-pink-900/20 border-pink-500 shadow-lg shadow-pink-100 dark:shadow-pink-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-pink-300 hover:shadow-md'}`}
                     >
-                        <Search className="w-4 h-4 mr-2" />
-                        Lost & Found
+                        <Search className={`w-6 h-6 mb-2 ${activeTab === 'lost-found' ? 'text-pink-600 dark:text-pink-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span className={`text-xs font-semibold text-center ${activeTab === 'lost-found' ? 'text-pink-700 dark:text-pink-300' : 'text-slate-600 dark:text-slate-400'}`}>Lost &<br />Found</span>
                     </button>
                     <button
                         onClick={() => setActiveTab('student-details')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'student-details' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'student-details' ? 'bg-cyan-50 dark:bg-cyan-900/20 border-cyan-500 shadow-lg shadow-cyan-100 dark:shadow-cyan-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-cyan-300 hover:shadow-md'}`}
                     >
-                        <Users className="w-4 h-4 mr-2" />
-                        Student Details
+                        <Users className={`w-6 h-6 mb-2 ${activeTab === 'student-details' ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span className={`text-xs font-semibold text-center ${activeTab === 'student-details' ? 'text-cyan-700 dark:text-cyan-300' : 'text-slate-600 dark:text-slate-400'}`}>Student<br />Details</span>
                     </button>
                     <button
                         onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'register' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${activeTab === 'register' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-500 shadow-lg shadow-indigo-100 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:shadow-md'}`}
                     >
-                        <ClipboardList className="w-4 h-4 mr-2" />
-                        Register
+                        <ClipboardList className={`w-6 h-6 mb-2 ${activeTab === 'register' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span className={`text-xs font-semibold text-center ${activeTab === 'register' ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-600 dark:text-slate-400'}`}>Register</span>
                     </button>
                 </div>
 
