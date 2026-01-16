@@ -13,15 +13,7 @@ export async function POST(req: Request) {
 
 
 
-        // If it's a DevOps login attempt but not the master account, strictly deny
-        if (isDevOps) {
-            return NextResponse.json({ error: 'Access Denied' }, { status: 403 });
-        }
-
-        // If an email is used that is NOT the master DevOps email, deny access
-        if (id.includes('@')) {
-            return NextResponse.json({ error: 'Access Denied' }, { status: 403 });
-        }
+        // Legacy DevOps/Email blocks removed to allow standard logins for all roles.
 
         const user = await db.findUser(id);
 

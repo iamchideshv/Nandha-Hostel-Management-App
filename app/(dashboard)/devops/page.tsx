@@ -42,6 +42,7 @@ export default function DevOpsDashboard() {
         email: '',
         profileImage: ''
     });
+    const [mounted, setMounted] = useState(false);
 
     const fetchRequests = async () => {
         setLoading(true);
@@ -96,6 +97,7 @@ export default function DevOpsDashboard() {
     };
 
     useEffect(() => {
+        setMounted(true);
         fetchRequests();
         fetchUsers();
         fetchFeedback();
@@ -360,7 +362,7 @@ export default function DevOpsDashboard() {
                                                     <td className="py-3 text-slate-600 dark:text-slate-400">{req.userName}</td>
                                                     <td className="py-3 text-slate-600 dark:text-slate-400">{req.userEmail || 'N/A'}</td>
                                                     <td className="py-3 text-slate-600 dark:text-slate-400">
-                                                        {new Date(req.requestDate).toLocaleString()}
+                                                        {mounted ? new Date(req.requestDate).toLocaleString() : ''}
                                                     </td>
                                                     <td className="py-3 text-right">
                                                         <div className="flex items-center justify-end gap-2">
@@ -591,8 +593,8 @@ export default function DevOpsDashboard() {
                                                     <p className="max-w-md italic">"{item.message || 'No comments'}"</p>
                                                 </td>
                                                 <td className="py-4 text-right">
-                                                    <p className="text-xs">{new Date(item.createdAt).toLocaleDateString()}</p>
-                                                    <p className="text-[10px] text-slate-400">{new Date(item.createdAt).toLocaleTimeString()}</p>
+                                                    <p className="text-xs">{mounted ? new Date(item.createdAt).toLocaleDateString() : ''}</p>
+                                                    <p className="text-[10px] text-slate-400">{mounted ? new Date(item.createdAt).toLocaleTimeString() : ''}</p>
                                                 </td>
                                             </tr>
                                         ))}
@@ -651,7 +653,7 @@ export default function DevOpsDashboard() {
                                                     </span>
                                                 </td>
                                                 <td className="py-4 font-mono text-xs">
-                                                    {new Date(item.requestDate).toLocaleString()}
+                                                    {mounted ? new Date(item.requestDate).toLocaleString() : ''}
                                                 </td>
                                                 <td className="py-4 text-right">
                                                     <div className="flex justify-end gap-2">
