@@ -14,10 +14,10 @@ import { formatDate, formatTime } from '@/lib/formatters';
 
 export default function AdminDashboard() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'mess' | 'complaints' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register'>('complaints');
+    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register'>('register');
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
-    const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick'>('main');
+    const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick' | 'complaints'>('main');
     const [leaveCollegeFilter, setLeaveCollegeFilter] = useState<string | null>(null);
     const [outingCollegeFilter, setOutingCollegeFilter] = useState<string | null>(null);
 
@@ -510,10 +510,7 @@ export default function AdminDashboard() {
                             <h2 className="font-semibold text-lg">Navigation</h2>
                         </div>
                         <nav className="p-4 space-y-2">
-                            <button onClick={() => { setActiveTab('complaints'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'complaints' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
-                                <AlertCircle className="w-5 h-5" />
-                                <span>Complaints</span>
-                            </button>
+
                             <button onClick={() => { setActiveTab('outpass'); setIsMobileNavOpen(false); }} className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                 <FileText className="w-5 h-5" />
                                 <span>Outpass</span>
@@ -584,13 +581,6 @@ export default function AdminDashboard() {
                 {/* Tabs */}
                 <div className="flex space-x-2 border-b border-slate-200 pb-4 mb-6 overflow-x-auto">
                     <button
-                        onClick={() => setActiveTab('complaints')}
-                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'complaints' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
-                    >
-                        <AlertCircle className="w-4 h-4 mr-2" />
-                        Complaints Registered
-                    </button>
-                    <button
                         onClick={() => setActiveTab('outpass')}
                         className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'outpass' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                     >
@@ -643,68 +633,7 @@ export default function AdminDashboard() {
 
                 {/* {loading && <p className="text-center py-10 text-slate-500">Loading dashboard data...</p>} */}
 
-                {activeTab === 'complaints' && (
-                    <div className="space-y-4">
-                        <div className="flex justify-end space-x-2">
-                            <select
-                                className="border rounded-md px-3 py-1 text-sm bg-white dark:bg-black text-slate-900 dark:text-white border-slate-200 dark:border-slate-800"
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value as any)}
-                            >
-                                <option value="all">All Types</option>
-                                <option value="food">Food</option>
-                                <option value="misc">Miscellaneous</option>
-                            </select>
-                            <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={async () => {
-                                    if (confirm('Are you sure you want to clear all complaints history for your hostel? This cannot be undone.')) {
-                                        await fetch(`/api/complaints?hostelName=${user?.hostelName || ''}`, { method: 'DELETE' });
-                                        toast.success('Complaints history cleared');
-                                        fetchData();
-                                    }
-                                }}
-                            >
-                                Clear History
-                            </Button>
-                        </div>
-                        <div className="grid gap-4">
-                            {filteredComplaints.length === 0 ? <p className="text-center text-slate-500">No complaints found.</p> :
-                                filteredComplaints.map(c => (
-                                    <Card key={c.id}>
-                                        <CardHeader className="pb-2">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <CardTitle className="text-lg">{c.title}</CardTitle>
-                                                    <div className="flex items-start space-x-2 mt-1">
-                                                        <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
-                                                        <CardDescription className="flex items-center gap-2 mt-1">
-                                                            {getStudentAvatar(c.studentId)}
-                                                            <span>{new Date(c.createdAt).toLocaleDateString()} • {c.studentName}</span>
-                                                        </CardDescription>
-                                                    </div>
-                                                </div>
-                                                <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
-                                                    {c.status}
-                                                </div>
-                                            </div>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">{c.description}</p>
-                                            {c.status !== 'resolved' && (
-                                                <div className="flex space-x-2">
-                                                    {c.status === 'pending' && <Button size="sm" variant="outline" onClick={() => updateComplaintStatus(c.id, 'in-progress')}>Mark In Progress</Button>}
-                                                    <Button size="sm" onClick={() => updateComplaintStatus(c.id, 'resolved')}>Mark Resolved</Button>
-                                                </div>
-                                            )}
-                                        </CardContent>
-                                    </Card>
-                                ))
-                            }
-                        </div>
-                    </div>
-                )}
+
 
                 {activeTab === 'outpass' && (
                     <div className="grid gap-4">
@@ -1874,6 +1803,19 @@ export default function AdminDashboard() {
                                     </p>
                                     <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">View Register</Button>
                                 </div>
+
+                                <div className="border bg-white dark:bg-slate-950 rounded-lg p-6 hover:shadow-lg transition-all border-l-4 border-l-purple-500">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                                            <AlertCircle className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="font-bold text-lg">Complaint Register</h3>
+                                    </div>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                                        View and manage student complaints
+                                    </p>
+                                    <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-purple-600 hover:bg-purple-700">View Register</Button>
+                                </div>
                             </div>
                         )}
 
@@ -1888,7 +1830,8 @@ export default function AdminDashboard() {
                                         <CardDescription>
                                             {registerSubTab === 'leave' ? 'Consolidated view of student leave records' :
                                                 registerSubTab === 'outing' ? 'Real-time log of student exits and entries' :
-                                                    'Medical alerts and sick list'}
+                                                    registerSubTab === 'sick' ? 'Medical alerts and sick list' :
+                                                        'View and manage all student complaints'}
                                         </CardDescription>
                                     </div>
                                 </CardHeader>
@@ -2431,7 +2374,7 @@ export default function AdminDashboard() {
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-100" onClick={() => setActiveTab('complaints')}>View Detail</Button>
+                                                                <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-100" onClick={() => setRegisterSubTab('complaints')}>View Detail</Button>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -2439,12 +2382,75 @@ export default function AdminDashboard() {
                                             )}
                                         </div>
                                     )}
+
+                                    {registerSubTab === 'complaints' && (
+                                        <div className="space-y-4">
+                                            <div className="flex justify-end space-x-2">
+                                                <select
+                                                    className="border rounded-md px-3 py-1 text-sm bg-white dark:bg-black text-slate-900 dark:text-white border-slate-200 dark:border-slate-800"
+                                                    value={filter}
+                                                    onChange={(e) => setFilter(e.target.value as any)}
+                                                >
+                                                    <option value="all">All Types</option>
+                                                    <option value="food">Food</option>
+                                                    <option value="misc">Miscellaneous</option>
+                                                </select>
+                                                <Button
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    onClick={async () => {
+                                                        if (confirm('Are you sure you want to clear all complaints history for your hostel? This cannot be undone.')) {
+                                                            await fetch(`/api/complaints?hostelName=${user?.hostelName || ''}`, { method: 'DELETE' });
+                                                            toast.success('Complaints history cleared');
+                                                            fetchData();
+                                                        }
+                                                    }}
+                                                >
+                                                    Clear History
+                                                </Button>
+                                            </div>
+                                            <div className="grid gap-4">
+                                                {filteredComplaints.length === 0 ? <p className="text-center text-slate-500">No complaints found.</p> :
+                                                    filteredComplaints.map(c => (
+                                                        <Card key={c.id}>
+                                                            <CardHeader className="pb-2">
+                                                                <div className="flex justify-between items-start">
+                                                                    <div>
+                                                                        <CardTitle className="text-lg">{c.title}</CardTitle>
+                                                                        <div className="flex items-start space-x-2 mt-1">
+                                                                            <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
+                                                                            <CardDescription className="flex items-center gap-2 mt-1">
+                                                                                {getStudentAvatar(c.studentId)}
+                                                                                <span>{new Date(c.createdAt).toLocaleDateString()} • {c.studentName}</span>
+                                                                            </CardDescription>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
+                                                                        {c.status}
+                                                                    </div>
+                                                                </div>
+                                                            </CardHeader>
+                                                            <CardContent>
+                                                                <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">{c.description}</p>
+                                                                {c.status !== 'resolved' && (
+                                                                    <div className="flex space-x-2">
+                                                                        {c.status === 'pending' && <Button size="sm" variant="outline" onClick={() => updateComplaintStatus(c.id, 'in-progress')}>Mark In Progress</Button>}
+                                                                        <Button size="sm" onClick={() => updateComplaintStatus(c.id, 'resolved')}>Mark Resolved</Button>
+                                                                    </div>
+                                                                )}
+                                                            </CardContent>
+                                                        </Card>
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
                         )}
                     </div>
                 )}
-            </div>
+            </div >
         </>
     );
 }
