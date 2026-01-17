@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { Outpass } from '@/lib/types';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+import { sendPushToRole } from '@/lib/push-notifications';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -68,6 +69,19 @@ export async function POST(req: Request) {
     };
 
     await db.addOutpass(newOutpass);
+
+    // Send Push Notification to Admin
+    try {
+      await sendPushToRole(
+        'admin',
+        'New Outpass Request 📄',
+        `${studentName} is requesting ${type} until ${toDate}.`,
+        { type: 'outpass', id: newOutpass.id }
+      );
+    } catch (pushError) {
+      console.error('Failed to send push notification:', pushError);
+    }
+
     return NextResponse.json(newOutpass);
   } catch (error) {
     console.error('Outpass POST Error:', error);

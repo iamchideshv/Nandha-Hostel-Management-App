@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+import { sendPushToRole, sendPushToUser } from '@/lib/push-notifications';
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
@@ -37,6 +38,19 @@ export async function POST(req: Request) {
         };
 
         await db.addLostFoundItem(newItem);
+
+        // Notify Admin
+        try {
+            await sendPushToRole(
+                'admin',
+                'Lost Item Reported 🔍',
+                `${studentName} lost ${productName} at ${location}.`,
+                { type: 'lost-found', id: newItem.id }
+            );
+        } catch (error) {
+            console.error('Push Error:', error);
+        }
+
         return NextResponse.json(newItem);
     } catch (error) {
         console.error('API Error:', error);
@@ -68,6 +82,26 @@ export async function PATCH(req: Request) {
         };
 
         await db.addLostFoundItem(updatedItem);
+
+        // Notify Student if Found or Returned
+        if (status === 'found' || status === 'returned') {
+            try {
+                const title = status === 'found' ? 'Item Found! 🎉' : 'Item Returned ✅';
+                const body = status === 'found'
+                    ? `Good news! Your ${existingItem.productName} has been found. Please check with the warden.`
+                    : `Your ${existingItem.productName} has been marked as returned.`;
+
+                await sendPushToUser(
+                    existingItem.studentId,
+                    title,
+                    body,
+                    { type: 'lost-found' }
+                );
+            } catch (error) {
+                console.error('Push Error:', error);
+            }
+        }
+
         return NextResponse.json(updatedItem);
     } catch (error) {
         console.error('PATCH Error:', error);

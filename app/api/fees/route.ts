@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { FeeStatus } from '@/lib/types';
+import { sendPushToRole, sendPushToUser } from '@/lib/push-notifications';
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
@@ -53,6 +54,19 @@ export async function POST(req: Request) {
                 lastUpdated: new Date().toISOString()
             };
             await db.updateFeeStatus(newRecord);
+
+            // Notify Admin of Payment Request
+            try {
+                await sendPushToRole(
+                    'admin',
+                    'Fee Payment Verification 💰',
+                    `${studentName} has submitted a payment request.`,
+                    { type: 'fees', id: studentId }
+                );
+            } catch (error) {
+                console.error('Push Error:', error);
+            }
+
             return NextResponse.json({ success: true, data: newRecord });
         }
 
@@ -63,6 +77,23 @@ export async function POST(req: Request) {
                 lastUpdated: new Date().toISOString()
             };
             await db.updateFeeStatus(updatedRecord);
+
+            // Notify Student of Status Update
+            try {
+                const statusMsg = data.status === 'paid' ? 'PAID ✅' :
+                    data.status === 'pending_request' ? 'UNDER REVIEW ⏳' :
+                        data.status === 'pending' ? 'DUE ⚠️' : data.status;
+
+                await sendPushToUser(
+                    data.studentId,
+                    'Fee Status Update',
+                    `Your fee status is now: ${statusMsg}. Amount Due: ₹${data.amountDue || '0'}`,
+                    { type: 'fees' }
+                );
+            } catch (error) {
+                console.error('Push Error:', error);
+            }
+
             return NextResponse.json({ success: true, data: updatedRecord });
         }
 

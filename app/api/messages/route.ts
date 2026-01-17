@@ -37,8 +37,11 @@ export async function POST(req: NextRequest) {
 
         // Send Push Notification if urgent or private
         try {
-            const { sendPushToUser, sendPushToRole } = await import('@/lib/push-notifications');
-            if (targetStudentId) {
+            const { sendPushToUser, sendPushToRole, sendPushToAll } = await import('@/lib/push-notifications');
+
+            if (type === 'app-update') {
+                await sendPushToAll('App Update 🚀', message, { url: '/' });
+            } else if (targetStudentId) {
                 await sendPushToUser(targetStudentId, `Message from ${senderName}`, message);
             } else if (type === 'urgent') {
                 await sendPushToRole('admin', `URGENT: ${senderName}`, message);

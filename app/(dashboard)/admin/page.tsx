@@ -739,6 +739,34 @@ export default function AdminDashboard() {
                         <Send className="w-4 h-4 mr-2" />
                         Test Push
                     </Button>
+                    <Button
+                        variant="default"
+                        size="sm"
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                        onClick={async () => {
+                            if (!confirm('Send "App Update" notification to ALL users?')) return;
+                            try {
+                                const res = await fetch('/api/messages', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        message: 'A new version of the app is available! Please refresh to get the latest features.',
+                                        type: 'app-update'
+                                    })
+                                });
+                                if (res.ok) {
+                                    toast.success('Update notification broadcasted!');
+                                } else {
+                                    toast.error('Failed to broadcast update');
+                                }
+                            } catch (e) {
+                                toast.error('Error sending broadcast');
+                            }
+                        }}
+                    >
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Notify Update
+                    </Button>
                 </header>
 
                 {/* Tabs */}

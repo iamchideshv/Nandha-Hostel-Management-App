@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { SickRegister } from '@/lib/types';
 import { NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+import { sendPushToRole } from '@/lib/push-notifications';
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
@@ -48,6 +49,19 @@ export async function POST(req: Request) {
         };
 
         await db.addSickRegister(newEntry);
+
+        // Send Push Notification to Admin
+        try {
+            await sendPushToRole(
+                'admin',
+                'Medical Emergency Alert 🚨',
+                `${studentName} is requesting medical assistance in ${hostelName} - Room ${roomNumber}.`,
+                { type: 'sick', id: newEntry.id }
+            );
+        } catch (pushError) {
+            console.error('Failed to send push notification:', pushError);
+        }
+
         return NextResponse.json(newEntry);
     } catch (error) {
         console.error('Sick Register POST Error:', error);

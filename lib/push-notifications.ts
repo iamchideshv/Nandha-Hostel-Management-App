@@ -21,6 +21,15 @@ export async function sendPushToRole(role: string, title: string, body: string, 
     return sendToTokens(allTokens, title, body, data);
 }
 
+export async function sendPushToAll(title: string, body: string, data?: any) {
+    const users = await db.getUsers();
+    // Get ALL tokens from ALL users
+    const allTokens = users.flatMap(u => u.fcmTokens || []);
+
+    if (allTokens.length === 0) return;
+    return sendToTokens(allTokens, title, body, data);
+}
+
 
 
 async function sendToTokens(tokens: string[], title: string, body: string, data?: any) {
