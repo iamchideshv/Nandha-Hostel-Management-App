@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye, ClipboardList, Thermometer, Footprints, ChevronLeft, Siren } from 'lucide-react';
+import { BadgeCheck, Clock, Utensils, AlertCircle, FileText, Send, Loader2, Info, Download, Search, XCircle, Menu, LogOut, Home, Eye, ClipboardList, Thermometer, Footprints, ChevronLeft, Siren, RefreshCw } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { Complaint, Outpass, Message, LostFound } from '@/lib/types';
 import { AboutModal } from '@/components/about-modal';
@@ -1534,17 +1534,29 @@ export default function StudentDashboard() {
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
                                     <CardTitle>History</CardTitle>
-                                    {outpasses.length > 0 && (
+                                    <div className="flex gap-1">
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="text-[10px] text-red-500 hover:text-red-700 hover:bg-red-50 uppercase font-bold tracking-wider"
-                                            onClick={handleClearOutpassHistory}
-                                            disabled={submitting}
+                                            onClick={() => { setLoadingData(true); fetchData(); }}
+                                            className="text-slate-500 hover:text-blue-600 hover:bg-blue-50"
+                                            disabled={loadingData}
+                                            title="Refresh History"
                                         >
-                                            Clear History
+                                            <RefreshCw className={`w-4 h-4 ${loadingData ? 'animate-spin' : ''}`} />
                                         </Button>
-                                    )}
+                                        {outpasses.length > 0 && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-[10px] text-red-500 hover:text-red-700 hover:bg-red-50 uppercase font-bold tracking-wider"
+                                                onClick={handleClearOutpassHistory}
+                                                disabled={submitting}
+                                            >
+                                                Clear History
+                                            </Button>
+                                        )}
+                                    </div>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
