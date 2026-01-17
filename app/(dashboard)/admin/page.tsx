@@ -330,6 +330,17 @@ export default function AdminDashboard() {
         try {
             const hostelQuery = user?.hostelName ? `?hostelName=${user.hostelName}` : '';
 
+            const fetchSafe = async (url: string) => {
+                try {
+                    const res = await fetch(url, { cache: 'no-store' });
+                    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                    return await res.json();
+                } catch (err) {
+                    console.error(`Fetch error for ${url}:`, err);
+                    return null;
+                }
+            };
+
             // Define which APIs to call based on the tab
             const needsComplaints = !tab || tab === 'register';
             const needsOutpass = !tab || tab === 'outpass' || tab === 'register';
@@ -342,53 +353,41 @@ export default function AdminDashboard() {
 
             const promises = [];
 
-            if (needsComplaints) promises.push(fetch(`/api/complaints${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
-            else promises.push(Promise.resolve(null));
-
-            if (needsOutpass) promises.push(fetch(`/api/outpass${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
-            else promises.push(Promise.resolve(null));
-
-            if (needsFees) promises.push(fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`, { cache: 'no-store' }).then(res => res.json()));
-            else promises.push(Promise.resolve(null));
+            promises.push(needsComplaints ? fetchSafe(`/api/complaints${hostelQuery}`) : Promise.resolve(null));
+            promises.push(needsOutpass ? fetchSafe(`/api/outpass${hostelQuery}`) : Promise.resolve(null));
+            promises.push(needsFees ? fetchSafe(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`) : Promise.resolve(null));
 
             if (needsMess) {
-                promises.push(fetch(`/api/mess-menu?type=${messHostelType}`, { cache: 'no-store' }).then(res => res.json()));
-                promises.push(fetch(`/api/mess-timings?type=${messHostelType}`, { cache: 'no-store' }).then(res => res.json()));
+                promises.push(fetchSafe(`/api/mess-menu?type=${messHostelType}`));
+                promises.push(fetchSafe(`/api/mess-timings?type=${messHostelType}`));
             } else {
                 promises.push(Promise.resolve(null));
                 promises.push(Promise.resolve(null));
             }
 
-            if (needsLostFound) promises.push(fetch(`/api/lost-found${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
-            else promises.push(Promise.resolve(null));
-
-            if (needsMessages) promises.push(fetch(`/api/messages${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
-            else promises.push(Promise.resolve(null));
-
-            if (needsUsers) promises.push(fetch(`/api/users`, { cache: 'no-store' }).then(res => res.json()));
-            else promises.push(Promise.resolve(null));
-
-            if (needsSick) promises.push(fetch(`/api/sick-register${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
-            else promises.push(Promise.resolve(null));
+            promises.push(needsLostFound ? fetchSafe(`/api/lost-found${hostelQuery}`) : Promise.resolve(null));
+            promises.push(needsMessages ? fetchSafe(`/api/messages${hostelQuery}`) : Promise.resolve(null));
+            promises.push(needsUsers ? fetchSafe(`/api/users`) : Promise.resolve(null));
+            promises.push(needsSick ? fetchSafe(`/api/sick-register${hostelQuery}`) : Promise.resolve(null));
 
             const results = await Promise.all(promises);
 
-            if (needsComplaints) setComplaints(results[0].complaints || results[0]);
-            if (needsOutpass) setOutpasses(results[1]);
-            if (needsFees) setFees(results[2]);
+            if (needsComplaints && results[0]) setComplaints(results[0].complaints || results[0]);
+            if (needsOutpass && results[1]) setOutpasses(results[1]);
+            if (needsFees && results[2]) setFees(results[2]);
             if (needsMess) {
                 if (results[3] && !results[3].error) setMessMenu(results[3]);
                 if (results[4] && !results[4].error) setMessTimings(results[4]);
             }
-            if (needsLostFound) setLostItems(results[5]);
-            if (needsMessages) setMessages(results[6]);
-            if (needsUsers) setUsers(results[7]);
-            if (needsSick) setSickRegisters(results[8]);
+            if (needsLostFound && results[5]) setLostItems(results[5]);
+            if (needsMessages && results[6]) setMessages(results[6]);
+            if (needsUsers && results[7]) setUsers(results[7]);
+            if (needsSick && results[8]) setSickRegisters(results[8]);
 
             if (tab) toast.success(`${tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')} data refreshed`);
         } catch (e) {
             toast.error('Failed to load dashboard data');
-            console.error('Fetch error:', e);
+            console.error('Critical Fetch error:', e);
         } finally {
             setLoading(false);
         }
