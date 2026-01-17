@@ -51,6 +51,13 @@ export function useNotifications() {
                 // 4. Listen for foreground messages
                 onMessage(messaging, (payload) => {
                     console.log('Message received in foreground: ', payload);
+
+                    // prevent self notification
+                    if (payload.data?.recipientId && payload.data.recipientId !== user.id) {
+                        console.log('Ignoring notification for different user:', payload.data.recipientId);
+                        return;
+                    }
+
                     toast.info(payload.notification?.title || 'New Notification', {
                         description: payload.notification?.body,
                         duration: 5000,
