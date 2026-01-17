@@ -692,11 +692,11 @@ export default function AdminDashboard() {
                             <Menu className="w-5 h-5" />
                         </Button>
                         <div className="flex-1 md:flex-none">
-                            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1 md:hidden">
-                                <UserIcon className="w-3 h-3" />
-                                <span className="text-xs font-medium">{user?.name}</span>
+                            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 mb-0.5 md:hidden">
+                                <UserIcon className="w-4 h-4" />
+                                <span className="text-base font-semibold">{user?.name}</span>
                             </div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+                            <h1 className="text-lg md:text-3xl font-bold text-slate-900 dark:text-white flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
                                 <span>Admin Dashboard</span>
                                 {user?.hostelName && (
                                     <span className="text-xs md:text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full w-fit">
