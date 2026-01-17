@@ -32,11 +32,18 @@ export default function DashboardLayout({
 
         if (isProtectedRoute) {
             // Push state to prevent immediate back navigation
-            window.history.pushState(null, '', window.location.href);
+            window.history.pushState({ isDashboardRoot: true }, '', window.location.href);
 
             const handlePopState = (event: PopStateEvent) => {
+                // If we are returning to the dashboard root (e.g., from a detail view like #mess), 
+                // allow the navigation and don't show the confirmation.
+                if (event.state?.isDashboardRoot) {
+                    return;
+                }
+
+                // If undefined state or other state (trying to leave the dashboard context),
                 // Prevent back navigation and show confirmation
-                window.history.pushState(null, '', window.location.href);
+                window.history.pushState({ isDashboardRoot: true }, '', window.location.href);
                 setShowHomeConfirm(true);
             };
 
