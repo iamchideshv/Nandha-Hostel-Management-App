@@ -762,7 +762,7 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6 animate-in fade-in zoom-in duration-300">
                         <button
                             onClick={() => setActiveTab('outpass')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 hover:shadow-lg hover:-translate-y-1 group"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 hover:shadow-lg hover:-translate-y-1 group relative"
                         >
                             <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-full mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
                                 <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
@@ -772,7 +772,7 @@ export default function AdminDashboard() {
                         </button>
                         <button
                             onClick={() => setActiveTab('fees')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400 hover:shadow-lg hover:-translate-y-1 group"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400 hover:shadow-lg hover:-translate-y-1 group relative"
                         >
                             <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-full mb-3 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/30 transition-colors">
                                 <IndianRupee className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
@@ -782,7 +782,7 @@ export default function AdminDashboard() {
                         </button>
                         <button
                             onClick={() => setActiveTab('mess')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-orange-400 hover:shadow-lg hover:-translate-y-1 group"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-orange-400 hover:shadow-lg hover:-translate-y-1 group relative"
                         >
                             <div className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-full mb-3 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors">
                                 <Utensils className="w-8 h-8 text-orange-600 dark:text-orange-400" />
@@ -791,7 +791,7 @@ export default function AdminDashboard() {
                         </button>
                         <button
                             onClick={() => setActiveTab('messages')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-purple-400 hover:shadow-lg hover:-translate-y-1 group"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-purple-400 hover:shadow-lg hover:-translate-y-1 group relative"
                         >
                             <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-full mb-3 group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors">
                                 <MessageSquare className="w-8 h-8 text-purple-600 dark:text-purple-400" />
@@ -801,7 +801,7 @@ export default function AdminDashboard() {
                         </button>
                         <button
                             onClick={() => setActiveTab('lost-found')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:shadow-lg hover:-translate-y-1 group"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:shadow-lg hover:-translate-y-1 group relative"
                         >
                             <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-full mb-3 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/30 transition-colors">
                                 <Search className="w-8 h-8 text-amber-600 dark:text-amber-400" />
@@ -811,7 +811,7 @@ export default function AdminDashboard() {
                         </button>
                         <button
                             onClick={() => setActiveTab('student-details')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-cyan-400 hover:shadow-lg hover:-translate-y-1 group"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-cyan-400 hover:shadow-lg hover:-translate-y-1 group relative"
                         >
                             <div className="p-3 bg-cyan-50 dark:bg-cyan-900/20 rounded-full mb-3 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-900/30 transition-colors">
                                 <Users className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
@@ -820,7 +820,7 @@ export default function AdminDashboard() {
                         </button>
                         <button
                             onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-400 hover:shadow-lg hover:-translate-y-1 group"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-400 hover:shadow-lg hover:-translate-y-1 group relative"
                         >
                             <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-full mb-3 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/30 transition-colors">
                                 <ClipboardList className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
