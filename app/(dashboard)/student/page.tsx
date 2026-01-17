@@ -48,7 +48,7 @@ interface OutpassData {
 export default function StudentDashboard() {
     const { user, login, logout } = useAuth();
     useNotifications();
-    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register'>('mess');
+    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register' | null>(null);
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick' | 'complaints'>('main');
@@ -915,214 +915,228 @@ export default function StudentDashboard() {
 
 
 
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                    <button onClick={() => setActiveTab('mess')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'mess' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
-                        <Utensils className="h-6 w-6 text-blue-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
-                    </button>
-                    <button onClick={() => setActiveTab('outpass')} className={`p-4 rounded-xl border text-left transition-all relative ${activeTab === 'outpass' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
-                        <FileText className="h-6 w-6 text-green-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Outpass</h3>
-                        <NotificationBadge count={pendingCounts.outpass} />
-                    </button>
-                    <button onClick={() => setActiveTab('messages')} className={`p-4 rounded-xl border text-left transition-all relative ${activeTab === 'messages' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
-                        <Send className="h-6 w-6 text-purple-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Messages</h3>
-                        <NotificationBadge count={pendingCounts.messages} />
-                    </button>
-                    <div
-                        onClick={() => setActiveTab('fees')}
-                        className={`p-4 rounded-xl border text-left cursor-pointer transition-all relative ${activeTab === 'fees' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}
-                    >
-                        <BadgeCheck className={`h-6 w-6 mb-2 ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-400'}`} />
-                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Fees Status</h3>
-                        <p className={`text-xs font-bold mt-1 uppercase ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-500'}`}>
-                            {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
-                        </p>
-                        <NotificationBadge count={pendingCounts.fees} />
+                {!activeTab ? (
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4 animate-in fade-in zoom-in duration-300">
+                        <button onClick={() => setActiveTab('mess')} className="p-4 rounded-xl border text-left transition-all bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-400 hover:shadow-md group">
+                            <Utensils className="h-6 w-6 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
+                        </button>
+                        <button onClick={() => setActiveTab('outpass')} className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-green-400 hover:shadow-md group">
+                            <FileText className="h-6 w-6 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Outpass</h3>
+                            <NotificationBadge count={pendingCounts.outpass} />
+                        </button>
+                        <button onClick={() => setActiveTab('messages')} className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-purple-400 hover:shadow-md group">
+                            <Send className="h-6 w-6 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Messages</h3>
+                            <NotificationBadge count={pendingCounts.messages} />
+                        </button>
+                        <div
+                            onClick={() => setActiveTab('fees')}
+                            className="p-4 rounded-xl border text-left cursor-pointer transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-yellow-400 hover:shadow-md group"
+                        >
+                            <BadgeCheck className={`h-6 w-6 mb-2 group-hover:scale-110 transition-transform ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-400'}`} />
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Fees Status</h3>
+                            <p className={`text-xs font-bold mt-1 uppercase ${feeStatus?.status === 'paid' ? 'text-green-600' : feeStatus?.status === 'unpaid' ? 'text-red-600' : 'text-slate-500'}`}>
+                                {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
+                            </p>
+                            <NotificationBadge count={pendingCounts.fees} />
+                        </div>
+                        <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }} className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-indigo-400 hover:shadow-md group">
+                            <ClipboardList className="h-6 w-6 text-indigo-600 mb-2 group-hover:scale-110 transition-transform" />
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Register</h3>
+                            <NotificationBadge count={pendingCounts.register} />
+                        </button>
+                        <button onClick={() => setActiveTab('lost-found')} className="p-4 rounded-xl border text-left transition-all bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-amber-400 hover:shadow-md group">
+                            <Search className="h-6 w-6 text-amber-600 mb-2 group-hover:scale-110 transition-transform" />
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-100">Lost & Found</h3>
+                        </button>
                     </div>
-                    <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }} className={`p-4 rounded-xl border text-left transition-all relative ${activeTab === 'register' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
-                        <ClipboardList className="h-6 w-6 text-indigo-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Register</h3>
-                        <NotificationBadge count={pendingCounts.register} />
-                    </button>
+                ) : (
+                    <div className="mb-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setActiveTab(null)}
+                            className="pl-0 hover:bg-transparent hover:text-blue-600 text-slate-500"
+                        >
+                            <ChevronLeft className="w-5 h-5 mr-1" />
+                            Back to Dashboard
+                        </Button>
+                    </div>
+                )}
 
 
-                    {/* Profile Modal */}
-                    {showProfileModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }}>
-                            <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-                                <div className="p-6 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-                                    <div className="flex flex-col">
-                                        <h3 className="text-lg font-bold">My Profile</h3>
-                                        <p className="text-[10px] text-red-500 font-medium">Update Detail correctly Next time you can't able to modify</p>
+                {/* Profile Modal */}
+                {showProfileModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }}>
+                        <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                            <div className="p-6 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                                <div className="flex flex-col">
+                                    <h3 className="text-lg font-bold">My Profile</h3>
+                                    <p className="text-[10px] text-red-500 font-medium">Update Detail correctly Next time you can't able to modify</p>
+                                </div>
+                                <button onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }} className="text-slate-500 hover:text-red-500">
+                                    <XCircle className="w-6 h-6" />
+                                </button>
+                            </div>
+                            <div className="p-6 overflow-y-auto">
+                                {showModifyInfo && (
+                                    <div className="mb-6 space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
+                                        <div className="p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-3">
+                                            <BadgeCheck className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+                                            <p className="text-sm font-medium text-green-800 dark:text-green-200">Modify Request Raised To Admin</p>
+                                        </div>
+                                        <div className="p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
+                                            <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                                            <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Give The Modification Detail in nandhahostel@nandhaengg.org</p>
+                                        </div>
+                                        <div className="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3">
+                                            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                                            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">If not Updated AFTER 2-3 WORKING DAYS THEN CONTACT ADMIN</p>
+                                        </div>
                                     </div>
-                                    <button onClick={() => { setShowProfileModal(false); setShowModifyInfo(false); }} className="text-slate-500 hover:text-red-500">
-                                        <XCircle className="w-6 h-6" />
-                                    </button>
-                                </div>
-                                <div className="p-6 overflow-y-auto">
-                                    {showModifyInfo && (
-                                        <div className="mb-6 space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
-                                            <div className="p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg flex items-start gap-3">
-                                                <BadgeCheck className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
-                                                <p className="text-sm font-medium text-green-800 dark:text-green-200">Modify Request Raised To Admin</p>
+                                )}
+                                <form onSubmit={handleProfileUpdate} className="space-y-6">
+                                    {/* Image Upload */}
+                                    <div className="flex flex-col items-center justify-center gap-4">
+                                        <div className="relative group">
+                                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                                {profileForm.profileImage ? (
+                                                    <img src={profileForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <UserCircle className="w-20 h-20 text-slate-300" />
+                                                )}
                                             </div>
-                                            <div className="p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
-                                                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
-                                                <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Give The Modification Detail in nandhahostel@nandhaengg.org</p>
-                                            </div>
-                                            <div className="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3">
-                                                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                                                <p className="text-sm font-medium text-amber-800 dark:text-amber-200">If not Updated AFTER 2-3 WORKING DAYS THEN CONTACT ADMIN</p>
-                                            </div>
+                                            <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                                                <Camera className="w-4 h-4" />
+                                                <input type="file" accept="image/*" className="hidden" onChange={handleProfileImageUpload} />
+                                            </label>
                                         </div>
-                                    )}
-                                    <form onSubmit={handleProfileUpdate} className="space-y-6">
-                                        {/* Image Upload */}
-                                        <div className="flex flex-col items-center justify-center gap-4">
-                                            <div className="relative group">
-                                                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                                    {profileForm.profileImage ? (
-                                                        <img src={profileForm.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <UserCircle className="w-20 h-20 text-slate-300" />
-                                                    )}
-                                                </div>
-                                                <label className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95">
-                                                    <Camera className="w-4 h-4" />
-                                                    <input type="file" accept="image/*" className="hidden" onChange={handleProfileImageUpload} />
-                                                </label>
-                                            </div>
-                                            <p className="text-xs text-slate-500">Click camera icon to change photo</p>
-                                        </div>
+                                        <p className="text-xs text-slate-500">Click camera icon to change photo</p>
+                                    </div>
 
-                                        <div className="grid md:grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <Label>Name</Label>
-                                                <Input
-                                                    value={profileForm.name}
-                                                    onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
-                                                    placeholder="Full Name"
-                                                    required
-                                                    readOnly={!!user?.name && !unlockedFields.includes('name')}
-                                                    className={user?.name && !unlockedFields.includes('name') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label className="flex justify-between">
-                                                    <span>Year & Department</span>
-                                                    <span className="text-[10px] text-slate-400 font-normal">(Ex: 2nd-ECE)</span>
-                                                </Label>
-                                                <Input
-                                                    value={profileForm.department}
-                                                    onChange={e => setProfileForm({ ...profileForm, department: e.target.value })}
-                                                    placeholder="e.g. 2nd-ECE"
-                                                    readOnly={!!user?.department && !unlockedFields.includes('department')}
-                                                    className={user?.department && !unlockedFields.includes('department') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label>Room Number</Label>
-                                                <Input
-                                                    value={profileForm.roomNumber}
-                                                    onChange={e => setProfileForm({ ...profileForm, roomNumber: e.target.value })}
-                                                    placeholder="Room 101"
-                                                    readOnly={!!user?.roomNumber && !unlockedFields.includes('roomNumber')}
-                                                    className={user?.roomNumber && !unlockedFields.includes('roomNumber') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label>Phone Number</Label>
-                                                <Input
-                                                    type="tel"
-                                                    value={profileForm.phoneNumber}
-                                                    onChange={e => {
-                                                        const val = e.target.value.replace(/\D/g, '');
-                                                        if (val.length <= 10) {
-                                                            setProfileForm({ ...profileForm, phoneNumber: val });
-                                                        }
-                                                    }}
-                                                    placeholder="10 digit number"
-                                                    readOnly={!!user?.phoneNumber && !unlockedFields.includes('phoneNumber')}
-                                                    className={user?.phoneNumber && !unlockedFields.includes('phoneNumber') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                                    maxLength={10}
-                                                />
-                                            </div>
-                                            <div className="col-span-2 space-y-2">
-                                                <Label>Email Address</Label>
-                                                <Input
-                                                    type="email"
-                                                    value={profileForm.email}
-                                                    onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
-                                                    placeholder="student@example.com"
-                                                    readOnly={!!user?.email && !unlockedFields.includes('email')}
-                                                    className={user?.email && !unlockedFields.includes('email') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                                />
-                                            </div>
-                                            <div className="col-span-2 space-y-2">
-                                                <Label>College</Label>
-                                                <Input
-                                                    value={profileForm.college}
-                                                    onChange={e => setProfileForm({ ...profileForm, college: e.target.value })}
-                                                    placeholder="Select your college"
-                                                    readOnly={!!user?.college && !unlockedFields.includes('college')}
-                                                    className={user?.college && !unlockedFields.includes('college') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                                />
-                                            </div>
-                                        </div>
-
+                                    <div className="grid md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <div className="flex justify-between items-center">
-                                                <Label className="text-blue-600 dark:text-blue-400 font-bold">Modify Your details</Label>
-                                                <button
-                                                    type="button"
-                                                    onClick={async () => {
-                                                        setShowModifyInfo(true);
-                                                        // Send request to DevOps for general profile modification
-                                                        try {
-                                                            await fetch('/api/profile-update-request', {
-                                                                method: 'POST',
-                                                                headers: { 'Content-Type': 'application/json' },
-                                                                body: JSON.stringify({
-                                                                    studentId: user?.id,
-                                                                    studentName: user?.name,
-                                                                    fieldName: 'Profile Details (General)'
-                                                                })
-                                                            });
-                                                        } catch (err) {
-                                                            console.error('Failed to send modification request:', err);
-                                                        }
-                                                    }}
-                                                    className="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full transition-colors"
-                                                >
-                                                    Modify
-                                                </button>
-                                            </div>
+                                            <Label>Name</Label>
+                                            <Input
+                                                value={profileForm.name}
+                                                onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
+                                                placeholder="Full Name"
+                                                required
+                                                readOnly={!!user?.name && !unlockedFields.includes('name')}
+                                                className={user?.name && !unlockedFields.includes('name') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                            />
                                         </div>
+                                        <div className="space-y-2">
+                                            <Label className="flex justify-between">
+                                                <span>Year & Department</span>
+                                                <span className="text-[10px] text-slate-400 font-normal">(Ex: 2nd-ECE)</span>
+                                            </Label>
+                                            <Input
+                                                value={profileForm.department}
+                                                onChange={e => setProfileForm({ ...profileForm, department: e.target.value })}
+                                                placeholder="e.g. 2nd-ECE"
+                                                readOnly={!!user?.department && !unlockedFields.includes('department')}
+                                                className={user?.department && !unlockedFields.includes('department') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Room Number</Label>
+                                            <Input
+                                                value={profileForm.roomNumber}
+                                                onChange={e => setProfileForm({ ...profileForm, roomNumber: e.target.value })}
+                                                placeholder="Room 101"
+                                                readOnly={!!user?.roomNumber && !unlockedFields.includes('roomNumber')}
+                                                className={user?.roomNumber && !unlockedFields.includes('roomNumber') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Phone Number</Label>
+                                            <Input
+                                                type="tel"
+                                                value={profileForm.phoneNumber}
+                                                onChange={e => {
+                                                    const val = e.target.value.replace(/\D/g, '');
+                                                    if (val.length <= 10) {
+                                                        setProfileForm({ ...profileForm, phoneNumber: val });
+                                                    }
+                                                }}
+                                                placeholder="10 digit number"
+                                                readOnly={!!user?.phoneNumber && !unlockedFields.includes('phoneNumber')}
+                                                className={user?.phoneNumber && !unlockedFields.includes('phoneNumber') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                maxLength={10}
+                                            />
+                                        </div>
+                                        <div className="col-span-2 space-y-2">
+                                            <Label>Email Address</Label>
+                                            <Input
+                                                type="email"
+                                                value={profileForm.email}
+                                                onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
+                                                placeholder="student@example.com"
+                                                readOnly={!!user?.email && !unlockedFields.includes('email')}
+                                                className={user?.email && !unlockedFields.includes('email') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                            />
+                                        </div>
+                                        <div className="col-span-2 space-y-2">
+                                            <Label>College</Label>
+                                            <Input
+                                                value={profileForm.college}
+                                                onChange={e => setProfileForm({ ...profileForm, college: e.target.value })}
+                                                placeholder="Select your college"
+                                                readOnly={!!user?.college && !unlockedFields.includes('college')}
+                                                className={user?.college && !unlockedFields.includes('college') ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                            />
+                                        </div>
+                                    </div>
 
-                                        <Button type="submit" className="w-full" disabled={submitting}>
-                                            {submitting ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Updating Profile...
-                                                </>
-                                            ) : (
-                                                'Update Profile'
-                                            )}
-                                        </Button>
-                                    </form>
-                                </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <Label className="text-blue-600 dark:text-blue-400 font-bold">Modify Your details</Label>
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    setShowModifyInfo(true);
+                                                    // Send request to DevOps for general profile modification
+                                                    try {
+                                                        await fetch('/api/profile-update-request', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                studentId: user?.id,
+                                                                studentName: user?.name,
+                                                                fieldName: 'Profile Details (General)'
+                                                            })
+                                                        });
+                                                    } catch (err) {
+                                                        console.error('Failed to send modification request:', err);
+                                                    }
+                                                }}
+                                                className="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full transition-colors"
+                                            >
+                                                Modify
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <Button type="submit" className="w-full" disabled={submitting}>
+                                        {submitting ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                Updating Profile...
+                                            </>
+                                        ) : (
+                                            'Update Profile'
+                                        )}
+                                    </Button>
+                                </form>
                             </div>
                         </div>
-                    )}
-                    <button onClick={() => setActiveTab('lost-found')} className={`p-4 rounded-xl border text-left transition-all ${activeTab === 'lost-found' ? 'ring-2 ring-blue-600 border-transparent bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
-                        <Search className="h-6 w-6 text-amber-600 mb-2" />
-                        <h3 className="font-semibold text-slate-800 dark:text-slate-100">Lost & Found</h3>
-                    </button>
-                </div>
+                    </div>
+                )}
 
-                <div className="min-h-[400px]">
+                <div className={`min-h-[400px] ${!activeTab ? 'hidden' : 'animate-in fade-in slide-in-from-right-8 duration-300'}`}>
                     {activeTab === 'mess' && (
                         <Card>
                             <CardHeader>
