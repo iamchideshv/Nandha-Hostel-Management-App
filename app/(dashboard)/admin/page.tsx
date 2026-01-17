@@ -141,6 +141,7 @@ export default function AdminDashboard() {
     // Private Message State
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
     const [replyMessage, setReplyMessage] = useState('');
+    const [studentSearch, setStudentSearch] = useState('');
 
     // Mess Menu State
     const [messMenu, setMessMenu] = useState({
@@ -1027,6 +1028,17 @@ export default function AdminDashboard() {
                                     <CardDescription>All registered students {user?.hostelName ? `in ${user.hostelName}` : ''}</CardDescription>
                                 </CardHeader>
                                 <CardContent>
+                                    <div className="mb-4">
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <Input
+                                                placeholder="Search student by name or ID..."
+                                                value={studentSearch}
+                                                onChange={(e) => setStudentSearch(e.target.value)}
+                                                className="pl-10"
+                                            />
+                                        </div>
+                                    </div>
                                     <div className="rounded-md border dark:border-slate-800">
                                         <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b dark:border-slate-800 bg-slate-50 dark:bg-slate-900 font-medium text-sm text-slate-500 dark:text-slate-400">
                                             <div className="col-span-3">User ID</div>
@@ -1037,12 +1049,22 @@ export default function AdminDashboard() {
                                             {users
                                                 .filter(u => u.role === 'student')
                                                 .filter(u => !user?.hostelName || u.hostelName === user.hostelName)
+                                                .filter(u =>
+                                                    u.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                                                    u.id.toLowerCase().includes(studentSearch.toLowerCase())
+                                                )
                                                 .length === 0 ? (
-                                                <div className="p-4 text-center text-slate-500">No students found</div>
+                                                <div className="p-4 text-center text-slate-500">
+                                                    {studentSearch ? `No students matching "${studentSearch}"` : 'No students found'}
+                                                </div>
                                             ) : (
                                                 users
                                                     .filter(u => u.role === 'student')
                                                     .filter(u => !user?.hostelName || u.hostelName === user.hostelName)
+                                                    .filter(u =>
+                                                        u.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                                                        u.id.toLowerCase().includes(studentSearch.toLowerCase())
+                                                    )
                                                     .map(student => {
                                                         const studentMessages = messages
                                                             .filter(m => m.senderId === student.id || m.targetStudentId === student.id)
