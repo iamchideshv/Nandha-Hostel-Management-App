@@ -48,7 +48,34 @@ interface OutpassData {
 export default function StudentDashboard() {
     const { user, login, logout } = useAuth();
     useNotifications();
-    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register' | null>(null);
+    const [activeTab, setActiveTabState] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register' | null>(null);
+
+    const setActiveTab = (tab: 'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'register' | null) => {
+        if (tab) {
+            window.history.pushState({ tab }, '', `#${tab}`);
+            setActiveTabState(tab);
+        } else {
+            setActiveTabState(null);
+        }
+    };
+
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (!event.state?.tab) {
+                setActiveTabState(null);
+            } else {
+                setActiveTabState(event.state.tab);
+            }
+        };
+
+        const hash = window.location.hash.slice(1) as any;
+        if (hash && ['mess', 'outpass', 'fees', 'messages', 'lost-found', 'register'].includes(hash)) {
+            setActiveTabState(hash);
+        }
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick' | 'complaints'>('main');
@@ -957,7 +984,7 @@ export default function StudentDashboard() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => setActiveTab(null)}
+                            onClick={() => window.history.back()}
                             className="pl-0 hover:bg-transparent hover:text-blue-600 text-slate-500"
                         >
                             <ChevronLeft className="w-5 h-5 mr-1" />

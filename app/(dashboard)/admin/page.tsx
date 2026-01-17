@@ -18,7 +18,43 @@ export default function AdminDashboard() {
     const { user, logout } = useAuth();
     const router = useRouter();
     useNotifications();
-    const [activeTab, setActiveTab] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register' | null>(null);
+    const [activeTab, setActiveTabState] = useState<'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register' | null>(null);
+
+    const setActiveTab = (tab: 'mess' | 'outpass' | 'fees' | 'messages' | 'lost-found' | 'student-details' | 'register' | null) => {
+        if (tab) {
+            window.history.pushState({ tab }, '', `#${tab}`);
+            setActiveTabState(tab);
+        } else {
+            // When explicitly closing, use history.back() to pop state if it was pushed, but wait...
+            // If we just go back, the popstate event will handle the null setting.
+            // BUT, if we click "Back" button, we want to go back in history to remove the hash.
+            // If we rely on history.back(), it calls popstate.
+            setActiveTabState(null);
+            // However, just calling setActiveTabState(null) doesn't clean the URL hash if we don't go back.
+            // If we want the "Back" button to act like browser back, we should call history.back().
+        }
+    };
+
+    // Sync state with history
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            // If we go back to a state with no hash or no tab data, close the tab
+            if (!event.state?.tab) {
+                setActiveTabState(null);
+            } else {
+                setActiveTabState(event.state.tab);
+            }
+        };
+
+        // Handle initial load with hash
+        const hash = window.location.hash.slice(1) as any;
+        if (hash && ['mess', 'outpass', 'fees', 'messages', 'lost-found', 'student-details', 'register'].includes(hash)) {
+            setActiveTabState(hash);
+        }
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
     const [messSubTab, setMessSubTab] = useState<'menu' | 'timings' | 'vending'>('menu');
     const [messHostelType, setMessHostelType] = useState<'boys' | 'girls'>('boys');
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick' | 'complaints'>('main');
@@ -800,7 +836,7 @@ export default function AdminDashboard() {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => setActiveTab(null)}
+                                onClick={() => window.history.back()}
                                 className="pl-0 hover:bg-transparent hover:text-blue-600 text-slate-500"
                             >
                                 <ChevronLeft className="w-5 h-5 mr-1" />
