@@ -24,14 +24,16 @@ export default function AdminDashboard() {
         if (tab) {
             window.history.pushState({ tab }, '', `#${tab}`);
             setActiveTabState(tab);
+            // Fetch data for the specific tab being opened
+            fetchData(tab);
         } else {
-            // When explicitly closing, use history.back() to pop state if it was pushed, but wait...
-            // If we just go back, the popstate event will handle the null setting.
-            // BUT, if we click "Back" button, we want to go back in history to remove the hash.
-            // If we rely on history.back(), it calls popstate.
             setActiveTabState(null);
-            // However, just calling setActiveTabState(null) doesn't clean the URL hash if we don't go back.
-            // If we want the "Back" button to act like browser back, we should call history.back().
+            // If there's a hash, we might want to clear it without a full reload or history push if possible, 
+            // but the popstate listener usually handles this if the user uses the browser back button.
+            if (window.location.hash) {
+                // Instead of history.back(), which can leave the page, let's just clear the hash
+                window.history.pushState(null, '', window.location.pathname);
+            }
         }
     };
 
@@ -323,43 +325,70 @@ export default function AdminDashboard() {
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (tab?: string) => {
         setLoading(true);
         try {
             const hostelQuery = user?.hostelName ? `?hostelName=${user.hostelName}` : '';
-            const [compRes, outRes, feeRes, messRes, timingsRes, lostRes, msgRes, usersRes, sickRes] = await Promise.all([
-                fetch(`/api/complaints${hostelQuery}`, { cache: 'no-store' }),
-                fetch(`/api/outpass${hostelQuery}`, { cache: 'no-store' }),
-                fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`, { cache: 'no-store' }),
-                fetch(`/api/mess-menu?type=${messHostelType}`, { cache: 'no-store' }),
-                fetch(`/api/mess-timings?type=${messHostelType}`, { cache: 'no-store' }),
-                fetch(`/api/lost-found${hostelQuery}`, { cache: 'no-store' }),
-                fetch(`/api/messages${hostelQuery}`, { cache: 'no-store' }),
-                fetch(`/api/users`, { cache: 'no-store' }),
-                fetch(`/api/sick-register${hostelQuery}`, { cache: 'no-store' })
-            ]);
-            const cData = await compRes.json();
-            const oData = await outRes.json();
-            const fData = await feeRes.json();
-            const mData = await messRes.json();
-            const tData = await timingsRes.json();
-            const lData = await lostRes.json();
-            const msgData = await msgRes.json();
 
-            const usersData = await usersRes.json();
-            const sickData = await sickRes.json();
+            // Define which APIs to call based on the tab
+            const needsComplaints = !tab || tab === 'register';
+            const needsOutpass = !tab || tab === 'outpass' || tab === 'register';
+            const needsFees = !tab || tab === 'fees';
+            const needsMess = !tab || tab === 'mess';
+            const needsLostFound = !tab || tab === 'lost-found';
+            const needsMessages = !tab || tab === 'messages';
+            const needsUsers = !tab || tab === 'student-details';
+            const needsSick = !tab || tab === 'register';
 
-            setComplaints(cData.complaints || cData);
-            setOutpasses(oData);
-            setFees(fData);
-            if (mData && !mData.error) setMessMenu(mData);
-            if (tData && !tData.error) setMessTimings(tData);
-            setLostItems(lData);
-            setMessages(msgData);
-            setUsers(usersData);
-            setSickRegisters(sickData);
+            const promises = [];
+
+            if (needsComplaints) promises.push(fetch(`/api/complaints${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
+            else promises.push(Promise.resolve(null));
+
+            if (needsOutpass) promises.push(fetch(`/api/outpass${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
+            else promises.push(Promise.resolve(null));
+
+            if (needsFees) promises.push(fetch(`/api/fees${hostelQuery.replace('?', '?type=all&') || '?type=all'}`, { cache: 'no-store' }).then(res => res.json()));
+            else promises.push(Promise.resolve(null));
+
+            if (needsMess) {
+                promises.push(fetch(`/api/mess-menu?type=${messHostelType}`, { cache: 'no-store' }).then(res => res.json()));
+                promises.push(fetch(`/api/mess-timings?type=${messHostelType}`, { cache: 'no-store' }).then(res => res.json()));
+            } else {
+                promises.push(Promise.resolve(null));
+                promises.push(Promise.resolve(null));
+            }
+
+            if (needsLostFound) promises.push(fetch(`/api/lost-found${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
+            else promises.push(Promise.resolve(null));
+
+            if (needsMessages) promises.push(fetch(`/api/messages${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
+            else promises.push(Promise.resolve(null));
+
+            if (needsUsers) promises.push(fetch(`/api/users`, { cache: 'no-store' }).then(res => res.json()));
+            else promises.push(Promise.resolve(null));
+
+            if (needsSick) promises.push(fetch(`/api/sick-register${hostelQuery}`, { cache: 'no-store' }).then(res => res.json()));
+            else promises.push(Promise.resolve(null));
+
+            const results = await Promise.all(promises);
+
+            if (needsComplaints) setComplaints(results[0].complaints || results[0]);
+            if (needsOutpass) setOutpasses(results[1]);
+            if (needsFees) setFees(results[2]);
+            if (needsMess) {
+                if (results[3] && !results[3].error) setMessMenu(results[3]);
+                if (results[4] && !results[4].error) setMessTimings(results[4]);
+            }
+            if (needsLostFound) setLostItems(results[5]);
+            if (needsMessages) setMessages(results[6]);
+            if (needsUsers) setUsers(results[7]);
+            if (needsSick) setSickRegisters(results[8]);
+
+            if (tab) toast.success(`${tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')} data refreshed`);
         } catch (e) {
             toast.error('Failed to load dashboard data');
+            console.error('Fetch error:', e);
         } finally {
             setLoading(false);
         }
@@ -745,6 +774,17 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => fetchData()}
+                            disabled={loading}
+                            className="text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
+                            title="Refresh All Data"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                            <span className="hidden md:inline ml-2">Refresh</span>
+                        </Button>
                         <div className="hidden md:flex items-center gap-2 text-slate-500 dark:text-slate-400 mr-4">
                             <UserIcon className="w-4 h-4" />
                             <span className="text-sm font-medium">{user?.name}</span>
@@ -833,15 +873,25 @@ export default function AdminDashboard() {
                 ) : (
                     /* Detail View - Only visible when a tab is active */
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center justify-between mb-4">
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => window.history.back()}
+                                onClick={() => setActiveTab(null)}
                                 className="pl-0 hover:bg-transparent hover:text-blue-600 text-slate-500"
                             >
                                 <ChevronLeft className="w-5 h-5 mr-1" />
                                 Back to Dashboard
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => fetchData(activeTab || undefined)}
+                                disabled={loading}
+                                className="h-8 gap-2 border-slate-200 dark:border-slate-800"
+                            >
+                                <RotateCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                                Refresh {activeTab?.charAt(0).toUpperCase()}{activeTab?.slice(1)}
                             </Button>
                         </div>
 

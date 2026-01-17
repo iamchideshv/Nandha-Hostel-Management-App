@@ -10,6 +10,8 @@ import {
   deleteDoc,
   query,
   where,
+  orderBy,
+  limit,
   QueryConstraint
 } from 'firebase/firestore';
 import { User, Complaint, Outpass, ComplaintStatus, OutpassStatus, FeeStatus } from './types';
@@ -84,9 +86,10 @@ export const db = {
     if (studentId) constraints.push(where("studentId", "==", studentId));
     if (hostelName) constraints.push(where("hostelName", "==", hostelName));
 
-    if (constraints.length > 0) {
-      q = query(collection(firestore, COMPLAINTS_COL), ...constraints);
-    }
+    constraints.push(orderBy("createdAt", "desc"));
+    constraints.push(limit(150)); // Fetch last 150 complaints
+
+    q = query(collection(firestore, COMPLAINTS_COL), ...constraints);
 
     const querySnapshot = await getDocs(q);
     const docs = querySnapshot.docs.map(doc => doc.data() as Complaint);
@@ -150,9 +153,10 @@ export const db = {
     if (studentId) constraints.push(where("studentId", "==", studentId));
     if (hostelName) constraints.push(where("hostelName", "==", hostelName));
 
-    if (constraints.length > 0) {
-      q = query(collection(firestore, OUTPASS_COL), ...constraints);
-    }
+    constraints.push(orderBy("createdAt", "desc"));
+    constraints.push(limit(250)); // Fetch only last 250 records for performance
+
+    q = query(collection(firestore, OUTPASS_COL), ...constraints);
 
     const querySnapshot = await getDocs(q);
     const docs = querySnapshot.docs.map(doc => doc.data() as Outpass);
@@ -469,9 +473,10 @@ export const db = {
     if (studentId) constraints.push(where("studentId", "==", studentId));
     if (hostelName) constraints.push(where("hostelName", "==", hostelName));
 
-    if (constraints.length > 0) {
-      q = query(collection(firestore, SICK_REGISTER_COL), ...constraints);
-    }
+    constraints.push(orderBy("createdAt", "desc"));
+    constraints.push(limit(150));
+
+    q = query(collection(firestore, SICK_REGISTER_COL), ...constraints);
 
     const querySnapshot = await getDocs(q);
     const docs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
