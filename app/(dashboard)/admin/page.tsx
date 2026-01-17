@@ -687,86 +687,37 @@ export default function AdminDashboard() {
 
             <div className="space-y-6 max-w-6xl mx-auto">
                 <header className="mb-6 flex justify-between items-start">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full md:w-auto">
                         <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMobileNavOpen(true)}>
                             <Menu className="w-5 h-5" />
                         </Button>
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                        <div className="flex-1 md:flex-none">
+                            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1 md:hidden">
+                                <UserIcon className="w-3 h-3" />
+                                <span className="text-xs font-medium">{user?.name}</span>
+                            </div>
+                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
                                 <span>Admin Dashboard</span>
                                 {user?.hostelName && (
-                                    <span className="text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full w-fit">
+                                    <span className="text-xs md:text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full w-fit">
                                         {user.hostelName}
                                     </span>
                                 )}
                             </h1>
-                            <p className="text-slate-500">Manage hostel operations</p>
+                            <p className="text-slate-500 text-sm md:text-base hidden md:block">Manage hostel operations</p>
                         </div>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
-                        <Info className="w-4 h-4 mr-2" />
-                        About App
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={async () => {
-                            if (!confirm('Send a test push notification to yourself?')) return;
-                            try {
-                                const res = await fetch('/api/push', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        userId: user?.id,
-                                        title: 'Test Notification',
-                                        body: 'If you see this, push notifications are working!',
-                                        data: { url: '/admin' }
-                                    })
-                                });
-                                const data = await res.json();
-                                if (res.ok) {
-                                    toast.success('Test notification sent! Check your phone.');
-                                } else {
-                                    toast.error(`Push Failed: ${data.error}`);
-                                    alert(`Push Failed: ${data.error}`);
-                                }
-                            } catch (e: any) {
-                                toast.error('Error sending test push');
-                            }
-                        }}
-                        className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-                    >
-                        <Send className="w-4 h-4 mr-2" />
-                        Test Push
-                    </Button>
-                    <Button
-                        variant="default"
-                        size="sm"
-                        className="bg-purple-600 hover:bg-purple-700 text-white"
-                        onClick={async () => {
-                            if (!confirm('Send "App Update" notification to ALL users?')) return;
-                            try {
-                                const res = await fetch('/api/messages', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        message: 'A new version of the app is available! Please refresh to get the latest features.',
-                                        type: 'app-update'
-                                    })
-                                });
-                                if (res.ok) {
-                                    toast.success('Update notification broadcasted!');
-                                } else {
-                                    toast.error('Failed to broadcast update');
-                                }
-                            } catch (e) {
-                                toast.error('Error sending broadcast');
-                            }
-                        }}
-                    >
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Notify Update
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <div className="hidden md:flex items-center gap-2 text-slate-500 dark:text-slate-400 mr-4">
+                            <UserIcon className="w-4 h-4" />
+                            <span className="text-sm font-medium">{user?.name}</span>
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+                            <Info className="w-4 h-4 mr-2" />
+                            <span className="hidden md:inline">About App</span>
+                            <span className="md:hidden">About</span>
+                        </Button>
+                    </div>
                 </header>
 
                 {/* Tabs */}
