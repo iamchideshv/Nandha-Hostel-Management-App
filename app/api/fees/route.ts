@@ -61,7 +61,8 @@ export async function POST(req: Request) {
                     'admin',
                     'Fee Payment Verification 💰',
                     `${studentName} has submitted a payment request.`,
-                    { type: 'fees', id: studentId }
+                    { type: 'fees', id: studentId },
+                    hostelName
                 );
             } catch (error) {
                 console.error('Push Error:', error);

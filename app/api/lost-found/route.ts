@@ -45,7 +45,8 @@ export async function POST(req: Request) {
                 'admin',
                 'Lost Item Reported 🔍',
                 `${studentName} lost ${productName} at ${location}.`,
-                { type: 'lost-found', id: newItem.id }
+                { type: 'lost-found', id: newItem.id },
+                hostelName
             );
         } catch (error) {
             console.error('Push Error:', error);

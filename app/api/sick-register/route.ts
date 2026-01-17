@@ -56,7 +56,8 @@ export async function POST(req: Request) {
                 'admin',
                 'Medical Emergency Alert 🚨',
                 `${studentName} is requesting medical assistance in ${hostelName} - Room ${roomNumber}.`,
-                { type: 'sick', id: newEntry.id }
+                { type: 'sick', id: newEntry.id },
+                hostelName
             );
         } catch (pushError) {
             console.error('Failed to send push notification:', pushError);

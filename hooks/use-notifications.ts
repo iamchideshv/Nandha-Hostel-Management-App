@@ -52,9 +52,23 @@ export function useNotifications() {
                 onMessage(messaging, (payload) => {
                     console.log('Message received in foreground: ', payload);
 
-                    // prevent self notification
-                    if (payload.data?.recipientId && payload.data.recipientId !== user.id) {
-                        console.log('Ignoring notification for different user:', payload.data.recipientId);
+                    const data = payload.data || {};
+
+                    // 1. Private Message Check (Direct userId targeting)
+                    if (data.recipientId && data.recipientId !== user.id) {
+                        console.log('Ignoring private notification for different user:', data.recipientId);
+                        return;
+                    }
+
+                    // 2. Role-based Broadcast Check
+                    if (data.targetRole && data.targetRole !== user.role) {
+                        console.log('Ignoring role-based notification for different role:', data.targetRole);
+                        return;
+                    }
+
+                    // 3. Hostel-based Broadcast Check
+                    if (data.targetHostel && data.targetHostel !== 'all' && data.targetHostel !== user.hostelName) {
+                        console.log('Ignoring hostel-based notification for different hostel:', data.targetHostel);
                         return;
                     }
 

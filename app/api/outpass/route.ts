@@ -76,7 +76,8 @@ export async function POST(req: Request) {
         'admin',
         'New Outpass Request 📄',
         `${studentName} is requesting ${type} until ${toDate}.`,
-        { type: 'outpass', id: newOutpass.id }
+        { type: 'outpass', id: newOutpass.id },
+        hostelName
       );
     } catch (pushError) {
       console.error('Failed to send push notification:', pushError);

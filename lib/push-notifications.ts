@@ -9,16 +9,35 @@ export async function sendPushToUser(userId: string, title: string, body: string
         throw new Error('NO_DEVICE_TOKENS_FOUND');
     }
 
-    return sendToTokens(user.fcmTokens, title, body, data);
+    // Include recipientId in data for client-side filtering
+    const notificationData = {
+        ...(data || {}),
+        recipientId: userId
+    };
+
+    return sendToTokens(user.fcmTokens, title, body, notificationData);
 }
 
-export async function sendPushToRole(role: string, title: string, body: string, data?: any) {
+export async function sendPushToRole(role: string, title: string, body: string, data?: any, hostelName?: string) {
     const users = await db.getUsers();
-    const targetUsers = users.filter(u => u.role === role);
+    let targetUsers = users.filter(u => u.role === role);
+
+    if (hostelName) {
+        targetUsers = targetUsers.filter(u => u.hostelName === hostelName);
+    }
+
     const allTokens = targetUsers.flatMap(u => u.fcmTokens || []);
 
     if (allTokens.length === 0) return;
-    return sendToTokens(allTokens, title, body, data);
+
+    // Include target info in data for client-side filtering
+    const notificationData = {
+        ...(data || {}),
+        targetRole: role,
+        targetHostel: hostelName || 'all'
+    };
+
+    return sendToTokens(allTokens, title, body, notificationData);
 }
 
 export async function sendPushToAll(title: string, body: string, data?: any) {
