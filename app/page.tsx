@@ -130,7 +130,7 @@ export default function Home() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-t border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-900/20"
+              className="overflow-hidden bg-white/30 dark:bg-slate-900/20"
             >
               <InstitutionGrid />
             </motion.div>
@@ -138,7 +138,7 @@ export default function Home() {
         </AnimatePresence>
 
         {/* Gallery Section */}
-        <section className="bg-white/50 dark:bg-slate-900/30 border-y border-slate-200 dark:border-slate-800 py-10">
+        <section className="bg-white/50 dark:bg-slate-900/30 py-10">
           <div className="text-center mb-6 px-4">
             <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white font-cinzel">Campus Excellence</h2>
           </div>
