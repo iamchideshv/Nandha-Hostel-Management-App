@@ -149,10 +149,10 @@ export default function Home() {
         <section className="max-w-7xl mx-auto px-4 md:px-6 py-20 space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center"
+              whileHover={{ y: -5, scale: 1.02 }}
+              className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10 border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center transition-all duration-300"
             >
-              <div className="h-12 w-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="h-12 w-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-sm border border-blue-100">
                 <User className="h-6 w-6" />
               </div>
               <h3 className="font-bold text-xl mb-2 text-slate-900 dark:text-white">Student Portal</h3>
@@ -160,10 +160,10 @@ export default function Home() {
             </motion.div>
 
             <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center"
+              whileHover={{ y: -5, scale: 1.02 }}
+              className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl shadow-emerald-500/5 dark:shadow-emerald-500/10 border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center transition-all duration-300"
             >
-              <div className="h-12 w-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="h-12 w-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-4 shadow-sm border border-green-100">
                 <LayoutDashboard className="h-6 w-6" />
               </div>
               <h3 className="font-bold text-xl mb-2 text-slate-900 dark:text-white">Admin Hub</h3>
@@ -171,10 +171,10 @@ export default function Home() {
             </motion.div>
 
             <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center"
+              whileHover={{ y: -5, scale: 1.02 }}
+              className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl shadow-purple-500/5 dark:shadow-purple-500/10 border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center transition-all duration-300"
             >
-              <div className="h-12 w-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="h-12 w-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-4 shadow-sm border border-purple-100">
                 <ShieldCheck className="h-6 w-6" />
               </div>
               <h3 className="font-bold text-xl mb-2 text-slate-900 dark:text-white">Security First</h3>
@@ -189,7 +189,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-4xl mx-auto rounded-[2rem] bg-slate-900 dark:bg-blue-600 p-8 md:p-12 text-center space-y-6 relative overflow-hidden"
+            className="max-w-4xl mx-auto rounded-[2rem] bg-slate-900 dark:bg-blue-600 p-8 md:p-12 text-center space-y-6 relative overflow-hidden shadow-2xl shadow-blue-500/20"
           >
             <h2 className="text-2xl md:text-4xl font-black text-white font-cinzel">Technical Support</h2>
             <p className="text-slate-300 dark:text-blue-50 text-sm md:text-base max-w-lg mx-auto">Available 24/7 for authentication and accessibility assistance.</p>

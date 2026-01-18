@@ -50,7 +50,7 @@ export function InstitutionGrid() {
                         viewport={{ once: true }}
                         transition={{ delay: index * 0.05 }}
                         whileHover={{ y: -5, scale: 1.02 }}
-                        className={`group relative p-6 rounded-3xl border-2 transition-all duration-300 bg-white dark:bg-slate-900 flex flex-col items-center text-center gap-4 hover:shadow-2xl hover:shadow-blue-500/10
+                        className={`group relative p-6 rounded-3xl border-2 transition-all duration-300 bg-white dark:bg-slate-900 flex flex-col items-center text-center gap-4 shadow-lg hover:shadow-2xl hover:shadow-blue-500/10
               ${inst.color === 'blue' ? 'border-blue-50/50 hover:border-blue-500' :
                                 inst.color === 'red' ? 'border-red-50/50 hover:border-red-500' :
                                     inst.color === 'green' ? 'border-green-50/50 hover:border-green-500' :
