@@ -5,6 +5,7 @@ import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/lib/theme-context';
 import { Toaster } from 'sonner';
 import AppUpdateNotification from '@/components/app-update-notification';
+import PageTransition from '@/components/PageTransition';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <AuthProvider>
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </AuthProvider>
         </ThemeProvider>
         <Toaster position="top-center" richColors />

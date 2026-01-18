@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -343,7 +344,12 @@ export default function StudentDashboard() {
     const isProfileComplete = completion === 100;
 
     const ProfileLockedState = ({ feature }: { feature: string }) => (
-        <div className="flex flex-col items-center justify-center py-12 px-4 text-center space-y-4 bg-slate-50 dark:bg-slate-900/20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 animate-in fade-in duration-500">
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="flex flex-col items-center justify-center py-12 px-4 text-center space-y-4 bg-slate-50 dark:bg-slate-900/20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800"
+        >
             <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
                 <BadgeCheck className="w-8 h-8 opacity-20 absolute" />
                 <AlertCircle className="w-8 h-8" />
@@ -356,9 +362,11 @@ export default function StudentDashboard() {
             </div>
             <div className="flex flex-col items-center gap-3 w-full max-w-[200px]">
                 <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div
-                        className="bg-blue-600 h-full transition-all duration-1000 ease-out"
-                        style={{ width: `${completion}%` }}
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${completion}%` }}
+                        transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+                        className="bg-blue-600 h-full"
                     />
                 </div>
                 <span className="text-xs font-black text-blue-600 uppercase tracking-widest">{completion}% COMPLETED</span>
@@ -369,7 +377,7 @@ export default function StudentDashboard() {
             >
                 UPDATE PROFILE NOW
             </Button>
-        </div>
+        </motion.div>
     );
 
     const handleComplaintSubmit = async (e: React.FormEvent) => {
@@ -919,7 +927,12 @@ export default function StudentDashboard() {
             )}
 
             <div className="space-y-6 max-w-5xl mx-auto">
-                <header className="mb-8 flex justify-between items-start">
+                <motion.header
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="mb-8 flex justify-between items-start"
+                >
                     <div className="flex items-center gap-3">
                         <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMobileNavOpen(true)}>
                             <Menu className="w-5 h-5" />
@@ -970,27 +983,62 @@ export default function StudentDashboard() {
                         <Info className="w-4 h-4 mr-2" />
                         About App
                     </Button>
-                </header >
+                </motion.header >
 
 
 
                 {!activeTab ? (
-                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4 animate-in fade-in zoom-in duration-300">
-                        <button onClick={() => setActiveTab('mess')} className="p-4 rounded-xl border text-left transition-all bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-400 hover:shadow-md group">
+                    <motion.div
+                        variants={{
+                            hidden: { opacity: 0 },
+                            show: {
+                                opacity: 1,
+                                transition: {
+                                    staggerChildren: 0.1,
+                                    delayChildren: 0.2
+                                }
+                            }
+                        }}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-2 md:grid-cols-6 gap-4"
+                    >
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setActiveTab('mess')}
+                            className="p-4 rounded-xl border text-left transition-all bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-400 hover:shadow-md group"
+                        >
                             <Utensils className="h-6 w-6 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
                             <h3 className="font-semibold text-slate-800 dark:text-slate-100">Mess Details</h3>
-                        </button>
-                        <button onClick={() => setActiveTab('outpass')} className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-green-400 hover:shadow-md group">
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setActiveTab('outpass')}
+                            className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-green-400 hover:shadow-md group"
+                        >
                             <FileText className="h-6 w-6 text-green-600 mb-2 group-hover:scale-110 transition-transform" />
                             <h3 className="font-semibold text-slate-800 dark:text-slate-100">Outpass</h3>
                             <NotificationBadge count={pendingCounts.outpass} />
-                        </button>
-                        <button onClick={() => setActiveTab('messages')} className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-purple-400 hover:shadow-md group">
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setActiveTab('messages')}
+                            className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-purple-400 hover:shadow-md group"
+                        >
                             <Send className="h-6 w-6 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
                             <h3 className="font-semibold text-slate-800 dark:text-slate-100">Messages</h3>
                             <NotificationBadge count={pendingCounts.messages} />
-                        </button>
-                        <div
+                        </motion.button>
+                        <motion.div
+                            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab('fees')}
                             className="p-4 rounded-xl border text-left cursor-pointer transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-yellow-400 hover:shadow-md group"
                         >
@@ -1000,17 +1048,29 @@ export default function StudentDashboard() {
                                 {feeStatus?.status === 'pending_request' ? 'Request Sent' : feeStatus?.status || 'Unknown'}
                             </p>
                             <NotificationBadge count={pendingCounts.fees} />
-                        </div>
-                        <button onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }} className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-indigo-400 hover:shadow-md group">
+                        </motion.div>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }}
+                            className="p-4 rounded-xl border text-left transition-all relative bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-indigo-400 hover:shadow-md group"
+                        >
                             <ClipboardList className="h-6 w-6 text-indigo-600 mb-2 group-hover:scale-110 transition-transform" />
                             <h3 className="font-semibold text-slate-800 dark:text-slate-100">Register</h3>
                             <NotificationBadge count={pendingCounts.register} />
-                        </button>
-                        <button onClick={() => setActiveTab('lost-found')} className="p-4 rounded-xl border text-left transition-all bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-amber-400 hover:shadow-md group">
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setActiveTab('lost-found')}
+                            className="p-4 rounded-xl border text-left transition-all bg-white dark:bg-black hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-amber-400 hover:shadow-md group"
+                        >
                             <Search className="h-6 w-6 text-amber-600 mb-2 group-hover:scale-110 transition-transform" />
                             <h3 className="font-semibold text-slate-800 dark:text-slate-100">Lost & Found</h3>
-                        </button>
-                    </div>
+                        </motion.button>
+                    </motion.div>
                 ) : (
                     <div className="mb-6 animate-in fade-in slide-in-from-right-4 duration-300">
                         <Button

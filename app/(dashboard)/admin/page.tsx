@@ -13,6 +13,7 @@ import QRCode from 'react-qr-code';
 import { AboutModal } from '@/components/about-modal';
 import { formatDate, formatTime } from '@/lib/formatters';
 import { useNotifications } from '@/hooks/use-notifications';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AdminDashboard() {
     const { user, logout } = useAuth();
@@ -751,7 +752,12 @@ export default function AdminDashboard() {
             )}
 
             <div className="space-y-6 max-w-6xl mx-auto">
-                <header className="mb-6 flex justify-between items-start">
+                <motion.header
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="mb-6 flex justify-between items-start"
+                >
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMobileNavOpen(true)}>
                             <Menu className="w-5 h-5" />
@@ -794,81 +800,116 @@ export default function AdminDashboard() {
                             <span className="md:hidden">About</span>
                         </Button>
                     </div>
-                </header>
+                </motion.header>
 
                 {/* Tabs */}
                 {!activeTab ? (
                     /* Dashboard Grid - Only visible when no active tab */
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6 animate-in fade-in zoom-in duration-300">
-                        <button
+                    <motion.div
+                        variants={{
+                            hidden: { opacity: 0 },
+                            show: {
+                                opacity: 1,
+                                transition: {
+                                    staggerChildren: 0.05,
+                                    delayChildren: 0.1
+                                }
+                            }
+                        }}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6"
+                    >
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab('outpass')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 hover:shadow-lg hover:-translate-y-1 group relative"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 hover:shadow-lg group relative"
                         >
                             <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-full mb-3 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
                                 <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                             </div>
                             <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Outpass</span>
                             <NotificationBadge count={pendingCounts.outpass} />
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab('fees')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400 hover:shadow-lg hover:-translate-y-1 group relative"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400 hover:shadow-lg group relative"
                         >
                             <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-full mb-3 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/30 transition-colors">
                                 <IndianRupee className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                             </div>
                             <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Fees</span>
                             <NotificationBadge count={pendingCounts.fees} />
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab('mess')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-orange-400 hover:shadow-lg hover:-translate-y-1 group relative"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-orange-400 hover:shadow-lg group relative"
                         >
                             <div className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-full mb-3 group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors">
                                 <Utensils className="w-8 h-8 text-orange-600 dark:text-orange-400" />
                             </div>
                             <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Mess</span>
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab('messages')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-purple-400 hover:shadow-lg hover:-translate-y-1 group relative"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-purple-400 hover:shadow-lg group relative"
                         >
                             <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-full mb-3 group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors">
                                 <MessageSquare className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                             </div>
                             <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Messages</span>
                             <NotificationBadge count={pendingCounts.messages} />
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab('lost-found')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:shadow-lg hover:-translate-y-1 group relative"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-amber-400 hover:shadow-lg group relative"
                         >
                             <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-full mb-3 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/30 transition-colors">
                                 <Search className="w-8 h-8 text-amber-600 dark:text-amber-400" />
                             </div>
                             <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Lost & Found</span>
                             <NotificationBadge count={pendingCounts.lostFound} />
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab('student-details')}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-cyan-400 hover:shadow-lg hover:-translate-y-1 group relative"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-cyan-400 hover:shadow-lg group relative"
                         >
                             <div className="p-3 bg-cyan-50 dark:bg-cyan-900/20 rounded-full mb-3 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-900/30 transition-colors">
                                 <Users className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
                             </div>
                             <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Students</span>
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => { setActiveTab('register'); setRegisterSubTab('main'); }}
-                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-400 hover:shadow-lg hover:-translate-y-1 group relative"
+                            className="flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-indigo-400 hover:shadow-lg group relative"
                         >
                             <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-full mb-3 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/30 transition-colors">
                                 <ClipboardList className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                             </div>
                             <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Register</span>
                             <NotificationBadge count={pendingCounts.register} />
-                        </button>
-                    </div>
+                        </motion.button>
+                    </motion.div>
                 ) : (
                     /* Detail View - Only visible when a tab is active */
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
