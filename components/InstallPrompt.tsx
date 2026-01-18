@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Download, X, Share } from 'lucide-react';
+import { Download, X, Share, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -19,7 +19,10 @@ export function InstallPrompt() {
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
             (window.navigator as any).standalone === true;
 
-        if (isStandalone) return;
+        if (isStandalone) {
+            console.log('App is in standalone mode, hiding prompt');
+            return;
+        }
 
         // Check dismissal from localStorage
         const dismissalTime = localStorage.getItem('pwa-prompt-dismissed');
@@ -38,20 +41,22 @@ export function InstallPrompt() {
         setIsIOS(ios);
 
         if (ios) {
-            // Show iOS prompt after a short delay
-            const timer = setTimeout(() => setIsVisible(true), 3000);
+            // Show iOS prompt after 2 seconds for fresh impact
+            const timer = setTimeout(() => setIsVisible(true), 2000);
             return () => clearTimeout(timer);
         }
 
         const handler = (e: Event) => {
             e.preventDefault();
             setDeferredPrompt(e as BeforeInstallPromptEvent);
-            setIsVisible(true);
+            // Show prompt after a short delay so it "pops" as a toaster
+            setTimeout(() => setIsVisible(true), 1500);
         };
 
         window.addEventListener('beforeinstallprompt', handler);
 
         window.addEventListener('appinstalled', () => {
+            console.log('App was successfully installed');
             setIsVisible(false);
             setDeferredPrompt(null);
             localStorage.removeItem('pwa-prompt-dismissed');
@@ -85,55 +90,76 @@ export function InstallPrompt() {
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    initial={{ y: 100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: 100, opacity: 0 }}
-                    className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-[380px] z-[9999]"
+                    initial={{ y: 50, scale: 0.9, opacity: 0 }}
+                    animate={{ y: 0, scale: 1, opacity: 1 }}
+                    exit={{ y: 50, scale: 0.9, opacity: 0 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-[380px] z-[99999]"
                 >
-                    <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-blue-500/20 dark:border-blue-400/20 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-4 flex flex-col gap-3 transition-colors duration-300">
-                        <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
-                                    <img src="/logo-main.png" alt="App Icon" className="h-6 w-6 object-contain brightness-0 invert" />
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-none">
-                                        NEI Smart Hostel
-                                    </h3>
-                                    <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mt-1">
-                                        Install Official App
-                                    </p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={handleDismiss}
-                                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors bg-slate-100 dark:bg-slate-800 rounded-lg"
-                                aria-label="Dismiss"
-                            >
-                                <X className="h-4 w-4" />
-                            </button>
+                    <div className="relative bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-slate-100 dark:border-white/10 overflow-hidden group">
+                        {/* Background Accent */}
+                        <div className="absolute top-0 right-0 p-8 opacity-5">
+                            <Zap className="h-24 w-24 text-blue-600" />
                         </div>
 
-                        {isIOS ? (
-                            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200/50 dark:border-slate-700/50">
-                                <p className="text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center flex-wrap gap-1 leading-relaxed">
-                                    Tap <Share className="h-3 w-3 inline mx-0.5 text-blue-500" /> then <span className="font-bold text-slate-900 dark:text-white">"Add to Home Screen"</span> to install on your iPhone.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-between gap-3">
-                                <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">
-                                    Get the best experience with our lightning-fast mobile app.
-                                </p>
+                        <div className="p-5 flex flex-col gap-4">
+                            <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-12 w-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
+                                        <img src="/logo-main.png" alt="App Icon" className="h-7 w-7 object-contain brightness-0 invert" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-blue-600 transition-colors">
+                                            NEI Smart Hostel
+                                        </h3>
+                                        <div className="flex items-center gap-2 mt-1.5">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                Official PWA v2.0
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button
-                                    onClick={handleInstallClick}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 whitespace-nowrap"
+                                    onClick={handleDismiss}
+                                    className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700"
+                                    aria-label="Dismiss"
                                 >
-                                    <Download className="h-3.5 w-3.5" />
-                                    <span>Install Now</span>
+                                    <X className="h-4 w-4" />
                                 </button>
                             </div>
-                        )}
+
+                            <p className="text-xs font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
+                                {isIOS
+                                    ? "Experience the future of hostel management on your device."
+                                    : "Get the best experience with our lightning-fast mobile application."}
+                            </p>
+
+                            {isIOS ? (
+                                <div className="bg-blue-50/50 dark:bg-blue-500/5 rounded-2xl p-4 border border-blue-100/50 dark:border-blue-500/10">
+                                    <p className="text-[11px] font-bold text-blue-600 dark:text-blue-300 flex items-center flex-wrap gap-2 leading-tight">
+                                        Tap <Share className="h-4 w-4 text-blue-500" /> then <span className="underline decoration-blue-500/30">"Add to Home Screen"</span> to install.
+                                    </p>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={handleInstallClick}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-black py-4 rounded-2xl shadow-xl shadow-blue-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
+                                >
+                                    <Download className="h-4 w-4" />
+                                    <span>INSTALL OFFICIAL APP</span>
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="h-1 w-full bg-slate-100 dark:bg-white/5 overflow-hidden">
+                            <motion.div
+                                initial={{ x: "-100%" }}
+                                animate={{ x: "0%" }}
+                                transition={{ duration: 1.5, ease: "easeOut" }}
+                                className="h-full bg-blue-600"
+                            />
+                        </div>
                     </div>
                 </motion.div>
             )}
