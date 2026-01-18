@@ -14,7 +14,7 @@ export async function POST(request: Request) {
         // Limit the fields that can be updated for security
         // In a real app, strict validation is needed
         // Here we allow updating the fields requested
-        const allowedUpdates = ['name', 'department', 'roomNumber', 'email', 'phoneNumber', 'profileImage'];
+        const allowedUpdates = ['name', 'department', 'roomNumber', 'email', 'phoneNumber', 'profileImage', 'clearedMessages'];
         const updateData: any = {};
 
         for (const key of Object.keys(data)) {

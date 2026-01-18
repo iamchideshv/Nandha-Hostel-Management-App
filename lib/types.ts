@@ -16,6 +16,8 @@ export interface User {
     college?: string;
     phoneNumber?: string;
     fcmTokens?: string[];
+    createdAt?: string; // ISO date string
+    clearedMessages?: string[]; // Array of message IDs
 }
 
 export type ComplaintType = 'food' | 'misc';

@@ -39,6 +39,8 @@ export async function POST(req: Request) {
             roomNumber: roomNumber || '',
             college: college || '',
             feesPaid: false,
+            createdAt: new Date().toISOString(),
+            clearedMessages: []
         };
 
         await db.addUser(newUser);

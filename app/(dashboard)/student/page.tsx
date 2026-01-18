@@ -1351,24 +1351,65 @@ export default function StudentDashboard() {
                                                 <CardTitle>Inbox</CardTitle>
                                                 <CardDescription>Messages from Admin</CardDescription>
                                             </div>
-                                            {messages.filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))).length > 0 && (
-                                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
-                                                    if (!confirm('Are you sure you want to clear your inbox? This action cannot be undone.')) return;
-                                                    setMessages(prev => prev.filter(m => !(m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))))));
-                                                    toast.success('Inbox Cleared');
-                                                }}>
-                                                    <XCircle className="w-3 h-3 mr-1" /> Clear
-                                                </Button>
-                                            )}
+                                            {messages.filter(m => {
+                                                const isAdminMsg = m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))));
+                                                if (!isAdminMsg) return false;
+                                                const isAfterCreation = !user?.createdAt || new Date(m.timestamp) >= new Date(user.createdAt);
+                                                const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                return isAfterCreation && isNotCleared;
+                                            }).length > 0 && (
+                                                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
+                                                        if (!confirm('Are you sure you want to clear your inbox? This action cannot be undone.')) return;
+                                                        const visibleMsgIds = messages.filter(m => {
+                                                            const isAdminMsg = m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))));
+                                                            if (!isAdminMsg) return false;
+                                                            const isAfterCreation = !user?.createdAt || new Date(m.timestamp) >= new Date(user.createdAt);
+                                                            const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                            return isAfterCreation && isNotCleared;
+                                                        }).map(m => m.id);
+
+                                                        const newClearedMessages = [...(user?.clearedMessages || []), ...visibleMsgIds];
+
+                                                        try {
+                                                            const res = await fetch('/api/user/profile', {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ id: user?.id, clearedMessages: newClearedMessages })
+                                                            });
+                                                            if (res.ok) {
+                                                                if (user) login({ ...user, clearedMessages: newClearedMessages });
+                                                                toast.success('Inbox Cleared');
+                                                            } else {
+                                                                toast.error('Failed to clear inbox on server');
+                                                            }
+                                                        } catch (e) {
+                                                            toast.error('Error clearing inbox');
+                                                        }
+                                                    }}>
+                                                        <XCircle className="w-3 h-3 mr-1" /> Clear
+                                                    </Button>
+                                                )}
                                         </div>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                                            {messages.filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))))).length === 0 ? (
+                                            {messages.filter(m => {
+                                                const isAdminMsg = m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))));
+                                                if (!isAdminMsg) return false;
+                                                const isAfterCreation = !user?.createdAt || new Date(m.timestamp) >= new Date(user.createdAt);
+                                                const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                return isAfterCreation && isNotCleared;
+                                            }).length === 0 ? (
                                                 <p className="text-sm text-slate-500 text-center py-4">No messages from admin.</p>
                                             ) : (
                                                 messages
-                                                    .filter(m => m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName)))))
+                                                    .filter(m => {
+                                                        const isAdminMsg = m.senderRole === 'admin' && (m.targetStudentId ? m.targetStudentId === user?.id : (!m.targetHostels || m.targetHostels.length === 0 || (user?.hostelName && m.targetHostels.includes(user.hostelName))));
+                                                        if (!isAdminMsg) return false;
+                                                        const isAfterCreation = !user?.createdAt || new Date(m.timestamp) >= new Date(user.createdAt);
+                                                        const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                        return isAfterCreation && isNotCleared;
+                                                    })
                                                     .map((m) => (
                                                         <div key={m.id} className="p-3 rounded-lg border bg-blue-50 border-blue-100 dark:bg-blue-900/20">
                                                             <div className="flex justify-between items-start mb-1">
@@ -1405,24 +1446,61 @@ export default function StudentDashboard() {
                                                 <CardTitle>Sent History</CardTitle>
                                                 <CardDescription>Your sent messages</CardDescription>
                                             </div>
-                                            {messages.filter(m => m.senderId === user?.id).length > 0 && (
-                                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
-                                                    if (!confirm('Are you sure you want to clear your sent history? This action cannot be undone.')) return;
-                                                    setMessages(prev => prev.filter(m => m.senderId !== user?.id));
-                                                    toast.success('History Cleared');
-                                                }}>
-                                                    <XCircle className="w-3 h-3 mr-1" /> Clear
-                                                </Button>
-                                            )}
+                                            {messages.filter(m => {
+                                                const isSentMsg = m.senderId === user?.id;
+                                                if (!isSentMsg) return false;
+                                                const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                return isNotCleared;
+                                            }).length > 0 && (
+                                                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
+                                                        if (!confirm('Are you sure you want to clear your sent history? This action cannot be undone.')) return;
+                                                        const visibleMsgIds = messages.filter(m => {
+                                                            const isSentMsg = m.senderId === user?.id;
+                                                            if (!isSentMsg) return false;
+                                                            const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                            return isNotCleared;
+                                                        }).map(m => m.id);
+
+                                                        const newClearedMessages = [...(user?.clearedMessages || []), ...visibleMsgIds];
+
+                                                        try {
+                                                            const res = await fetch('/api/user/profile', {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ id: user?.id, clearedMessages: newClearedMessages })
+                                                            });
+                                                            if (res.ok) {
+                                                                if (user) login({ ...user, clearedMessages: newClearedMessages });
+                                                                toast.success('History Cleared');
+                                                            } else {
+                                                                toast.error('Failed to clear history on server');
+                                                            }
+                                                        } catch (e) {
+                                                            toast.error('Error clearing history');
+                                                        }
+                                                    }}>
+                                                        <XCircle className="w-3 h-3 mr-1" /> Clear
+                                                    </Button>
+                                                )}
                                         </div>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                                            {messages.filter(m => m.senderId === user?.id).length === 0 ? (
+                                            {messages.filter(m => {
+                                                const isSentMsg = m.senderId === user?.id;
+                                                if (!isSentMsg) return false;
+                                                const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                return isNotCleared;
+                                            }).length === 0 ? (
                                                 <p className="text-sm text-slate-500 text-center py-4">No sent messages.</p>
                                             ) : (
                                                 messages
-                                                    .filter(m => m.senderId === user?.id)
+                                                    .filter(m => {
+                                                        const isSentMsg = m.senderId === user?.id;
+                                                        if (!isSentMsg) return false;
+                                                        const isNotCleared = !user?.clearedMessages?.includes(m.id);
+                                                        return isNotCleared;
+                                                    })
                                                     .map((m) => (
                                                         <div key={m.id} className="p-3 rounded-lg border bg-white border-slate-200 dark:bg-slate-800">
                                                             <div className="flex justify-between items-start mb-1">

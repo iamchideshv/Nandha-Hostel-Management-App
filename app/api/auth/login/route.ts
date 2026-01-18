@@ -18,6 +18,17 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
 
+        // Migrate existing users to have a createdAt timestamp and clearedMessages array
+        if (!user.createdAt) {
+            const now = new Date().toISOString();
+            user.createdAt = now;
+            user.clearedMessages = user.clearedMessages || [];
+            await db.updateUserDetails(user.id, {
+                createdAt: now,
+                clearedMessages: user.clearedMessages
+            });
+        }
+
         // In a real app, we would set a cookie/session here.
         // For this demo, we return the user data and let the frontend handle state.
         const { password: _, ...userWithoutPassword } = user;
