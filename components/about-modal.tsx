@@ -73,11 +73,11 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
                             <p className="text-sm text-slate-500 dark:text-slate-400">Hostel Management System</p>
                         </div>
                         <div className="text-sm text-slate-600 dark:text-slate-300 space-y-2 text-center">
-                            <p>Version 1.4.2</p>
+                            <p>Version 1.4.3</p>
                             <p className="font-semibold text-slate-900 dark:text-white">Developer: CHIDESH V</p>
                             <p className="text-xs text-slate-500 dark:text-slate-400">732224AI014 • DEPT. AI & DS</p>
                             <p className="font-medium text-slate-800 dark:text-slate-200 mt-2">FOR NANDHA ENGINEERING COLLEGE</p>
-                            <p className="text-xs text-slate-400 mt-4">© 2024 All Rights Reserved</p>
+                            <p className="text-xs text-slate-400 mt-4">© 2026 All Rights Reserved</p>
                         </div>
                         <div className="space-y-3 pt-2">
                             <Button

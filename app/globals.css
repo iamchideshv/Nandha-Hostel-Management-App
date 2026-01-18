@@ -804,7 +804,7 @@ input:checked+.theme-slider:before {
 
 .uiverse-rating-container>input:checked+label>svg,
 .uiverse-rating-container>input:checked+label~label>svg {
-  fill: #ff9e0b;
+  fill: #ff9e0b !important;
   filter: drop-shadow(0 0 15px rgba(255, 158, 11, 0.9));
   animation: pulse 0.8s infinite alternate;
 }
@@ -1044,8 +1044,7 @@ input:checked+.theme-slider:before {
   }
 }
 
-.uiverse-rating-container>input:checked+label:hover>svg,
-.uiverse-rating-container>input:checked+label:hover~label>svg {}
+/* Cleaned up empty rules */
 
 .auth-switch {
   position: relative;
