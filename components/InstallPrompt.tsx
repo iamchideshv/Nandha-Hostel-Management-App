@@ -94,9 +94,9 @@ export function InstallPrompt() {
                     animate={{ y: 0, scale: 1, opacity: 1 }}
                     exit={{ y: -50, scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                    className="fixed top-[10%] left-0 right-0 z-[99999] flex justify-center px-4"
+                    className="fixed top-[25%] left-0 right-0 z-[99999] flex justify-center px-4"
                 >
-                    <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/10 overflow-hidden group">
+                    <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-[0_40px_120px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/10 overflow-hidden group">
                         {/* Background Accent */}
                         <div className="absolute top-0 right-0 p-8 opacity-5">
                             <Zap className="h-24 w-24 text-blue-600" />
@@ -105,8 +105,8 @@ export function InstallPrompt() {
                         <div className="p-5 flex flex-col gap-4">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 transform transition-transform group-hover:scale-110">
-                                        <img src="/logo-main.png" alt="App Icon" className="h-7 w-7 object-contain brightness-0 invert" />
+                                    <div className="h-12 w-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 dark:border-white/5 transform transition-transform group-hover:scale-110 overflow-hidden p-1.5">
+                                        <img src="/logo-main.png" alt="App Icon" className="h-full w-full object-contain" />
                                     </div>
                                     <div>
                                         <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-blue-600 transition-colors">
