@@ -12,6 +12,7 @@ import { InstallPrompt } from '@/components/InstallPrompt';
 import { ImageGallery } from '@/components/ImageGallery';
 import { InstitutionGrid } from '@/components/InstitutionGrid';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FallingStars } from '@/components/FallingStars';
 
 export default function Home() {
   const { user, isLoading } = useAuth();
@@ -31,6 +32,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-500 bg-[#f8fafc] dark:bg-slate-950 overflow-x-hidden font-montserrat">
+      <FallingStars />
       {/* Soft Institutional Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.05),transparent)]" />
