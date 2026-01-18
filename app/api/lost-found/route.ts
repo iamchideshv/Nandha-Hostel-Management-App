@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { studentId, studentName, hostelName, roomNumber, productName, identification, location, timeAndDate, image, images } = body;
+        const { studentId, studentName, hostelName, roomNumber, studentPhone, productName, identification, location, timeAndDate, image, images } = body;
 
         const newItem = {
             id: uuidv4(),
@@ -27,6 +27,7 @@ export async function POST(req: Request) {
             studentName,
             hostelName,
             roomNumber,
+            studentPhone,
             productName,
             identification,
             location,

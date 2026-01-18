@@ -670,6 +670,7 @@ export default function StudentDashboard() {
                     studentName: user?.name,
                     hostelName: user?.hostelName,
                     roomNumber: user?.roomNumber,
+                    studentPhone: user?.phoneNumber,
                     ...lostFoundForm,
                     image: lostFoundForm.images[0] || lostFoundForm.image // Fallback/Priority
                 })

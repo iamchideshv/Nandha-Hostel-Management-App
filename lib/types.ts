@@ -148,6 +148,7 @@ export interface LostFound {
     images?: string[]; // Array of Base64 strings
     status: 'pending' | 'found' | 'returned' | 'not-found';
     adminMessage?: string;
+    studentPhone?: string;
     createdAt: string;
 }
 
