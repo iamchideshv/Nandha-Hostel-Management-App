@@ -12,7 +12,6 @@ import { InstallPrompt } from '@/components/InstallPrompt';
 import { ImageGallery } from '@/components/ImageGallery';
 import { InstitutionGrid } from '@/components/InstitutionGrid';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FallingStars } from '@/components/FallingStars';
 
 export default function Home() {
   const { user, isLoading } = useAuth();
@@ -31,13 +30,8 @@ export default function Home() {
   }, [user, isLoading, router]);
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-[#f8fafc] dark:bg-slate-950 overflow-x-hidden font-montserrat">
-      <FallingStars />
-      {/* Soft Institutional Background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.05),transparent)]" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] dark:opacity-[0.05]" />
-      </div>
+    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-white dark:bg-black overflow-x-hidden font-montserrat relative">
+      <div className="dynamic-bg" />
 
       <header className="fixed top-0 left-0 right-0 z-50 p-3 md:p-5 backdrop-blur-xl bg-white/80 dark:bg-slate-950/80 border-b border-slate-200/50 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-2">

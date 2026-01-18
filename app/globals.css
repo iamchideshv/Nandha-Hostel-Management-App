@@ -1407,100 +1407,47 @@ input:checked+.theme-slider:before {
   animation: slide-up 0.4s ease-out;
 }
 
-/* Falling Stars Background for Dark Mode */
-.stars {
+/* Dynamic Portal Background */
+.dynamic-bg {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 120%;
-  transform: rotate(-45deg);
-  pointer-events: none;
+  inset: 0;
   z-index: 0;
-  opacity: 0;
-  transition: opacity 1s ease;
+  pointer-events: none;
+  /* Light Mode - Desktop (Default) */
+  background: radial-gradient(125% 125% at 50% 10%, #fff 40%, #6366f1 100%) no-repeat center center fixed;
+  background-size: cover;
 }
 
-.dark .stars {
-  opacity: 1;
-}
-
-.star {
-  --star-color: #3b82f6;
-  --star-tail-length: 6em;
-  --star-tail-height: 2px;
-  --star-width: calc(var(--star-tail-length) / 6);
-  --fall-duration: 9s;
-  --tail-fade-duration: var(--fall-duration);
-
-  position: absolute;
-  top: var(--top-offset);
-  left: 0;
-  width: var(--star-tail-length);
-  height: var(--star-tail-height);
-  color: var(--star-color);
-  background: linear-gradient(45deg, currentColor, transparent);
-  border-radius: 50%;
-  filter: drop-shadow(0 0 6px currentColor);
-  transform: translate3d(104em, 0, 0);
-  animation: fall var(--fall-duration) var(--fall-delay) linear infinite, tail-fade var(--tail-fade-duration) var(--fall-delay) ease-out infinite;
-}
-
-@media screen and (max-width: 750px) {
-  .star {
-    animation: fall var(--fall-duration) var(--fall-delay) linear infinite;
+@media (max-width: 768px) {
+  .dynamic-bg {
+    /* Light Mode - Mobile */
+    background:
+      radial-gradient(ellipse 80% 60% at 5% 40%, rgba(175, 109, 255, 0.48), transparent 67%),
+      radial-gradient(ellipse 70% 60% at 45% 45%, rgba(255, 100, 180, 0.41), transparent 67%),
+      radial-gradient(ellipse 62% 52% at 83% 76%, rgba(255, 235, 170, 0.44), transparent 63%),
+      radial-gradient(ellipse 60% 48% at 75% 20%, rgba(120, 190, 255, 0.36), transparent 66%),
+      linear-gradient(45deg, #f7eaff 0%, #fde2ea 100%) no-repeat center center fixed;
+    background-size: cover;
   }
 }
 
-.star::before,
-.star::after {
-  position: absolute;
-  content: '';
-  top: 0;
-  left: calc(var(--star-width) / -2);
-  width: var(--star-width);
-  height: 100%;
-  background: linear-gradient(45deg, transparent, currentColor, transparent);
-  border-radius: inherit;
-  animation: blink 2s linear infinite;
+.dark .dynamic-bg {
+  /* Dark Mode - Desktop */
+  background-image:
+    radial-gradient(circle at 50% 100%, rgba(70, 85, 110, 0.5) 0%, transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.4) 0%, transparent 70%),
+    radial-gradient(circle at 50% 100%, rgba(181, 184, 208, 0.3) 0%, transparent 80%);
+  background-color: black;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
 }
 
-.star::before {
-  transform: rotate(45deg);
-}
-
-.star::after {
-  transform: rotate(-45deg);
-}
-
-@keyframes fall {
-  to {
-    transform: translate3d(-30em, 0, 0);
-  }
-}
-
-@keyframes tail-fade {
-
-  0%,
-  50% {
-    width: var(--star-tail-length);
-    opacity: 1;
-  }
-
-  70%,
-  80% {
-    width: 0;
-    opacity: 0.4;
-  }
-
-  100% {
-    width: 0;
-    opacity: 0;
-  }
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0.6;
+@media (max-width: 768px) {
+  .dark .dynamic-bg {
+    /* Dark Mode - Mobile */
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139, 92, 246, 0.25), transparent 70%), #000000 no-repeat center center fixed;
+    background-size: cover;
   }
 }
