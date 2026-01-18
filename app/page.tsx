@@ -76,13 +76,13 @@ export default function Home() {
             <span className="text-[10px] md:text-xs font-black text-blue-700 dark:text-blue-400 uppercase tracking-[0.2em]">Next-Gen Operations</span>
           </motion.div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-slate-900 dark:text-white tracking-tighter leading-[1.1] md:leading-[1] font-cinzel">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tighter leading-[1.1] md:leading-[1] font-cinzel">
             <motion.span
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               className="block"
             >
-              Nandha Educational
+              Nandha Educational Institute
             </motion.span>
             <motion.span
               initial={{ y: 20, opacity: 0 }}
@@ -90,7 +90,7 @@ export default function Home() {
               transition={{ delay: 0.1 }}
               className="text-blue-600 dark:text-blue-400"
             >
-              Institution Portals
+              Smart Hostel
             </motion.span>
           </h1>
 
