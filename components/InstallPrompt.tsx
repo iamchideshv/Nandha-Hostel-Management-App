@@ -41,16 +41,16 @@ export function InstallPrompt() {
         setIsIOS(ios);
 
         if (ios) {
-            // Show iOS prompt after 2 seconds for fresh impact
-            const timer = setTimeout(() => setIsVisible(true), 2000);
-            return () => clearTimeout(timer);
+            // Instant appearance for iOS
+            setIsVisible(true);
+            return;
         }
 
         const handler = (e: Event) => {
             e.preventDefault();
             setDeferredPrompt(e as BeforeInstallPromptEvent);
-            // Show prompt after a short delay so it "pops" as a toaster
-            setTimeout(() => setIsVisible(true), 1500);
+            // Instant appearance
+            setIsVisible(true);
         };
 
         window.addEventListener('beforeinstallprompt', handler);
@@ -90,13 +90,13 @@ export function InstallPrompt() {
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    initial={{ y: 50, scale: 0.9, opacity: 0 }}
+                    initial={{ y: -50, scale: 0.9, opacity: 0 }}
                     animate={{ y: 0, scale: 1, opacity: 1 }}
-                    exit={{ y: 50, scale: 0.9, opacity: 0 }}
+                    exit={{ y: -50, scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                    className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-[380px] z-[99999]"
+                    className="fixed top-[10%] left-0 right-0 z-[99999] flex justify-center px-4"
                 >
-                    <div className="relative bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-slate-100 dark:border-white/10 overflow-hidden group">
+                    <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/10 overflow-hidden group">
                         {/* Background Accent */}
                         <div className="absolute top-0 right-0 p-8 opacity-5">
                             <Zap className="h-24 w-24 text-blue-600" />
