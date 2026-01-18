@@ -340,6 +340,38 @@ export default function StudentDashboard() {
         }
     }, [user]);
 
+    const isProfileComplete = completion === 100;
+
+    const ProfileLockedState = ({ feature }: { feature: string }) => (
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center space-y-4 bg-slate-50 dark:bg-slate-900/20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 animate-in fade-in duration-500">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
+                <BadgeCheck className="w-8 h-8 opacity-20 absolute" />
+                <AlertCircle className="w-8 h-8" />
+            </div>
+            <div className="space-y-2 max-w-sm">
+                <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white uppercase">Profile Incomplete</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                    You must complete your profile to 100% to access the <span className="text-blue-600 font-bold underline underline-offset-4">{feature}</span> feature.
+                </p>
+            </div>
+            <div className="flex flex-col items-center gap-3 w-full max-w-[200px]">
+                <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div
+                        className="bg-blue-600 h-full transition-all duration-1000 ease-out"
+                        style={{ width: `${completion}%` }}
+                    />
+                </div>
+                <span className="text-xs font-black text-blue-600 uppercase tracking-widest">{completion}% COMPLETED</span>
+            </div>
+            <Button
+                onClick={() => setShowProfileModal(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 rounded-full shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
+            >
+                UPDATE PROFILE NOW
+            </Button>
+        </div>
+    );
+
     const handleComplaintSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
@@ -1529,83 +1561,87 @@ export default function StudentDashboard() {
                                     <CardTitle>INTIMATE ADMIN</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <form onSubmit={handleOutpassSubmit} className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>College Name</Label>
-                                            <Input
-                                                placeholder="College Name"
-                                                className={`focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'} ${user?.college ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}`}
-                                                value={outpassForm.collegeName}
-                                                onChange={(e) => setOutpassForm({ ...outpassForm, collegeName: e.target.value })}
-                                                required
-                                                readOnly={!!user?.college}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label>Hostel Name</Label>
-                                            <Input
-                                                value={user?.hostelName || outpassForm.hostelName || ''}
-                                                readOnly={!!user?.hostelName}
-                                                className={user?.hostelName ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                                placeholder="Lock your hostel in profile"
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label>Student Name</Label>
-                                            <Input value={user?.name || ''} disabled className="bg-slate-100" />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label>Room Number</Label>
-                                            <Input value={user?.roomNumber || ''} disabled className="bg-slate-100" />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label>Year & Department</Label>
-                                            <Input
-                                                placeholder="e.g. 3rd Year CSE"
-                                                value={outpassForm.yearAndDept}
-                                                onChange={(e) => setOutpassForm({ ...outpassForm, yearAndDept: e.target.value })}
-                                                required
-                                                readOnly={!!user?.department}
-                                                className={user?.department ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label>Reason</Label>
-                                            <Input
-                                                placeholder="Going home for weekend"
-                                                value={outpassForm.reason}
-                                                onChange={(e) => setOutpassForm({ ...outpassForm, reason: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
+                                    {!isProfileComplete ? (
+                                        <ProfileLockedState feature="Outpass" />
+                                    ) : (
+                                        <form onSubmit={handleOutpassSubmit} className="space-y-4">
                                             <div className="space-y-2">
-                                                <Label>From</Label>
+                                                <Label>College Name</Label>
                                                 <Input
-                                                    type="date"
-                                                    value={outpassForm.fromDate}
-                                                    onChange={(e) => setOutpassForm({ ...outpassForm, fromDate: e.target.value })}
+                                                    placeholder="College Name"
+                                                    className={`focus-visible:ring-2 transition-all ${(outpassForm.hostelName || user?.hostelName || '').includes('AKSHAYA') ? 'focus-visible:ring-pink-500' : 'focus-visible:ring-blue-600'} ${user?.college ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}`}
+                                                    value={outpassForm.collegeName}
+                                                    onChange={(e) => setOutpassForm({ ...outpassForm, collegeName: e.target.value })}
+                                                    required
+                                                    readOnly={!!user?.college}
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Hostel Name</Label>
+                                                <Input
+                                                    value={user?.hostelName || outpassForm.hostelName || ''}
+                                                    readOnly={!!user?.hostelName}
+                                                    className={user?.hostelName ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                    placeholder="Lock your hostel in profile"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Student Name</Label>
+                                                <Input value={user?.name || ''} disabled className="bg-slate-100" />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Room Number</Label>
+                                                <Input value={user?.roomNumber || ''} disabled className="bg-slate-100" />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Year & Department</Label>
+                                                <Input
+                                                    placeholder="e.g. 3rd Year CSE"
+                                                    value={outpassForm.yearAndDept}
+                                                    onChange={(e) => setOutpassForm({ ...outpassForm, yearAndDept: e.target.value })}
+                                                    required
+                                                    readOnly={!!user?.department}
+                                                    className={user?.department ? "bg-slate-100 dark:bg-slate-800 text-slate-500 cursor-not-allowed" : ""}
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Reason</Label>
+                                                <Input
+                                                    placeholder="Going home for weekend"
+                                                    value={outpassForm.reason}
+                                                    onChange={(e) => setOutpassForm({ ...outpassForm, reason: e.target.value })}
                                                     required
                                                 />
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label>To</Label>
-                                                <Input
-                                                    type="date"
-                                                    value={outpassForm.toDate}
-                                                    onChange={(e) => setOutpassForm({ ...outpassForm, toDate: e.target.value })}
-                                                    required
-                                                />
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label>From</Label>
+                                                    <Input
+                                                        type="date"
+                                                        value={outpassForm.fromDate}
+                                                        onChange={(e) => setOutpassForm({ ...outpassForm, fromDate: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>To</Label>
+                                                    <Input
+                                                        type="date"
+                                                        value={outpassForm.toDate}
+                                                        onChange={(e) => setOutpassForm({ ...outpassForm, toDate: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <Button type="submit" disabled={submitting}> <Send className="w-4 h-4 mr-2" /> Submit to Admin </Button>
-                                    </form>
+                                            <Button type="submit" disabled={submitting}> <Send className="w-4 h-4 mr-2" /> Submit to Admin </Button>
+                                        </form>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -1705,23 +1741,27 @@ export default function StudentDashboard() {
                                         </div>
                                         <h3 className="text-lg font-medium">Status Unknown</h3>
                                         <p className="text-slate-500 max-w-sm mx-auto">You haven't requested your fee status yet. Click below to notify the admin.</p>
-                                        <Button
-                                            onClick={async () => {
-                                                setSubmitting(true);
-                                                try {
-                                                    await fetch('/api/fees', {
-                                                        method: 'POST',
-                                                        body: JSON.stringify({ action: 'request', studentId: user?.id, studentName: user?.name, hostelName: user?.hostelName })
-                                                    });
-                                                    toast.success('Request Sent to Admin');
-                                                    fetchData();
-                                                } catch (e) { toast.error('Request Failed'); }
-                                                setSubmitting(false);
-                                            }}
-                                            disabled={submitting}
-                                        >
-                                            Ask about my fees
-                                        </Button>
+                                        {!isProfileComplete ? (
+                                            <ProfileLockedState feature="Fee Details" />
+                                        ) : (
+                                            <Button
+                                                onClick={async () => {
+                                                    setSubmitting(true);
+                                                    try {
+                                                        await fetch('/api/fees', {
+                                                            method: 'POST',
+                                                            body: JSON.stringify({ action: 'request', studentId: user?.id, studentName: user?.name, hostelName: user?.hostelName })
+                                                        });
+                                                        toast.success('Request Sent to Admin');
+                                                        fetchData();
+                                                    } catch (e) { toast.error('Request Failed'); }
+                                                    setSubmitting(false);
+                                                }}
+                                                disabled={submitting}
+                                            >
+                                                Ask about my fees
+                                            </Button>
+                                        )}
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
@@ -1769,25 +1809,27 @@ export default function StudentDashboard() {
                                                 </div>
                                             </div>
                                         )}
-                                        <Button
-                                            variant="outline"
-                                            className="w-full mt-4"
-                                            onClick={async () => {
-                                                setSubmitting(true);
-                                                try {
-                                                    await fetch('/api/fees', {
-                                                        method: 'POST',
-                                                        body: JSON.stringify({ action: 'request', studentId: user?.id, studentName: user?.name, hostelName: user?.hostelName })
-                                                    });
-                                                    toast.success('Request Sent to Admin');
-                                                    fetchData();
-                                                } catch (e) { toast.error('Request Failed'); }
-                                                setSubmitting(false);
-                                            }}
-                                            disabled={submitting}
-                                        >
-                                            Check Again Request
-                                        </Button>
+                                        {isProfileComplete && (
+                                            <Button
+                                                variant="outline"
+                                                className="w-full mt-4"
+                                                onClick={async () => {
+                                                    setSubmitting(true);
+                                                    try {
+                                                        await fetch('/api/fees', {
+                                                            method: 'POST',
+                                                            body: JSON.stringify({ action: 'request', studentId: user?.id, studentName: user?.name, hostelName: user?.hostelName })
+                                                        });
+                                                        toast.success('Request Sent to Admin');
+                                                        fetchData();
+                                                    } catch (e) { toast.error('Request Failed'); }
+                                                    setSubmitting(false);
+                                                }}
+                                                disabled={submitting}
+                                            >
+                                                Check Again Request
+                                            </Button>
+                                        )}
                                     </div>
                                 )}
                             </CardContent>
@@ -1801,113 +1843,117 @@ export default function StudentDashboard() {
                                     <CardDescription>Report an item you've lost or found</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <form onSubmit={handleLostFoundSubmit} className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Product Name</Label>
-                                            <Input
-                                                placeholder="e.g. Blue Water Bottle"
-                                                value={lostFoundForm.productName}
-                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, productName: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Clues or Identification</Label>
-                                            <Input
-                                                placeholder="e.g. Has a 'Nike' sticker"
-                                                value={lostFoundForm.identification}
-                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, identification: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Where and When</Label>
-                                            <Input
-                                                placeholder="e.g. Near Mess Hall"
-                                                value={lostFoundForm.location}
-                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, location: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Time and Date</Label>
-                                            <Input
-                                                type="datetime-local"
-                                                value={lostFoundForm.timeAndDate}
-                                                onChange={(e) => setLostFoundForm({ ...lostFoundForm, timeAndDate: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Upload Images (Max 5)</Label>
-                                            <div className="space-y-4">
-                                                {/* Image Previews */}
-                                                {lostFoundForm.images.length > 0 && (
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        {lostFoundForm.images.map((img, index) => (
-                                                            <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group">
-                                                                <img src={img} alt={`Uploaded ${index + 1}`} className="w-full h-full object-cover" />
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => removeImage(index)}
-                                                                    className="absolute top-2 right-2 bg-red-500/90 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
-                                                                >
-                                                                    <XCircle className="w-4 h-4" />
-                                                                </button>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
-
-                                                {/* Upload Button */}
-                                                {lostFoundForm.images.length < 5 && (
-                                                    <div className="relative">
-                                                        <input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            multiple
-                                                            onChange={handleImageUpload}
-                                                            className="hidden"
-                                                            id="multi-image-upload"
-                                                        />
-                                                        <label
-                                                            htmlFor="multi-image-upload"
-                                                            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-all
-                                                                ${lostFoundForm.images.length > 0
-                                                                    ? 'h-32 border-slate-300 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-                                                                    : 'h-48 border-blue-200 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-                                                                }`}
-                                                        >
-                                                            <div className="flex flex-col items-center gap-2 p-4 text-center">
-                                                                {lostFoundForm.images.length > 0 ? (
-                                                                    <>
-                                                                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
-                                                                            <span className="text-2xl font-light">+</span>
-                                                                        </div>
-                                                                        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Add Image</span>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <div className="w-16 h-16 mb-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                                                            </svg>
-                                                                        </div>
-                                                                        <span className="text-base font-semibold text-blue-900 dark:text-blue-200">Upload Image</span>
-                                                                        <span className="text-xs text-slate-500">Supports JPG, PNG (Max 5)</span>
-                                                                    </>
-                                                                )}
-                                                            </div>
-                                                        </label>
-                                                    </div>
-                                                )}
+                                    {!isProfileComplete ? (
+                                        <ProfileLockedState feature="Lost & Found" />
+                                    ) : (
+                                        <form onSubmit={handleLostFoundSubmit} className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label>Product Name</Label>
+                                                <Input
+                                                    placeholder="e.g. Blue Water Bottle"
+                                                    value={lostFoundForm.productName}
+                                                    onChange={(e) => setLostFoundForm({ ...lostFoundForm, productName: e.target.value })}
+                                                    required
+                                                />
                                             </div>
-                                        </div>
-                                        <Button type="submit" disabled={submitting} className="w-full">
-                                            <Send className="w-4 h-4 mr-2" />
-                                            Submit Report
-                                        </Button>
-                                    </form>
+                                            <div className="space-y-2">
+                                                <Label>Clues or Identification</Label>
+                                                <Input
+                                                    placeholder="e.g. Has a 'Nike' sticker"
+                                                    value={lostFoundForm.identification}
+                                                    onChange={(e) => setLostFoundForm({ ...lostFoundForm, identification: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Where and When</Label>
+                                                <Input
+                                                    placeholder="e.g. Near Mess Hall"
+                                                    value={lostFoundForm.location}
+                                                    onChange={(e) => setLostFoundForm({ ...lostFoundForm, location: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Time and Date</Label>
+                                                <Input
+                                                    type="datetime-local"
+                                                    value={lostFoundForm.timeAndDate}
+                                                    onChange={(e) => setLostFoundForm({ ...lostFoundForm, timeAndDate: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Upload Images (Max 5)</Label>
+                                                <div className="space-y-4">
+                                                    {/* Image Previews */}
+                                                    {lostFoundForm.images.length > 0 && (
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            {lostFoundForm.images.map((img, index) => (
+                                                                <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group">
+                                                                    <img src={img} alt={`Uploaded ${index + 1}`} className="w-full h-full object-cover" />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => removeImage(index)}
+                                                                        className="absolute top-2 right-2 bg-red-500/90 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                                                                    >
+                                                                        <XCircle className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Upload Button */}
+                                                    {lostFoundForm.images.length < 5 && (
+                                                        <div className="relative">
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                multiple
+                                                                onChange={handleImageUpload}
+                                                                className="hidden"
+                                                                id="multi-image-upload"
+                                                            />
+                                                            <label
+                                                                htmlFor="multi-image-upload"
+                                                                className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl cursor-pointer transition-all
+                                                                    ${lostFoundForm.images.length > 0
+                                                                        ? 'h-32 border-slate-300 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                                                                        : 'h-48 border-blue-200 bg-blue-50/50 dark:bg-blue-900/10 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                                                                    }`}
+                                                            >
+                                                                <div className="flex flex-col items-center gap-2 p-4 text-center">
+                                                                    {lostFoundForm.images.length > 0 ? (
+                                                                        <>
+                                                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                                                <span className="text-2xl font-light">+</span>
+                                                                            </div>
+                                                                            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Add Image</span>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <div className="w-16 h-16 mb-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                                                </svg>
+                                                                            </div>
+                                                                            <span className="text-base font-semibold text-blue-900 dark:text-blue-200">Upload Image</span>
+                                                                            <span className="text-xs text-slate-500">Supports JPG, PNG (Max 5)</span>
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <Button type="submit" disabled={submitting} className="w-full">
+                                                <Send className="w-4 h-4 mr-2" />
+                                                Submit Report
+                                            </Button>
+                                        </form>
+                                    )}
                                 </CardContent>
                             </Card>
 
@@ -1980,89 +2026,94 @@ export default function StudentDashboard() {
                     {activeTab === 'register' && (
                         <div className="space-y-6">
                             {registerSubTab === 'main' && (
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-500">
-                                        <CardHeader>
-                                            <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
-                                                <LogOut className="w-6 h-6" />
-                                            </div>
-                                            <CardTitle>Leave Register</CardTitle>
-                                            <CardDescription>Apply for long leave or vacation</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                                Request permission for leave exceeding 24 hours. Requires parental approval.
-                                            </p>
-                                        </CardContent>
-                                        <CardFooter>
-                                            <Button onClick={() => setRegisterSubTab('leave')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
-                                        </CardFooter>
-                                    </Card>
+                                <div className="space-y-6">
+                                    {!isProfileComplete && (
+                                        <ProfileLockedState feature="Registers" />
+                                    )}
+                                    <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 ${!isProfileComplete ? 'opacity-50 pointer-events-none grayscale-[0.5]' : ''}`}>
+                                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-500">
+                                            <CardHeader>
+                                                <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
+                                                    <LogOut className="w-6 h-6" />
+                                                </div>
+                                                <CardTitle>Leave Register</CardTitle>
+                                                <CardDescription>Apply for long leave or vacation</CardDescription>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                    Request permission for leave exceeding 24 hours. Requires parental approval.
+                                                </p>
+                                            </CardContent>
+                                            <CardFooter>
+                                                <Button onClick={() => setRegisterSubTab('leave')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
+                                            </CardFooter>
+                                        </Card>
 
-                                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-blue-500">
-                                        <CardHeader>
-                                            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                                                <Footprints className="w-6 h-6" />
-                                            </div>
-                                            <CardTitle>Outing Register</CardTitle>
-                                            <CardDescription>Short duration outing entry</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                                Register for local outings, shopping, or movie trips. Return by curfew time.
-                                            </p>
-                                        </CardContent>
-                                        <CardFooter>
-                                            <Button onClick={() => {
-                                                setRegisterSubTab('outing');
-                                                const today = new Date();
-                                                const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-                                                setRegisterEntryForm(prev => ({ ...prev, date: localDate }));
-                                            }} className="w-full bg-blue-600 hover:bg-blue-700">Open Register</Button>
-                                        </CardFooter>
-                                    </Card>
+                                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-blue-500">
+                                            <CardHeader>
+                                                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                                                    <Footprints className="w-6 h-6" />
+                                                </div>
+                                                <CardTitle>Outing Register</CardTitle>
+                                                <CardDescription>Short duration outing entry</CardDescription>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                    Register for local outings, shopping, or movie trips. Return by curfew time.
+                                                </p>
+                                            </CardContent>
+                                            <CardFooter>
+                                                <Button onClick={() => {
+                                                    setRegisterSubTab('outing');
+                                                    const today = new Date();
+                                                    const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                                                    setRegisterEntryForm(prev => ({ ...prev, date: localDate }));
+                                                }} className="w-full bg-blue-600 hover:bg-blue-700">Open Register</Button>
+                                            </CardFooter>
+                                        </Card>
 
-                                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-red-500">
-                                        <CardHeader>
-                                            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
-                                                <Thermometer className="w-6 h-6" />
-                                            </div>
-                                            <CardTitle>Sick Register</CardTitle>
-                                            <CardDescription>Report sickness or medical emergency</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                                Log medical issues or requests to visit the hospital/infirmary.
-                                            </p>
-                                        </CardContent>
-                                        <CardFooter>
-                                            <div className="relative w-full">
-                                                <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
-                                                <NotificationBadge count={pendingCounts.sick} />
-                                            </div>
-                                        </CardFooter>
-                                    </Card>
+                                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-red-500">
+                                            <CardHeader>
+                                                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 text-red-600 dark:text-red-400">
+                                                    <Thermometer className="w-6 h-6" />
+                                                </div>
+                                                <CardTitle>Sick Register</CardTitle>
+                                                <CardDescription>Report sickness or medical emergency</CardDescription>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                    Log medical issues or requests to visit the hospital/infirmary.
+                                                </p>
+                                            </CardContent>
+                                            <CardFooter>
+                                                <div className="relative w-full">
+                                                    <Button onClick={() => setRegisterSubTab('sick')} className="w-full bg-red-600 hover:bg-red-700">Open Register</Button>
+                                                    <NotificationBadge count={pendingCounts.sick} />
+                                                </div>
+                                            </CardFooter>
+                                        </Card>
 
-                                    <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-600">
-                                        <CardHeader>
-                                            <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
-                                                <AlertCircle className="w-6 h-6" />
-                                            </div>
-                                            <CardTitle>Complaint Register</CardTitle>
-                                            <CardDescription>Register your issues or complaints</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                                                Submit complaints regarding food, room maintenance, water, or other issues.
-                                            </p>
-                                        </CardContent>
-                                        <CardFooter>
-                                            <div className="relative w-full">
-                                                <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
-                                                <NotificationBadge count={pendingCounts.complaints} />
-                                            </div>
-                                        </CardFooter>
-                                    </Card>
+                                        <Card className="hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-orange-600">
+                                            <CardHeader>
+                                                <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
+                                                    <AlertCircle className="w-6 h-6" />
+                                                </div>
+                                                <CardTitle>Complaint Register</CardTitle>
+                                                <CardDescription>Register your issues or complaints</CardDescription>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                    Submit complaints regarding food, room maintenance, water, or other issues.
+                                                </p>
+                                            </CardContent>
+                                            <CardFooter>
+                                                <div className="relative w-full">
+                                                    <Button onClick={() => setRegisterSubTab('complaints')} className="w-full bg-orange-600 hover:bg-orange-700">Open Register</Button>
+                                                    <NotificationBadge count={pendingCounts.complaints} />
+                                                </div>
+                                            </CardFooter>
+                                        </Card>
+                                    </div>
                                 </div>
                             )}
 
@@ -2241,11 +2292,11 @@ export default function StudentDashboard() {
                                                             <div className="pt-4 flex gap-4">
                                                                 <Button
                                                                     onClick={() => handleRegisterIntimation('leave')}
-                                                                    disabled={submitting}
+                                                                    disabled={submitting || !isProfileComplete}
                                                                     className="flex-1 bg-blue-600 hover:bg-blue-700 font-bold tracking-tight"
                                                                 >
                                                                     {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                                                    INTIMATE ADMIN
+                                                                    {!isProfileComplete ? 'PROFILE INCOMPLETE' : 'INTIMATE ADMIN'}
                                                                 </Button>
                                                             </div>
                                                         </div>
@@ -2484,11 +2535,11 @@ export default function StudentDashboard() {
                                                             </div>
                                                             <Button
                                                                 onClick={() => handleRegisterIntimation('outing')}
-                                                                disabled={submitting}
+                                                                disabled={submitting || !isProfileComplete}
                                                                 className="w-full bg-blue-600 hover:bg-blue-700 font-bold tracking-tight"
                                                             >
                                                                 {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                                                INTIMATE ADMIN
+                                                                {!isProfileComplete ? 'PROFILE INCOMPLETE' : 'INTIMATE ADMIN'}
                                                             </Button>
                                                         </div>
 
@@ -2574,10 +2625,10 @@ export default function StudentDashboard() {
                                                                 variant="destructive"
                                                                 size="sm"
                                                                 className="bg-red-600 hover:bg-red-700 font-bold animate-pulse shadow-lg shadow-red-500/20"
-                                                                onClick={() => setShowEmergencyModal(true)}
+                                                                onClick={() => setShowEmergencyModal(true)} disabled={!isProfileComplete}
                                                             >
                                                                 <Siren className="w-4 h-4 mr-2" />
-                                                                Emergency
+                                                                {!isProfileComplete ? 'Locked' : 'Emergency'}
                                                             </Button>
                                                         </div>
                                                         <CardDescription>Submit sick register entry with auto-filled details</CardDescription>
@@ -2636,9 +2687,9 @@ export default function StudentDashboard() {
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            <Button type="submit" disabled={submitting} className="w-full">
+                                                            <Button type="submit" disabled={submitting || !isProfileComplete} className="w-full">
                                                                 {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                                                Submit Sick Register Entry
+                                                                {!isProfileComplete ? 'PROFILE INCOMPLETE' : 'Submit Sick Register Entry'}
                                                             </Button>
                                                         </form>
                                                     </CardContent>
@@ -2753,7 +2804,9 @@ export default function StudentDashboard() {
                                                                         required
                                                                     />
                                                                 </div>
-                                                                <Button type="submit" disabled={submitting}> Register Complaint </Button>
+                                                                <Button type="submit" disabled={submitting || !isProfileComplete} className="w-full">
+                                                                    {!isProfileComplete ? 'PROFILE INCOMPLETE' : 'Register Complaint'}
+                                                                </Button>
                                                             </form>
                                                         </CardContent>
                                                     </Card>
