@@ -10,6 +10,10 @@ import PageTransition from '@/components/PageTransition';
 
 const inter = Inter({ subsets: ['latin'] });
 
+import { Montserrat, Cinzel } from 'next/font/google';
+const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' });
+const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' });
+
 export const viewport: Viewport = {
   themeColor: '#8b5cf6',
   width: 'device-width',
@@ -43,7 +47,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#8b5cf6" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${montserrat.variable} ${cinzel.variable} font-sans`}>
         <ThemeProvider>
           <AuthProvider>
             <PageTransition>
