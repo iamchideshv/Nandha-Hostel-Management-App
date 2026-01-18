@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Download } from 'lucide-react';
+import { Download, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;
@@ -10,29 +11,40 @@ interface BeforeInstallPromptEvent extends Event {
 
 export function InstallPrompt() {
     const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-    const [showInstallButton, setShowInstallButton] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [isDismissed, setIsDismissed] = useState(false);
 
     useEffect(() => {
+        // Don't show if manually dismissed in this session
+        if (isDismissed) return;
+
         const handler = (e: Event) => {
             // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
             // Stash the event so it can be triggered later
             setDeferredPrompt(e as BeforeInstallPromptEvent);
             // Show the install button
-            setShowInstallButton(true);
+            setIsVisible(true);
         };
 
         window.addEventListener('beforeinstallprompt', handler);
 
         // Check if already installed
         if (window.matchMedia('(display-mode: standalone)').matches) {
-            setShowInstallButton(false);
+            setIsVisible(false);
         }
+
+        // Handle the case where the app is installed via another method
+        window.addEventListener('appinstalled', () => {
+            setIsVisible(false);
+            setDeferredPrompt(null);
+            console.log('[PWA] App installed successfully');
+        });
 
         return () => {
             window.removeEventListener('beforeinstallprompt', handler);
         };
-    }, []);
+    }, [isDismissed]);
 
     const handleInstallClick = async () => {
         if (!deferredPrompt) {
@@ -47,7 +59,7 @@ export function InstallPrompt() {
 
         if (outcome === 'accepted') {
             console.log('User accepted the install prompt');
-            setShowInstallButton(false);
+            setIsVisible(false);
         } else {
             console.log('User dismissed the install prompt');
         }
@@ -56,28 +68,52 @@ export function InstallPrompt() {
         setDeferredPrompt(null);
     };
 
-    if (!showInstallButton) {
-        return null;
-    }
+    const handleDismiss = () => {
+        setIsVisible(false);
+        setIsDismissed(true);
+    };
 
     return (
-        <button
-            onClick={handleInstallClick}
-            className="Download-button"
-            aria-label="Install NEI Smart Hostel App"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="16"
-                width="20"
-                viewBox="0 0 640 512"
-            >
-                <path
-                    d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-167l80 80c9.4 9.4 24.6 9.4 33.9 0l80-80c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-39 39V184c0-13.3-10.7-24-24-24s-24 10.7-24 24V318.1l-39-39c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9z"
-                    fill="white"
-                ></path>
-            </svg>
-            <span>Install App</span>
-        </button>
+        <AnimatePresence>
+            {isVisible && (
+                <motion.div
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 100, opacity: 0 }}
+                    className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-[400px] z-[100]"
+                >
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] p-4 md:p-5 flex items-center gap-4 transition-colors duration-300">
+                        <div className="h-14 w-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center flex-shrink-0 animate-pulse-slow">
+                            <Download className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                            <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                                NEI Smart Hostel
+                            </h3>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
+                                Faster access & offline features.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={handleInstallClick}
+                                className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                            >
+                                <span>Install</span>
+                            </button>
+                            <button
+                                onClick={handleDismiss}
+                                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors bg-slate-50 dark:bg-slate-800 rounded-lg"
+                                aria-label="Dismiss"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }
