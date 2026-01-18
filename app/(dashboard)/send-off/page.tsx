@@ -239,9 +239,16 @@ export default function SendOffDashboard() {
                     <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white font-cinzel tracking-tight">Security Command</h1>
                     <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-widest opacity-70 mt-1">Verification Agent • {user?.id} • {user?.name}</p>
                 </div>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold">
-                    <LogOut className="w-4 h-4 mr-2" /> Logout
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+                        <Info className="w-4 h-4 mr-2" />
+                        <span className="hidden md:inline">About App</span>
+                        <span className="md:hidden">About</span>
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold">
+                        <LogOut className="w-4 h-4 mr-2" /> Logout
+                    </Button>
+                </div>
             </header>
 
             <div className="max-w-2xl mx-auto">

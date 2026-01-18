@@ -3095,8 +3095,6 @@ export default function StudentDashboard() {
 
 
 
-                <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
-                <EmergencyModal isOpen={showEmergencyModal} onClose={() => setShowEmergencyModal(false)} user={user} />
             </div >
             {/* Cropping Modal */}
             {
@@ -3165,6 +3163,8 @@ export default function StudentDashboard() {
                     </div>
                 )
             }
+            <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
+            <EmergencyModal isOpen={showEmergencyModal} onClose={() => setShowEmergencyModal(false)} user={user} />
         </>
     );
 }

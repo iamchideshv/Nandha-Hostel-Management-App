@@ -61,7 +61,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={onClose}>
             <div className="bg-white dark:bg-black p-6 rounded-xl max-w-sm w-full space-y-4 animate-in fade-in zoom-in duration-200 shadow-2xl" onClick={e => e.stopPropagation()}>
                 {view === 'info' && (
                     <>
