@@ -234,12 +234,12 @@ export default function SendOffDashboard() {
 
     return (
         <div className="max-w-4xl mx-auto p-4 space-y-6">
-            <header className="flex justify-between items-center mb-8 bg-white dark:bg-black p-4 rounded-xl border dark:border-slate-800 shadow-sm">
+            <header className="flex justify-between items-center mb-8 p-4 rounded-xl border dark:border-slate-800 bg-white/40 dark:bg-black/40 backdrop-blur-md shadow-sm">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Send-Off Security</h1>
-                    <p className="text-slate-500 text-sm">PWS ID: {user?.id} • {user?.name}</p>
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white font-cinzel tracking-tight">Security Command</h1>
+                    <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-widest opacity-70 mt-1">Verification Agent • {user?.id} • {user?.name}</p>
                 </div>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold">
                     <LogOut className="w-4 h-4 mr-2" /> Logout
                 </Button>
             </header>

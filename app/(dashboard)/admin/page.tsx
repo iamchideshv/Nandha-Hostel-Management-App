@@ -812,19 +812,19 @@ export default function AdminDashboard() {
                             <Menu className="w-5 h-5" />
                         </Button>
                         <div className="flex-1 md:flex-none">
-                            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 mb-0.5 md:hidden">
+                            <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-1 md:hidden">
                                 <UserIcon className="w-4 h-4" />
-                                <span className="text-base font-semibold">{user?.name}</span>
+                                <span className="text-sm font-black uppercase tracking-widest">{user?.name}</span>
                             </div>
-                            <h1 className="text-lg md:text-3xl font-bold text-slate-900 dark:text-white flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+                            <h1 className="text-xl md:text-4xl font-black text-slate-900 dark:text-white flex flex-col md:flex-row md:items-center gap-1 md:gap-4 font-cinzel tracking-tight">
                                 <span>Admin Dashboard</span>
                                 {user?.hostelName && (
-                                    <span className="text-xs md:text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full w-fit">
+                                    <span className="text-[10px] md:text-xs font-black bg-blue-600 text-white px-4 py-1.5 rounded-full w-fit uppercase tracking-widest shadow-lg shadow-blue-500/20">
                                         {user.hostelName}
                                     </span>
                                 )}
                             </h1>
-                            <p className="text-slate-500 text-sm md:text-base hidden md:block">Manage hostel operations</p>
+                            <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-[0.2em] mt-1 hidden md:block opacity-70">Strategic Oversight & Operations</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">

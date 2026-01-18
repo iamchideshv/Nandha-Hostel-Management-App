@@ -55,8 +55,8 @@ export default function AuthorityDashboard() {
         <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Outpass Requests</h1>
-                    <p className="text-slate-500">Approve or reject student outpass applications</p>
+                    <h1 className="text-2xl md:text-5xl font-black text-slate-900 dark:text-white font-cinzel tracking-tight">Outpass Requests</h1>
+                    <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-[0.2em] mt-2 opacity-70">Institutional Approval Matrix</p>
                 </div>
             </div>
 

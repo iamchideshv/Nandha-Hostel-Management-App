@@ -67,9 +67,11 @@ export default function DashboardLayout({
     };
 
     return (
-        <div className="min-h-screen flex flex-col md:flex-row transition-colors duration-300">
+        <div className="min-h-screen flex flex-col md:flex-row transition-colors duration-300 font-montserrat relative overflow-hidden">
+            <div className="dynamic-bg" />
+
             {/* Mobile Topbar */}
-            <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-black border-b dark:border-slate-800 sticky top-0 z-10">
+            <div className="md:hidden flex items-center justify-between p-4 bg-white/50 dark:bg-black/50 backdrop-blur-md border-b dark:border-slate-800 sticky top-0 z-10 shrink-0">
                 <div className="flex items-center space-x-2">
                     <img src="/logo-main.png" alt="Logo" className="h-8 w-8 object-contain rounded" />
                     <h1 className="font-bold text-lg text-blue-900 dark:text-blue-400">NEI Smart Hostel</h1>
@@ -87,7 +89,7 @@ export default function DashboardLayout({
 
             {/* Sidebar / Mobile Menu */}
             <aside className={`
-        fixed inset-0 z-20 bg-white dark:bg-black md:bg-white md:dark:bg-black border-r dark:border-slate-800 md:static md:w-64 md:border-r 
+        fixed inset-0 z-20 bg-white/80 dark:bg-black/80 md:bg-white/40 md:dark:bg-black/40 backdrop-blur-xl border-r dark:border-slate-800 md:static md:w-64 md:border-r 
         flex-col transition-all transform md:translate-x-0
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
@@ -95,8 +97,8 @@ export default function DashboardLayout({
                     <div className="flex items-center space-x-2">
                         <img src="/logo-main.png" alt="Logo" className="h-10 w-10 object-contain rounded-md" />
                         <div>
-                            <p className="text-sm font-medium text-slate-900 dark:text-white">{user.name}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{user.role}</p>
+                            <p className="text-sm font-black text-slate-900 dark:text-white font-cinzel tracking-tight">{user.name}</p>
+                            <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{user.role}</p>
                         </div>
                     </div>
                     <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
@@ -104,10 +106,10 @@ export default function DashboardLayout({
                     </Button>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-2">
+                <nav className="flex-1 p-4 space-y-2 relative z-10">
                     {user.role === 'student' && (
                         <>
-                            <Link href="/student" className="flex items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/student" className="flex items-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                                 Dashboard
                             </Link>
                             {/* Add more links if needed */}
@@ -115,37 +117,37 @@ export default function DashboardLayout({
                     )}
                     {user.role === 'admin' && (
                         <>
-                            <Link href="/admin" className="flex items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/admin" className="flex items-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                                 Dashboard
                             </Link>
                         </>
                     )}
                     {user.role === 'authority' && (
                         <>
-                            <Link href="/authority" className="flex items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/authority" className="flex items-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                                 Approvals
                             </Link>
                         </>
                     )}
                     {user.role === 'devops' && (
                         <>
-                            <Link href="/devops" className="flex items-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/devops" className="flex items-center p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                                 Password Reset Requests
                             </Link>
                         </>
                     )}
                 </nav>
 
-                <div className="p-4 border-t dark:border-slate-800 space-y-2">
+                <div className="p-4 border-t dark:border-slate-800 space-y-2 relative z-10">
                     <div className="flex items-center justify-between mb-2 pb-2 border-b dark:border-slate-800">
-                        <span className="text-sm text-slate-600 dark:text-slate-400">Theme</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Theme</span>
                         <ThemeToggle />
                     </div>
-                    <Button variant="outline" className="w-full justify-start text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950" onClick={() => setShowHomeConfirm(true)}>
+                    <Button variant="outline" className="w-full justify-start text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-bold" onClick={() => setShowHomeConfirm(true)}>
                         <Home className="mr-2 h-4 w-4" />
                         Go to Home
                     </Button>
-                    <Button variant="outline" className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950" onClick={handleLogout}>
+                    <Button variant="outline" className="w-full justify-start text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold" onClick={handleLogout}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Sign Out
                     </Button>
@@ -153,7 +155,7 @@ export default function DashboardLayout({
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto relative z-10">
                 <Suspense fallback={<div className="flex h-full items-center justify-center p-4 text-slate-500">Loading Dashboard...</div>}>
                     {children}
                 </Suspense>

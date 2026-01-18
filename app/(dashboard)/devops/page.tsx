@@ -285,12 +285,8 @@ export default function DevOpsDashboard() {
         <div className="p-6 max-w-7xl mx-auto">
             <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">DevOps Dashboard</h1>
-                    <p className="text-slate-600 dark:text-slate-400 mt-1">
-                        {activeTab === 'accounts' ? 'Manage password reset requests and users' :
-                            activeTab === 'feedback' ? 'Review user feedback and suggestions' :
-                                'Review profile modification requests'}
-                    </p>
+                    <h1 className="text-2xl md:text-5xl font-black text-slate-900 dark:text-white font-cinzel tracking-tight">DevOps Dashboard</h1>
+                    <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-[0.2em] mt-2 opacity-70">System Architecture & Database Master</p>
                 </div>
                 <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
                     <button

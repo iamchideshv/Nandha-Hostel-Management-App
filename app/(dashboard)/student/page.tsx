@@ -938,16 +938,16 @@ export default function StudentDashboard() {
                             <Menu className="w-5 h-5" />
                         </Button>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                            <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white flex items-center gap-3 font-cinzel tracking-tight">
                                 {user?.profileImage ? (
-                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
+                                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-blue-500 shadow-lg shrink-0">
                                         <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
                                     </div>
                                 ) : null}
                                 <span>Welcome, {user?.name}</span>
                             </h1>
                             <div className="flex flex-col items-start gap-1">
-                                <p className="text-slate-500 text-sm">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
+                                <p className="text-slate-500 text-sm font-bold uppercase tracking-widest opacity-80">Student Dashboard • {user?.hostelName} • Room {user?.roomNumber}</p>
                                 <div className="flex items-center gap-3 mt-1">
                                     <button
                                         onClick={() => {
