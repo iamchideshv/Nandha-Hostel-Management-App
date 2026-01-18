@@ -245,15 +245,32 @@ export default function AdminDashboard() {
     };
 
     const getCollegePendingCount = (collegeId: string, type: 'leave' | 'outing' | 'sick' | 'complaints') => {
+        const college = COLLEGES.find(c => c.id === collegeId);
+        if (!college) return 0;
+
         switch (type) {
             case 'leave':
-                return outpasses.filter(o => o.status === 'pending' && o.type === 'leave' && o.collegeName === collegeId && isNew(o.createdAt, 'register_leave')).length;
+                return outpasses.filter(o =>
+                    o.status === 'pending' &&
+                    o.type === 'leave' &&
+                    (o.collegeName === college.id || o.collegeName === college.name)
+                ).length;
             case 'outing':
-                return outpasses.filter(o => o.status === 'pending' && o.type === 'outing' && o.collegeName === collegeId && isNew(o.createdAt, 'register_outing')).length;
+                return outpasses.filter(o =>
+                    o.status === 'pending' &&
+                    o.type === 'outing' &&
+                    (o.collegeName === college.id || o.collegeName === college.name)
+                ).length;
             case 'sick':
-                return sickRegisters.filter(s => s.status === 'pending' && s.collegeName === collegeId && isNew(s.createdAt, 'register_sick')).length;
+                return sickRegisters.filter(s =>
+                    s.status === 'pending' &&
+                    (s.collegeName === college.id || s.collegeName === college.name)
+                ).length;
             case 'complaints':
-                return complaints.filter(c => c.status === 'pending' && c.collegeName === collegeId && isNew(c.createdAt, 'register_complaints')).length;
+                return complaints.filter(c =>
+                    c.status === 'pending' &&
+                    (c.collegeName === college.id || c.collegeName === college.name)
+                ).length;
             default:
                 return 0;
         }
