@@ -15,6 +15,21 @@ import { formatDate, formatTime } from '@/lib/formatters';
 import { useNotifications } from '@/hooks/use-notifications';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const COLLEGES = [
+    { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
+    { id: 'NPC', name: 'Nandha Polytechnic College', color: 'orange', icon: '⚙️' },
+    { id: 'NCT', name: 'Nandha College of Technology', color: 'green', icon: '💻' },
+    { id: 'BAMS', name: 'Nandha Ayurveda College', color: 'emerald', icon: '🌿' },
+    { id: 'NMC', name: 'Nandha Medical College', color: 'red', icon: '🏥' },
+    { id: 'NDC', name: 'Nandha Dental College', color: 'purple', icon: '🦷' },
+    { id: 'NCP', name: 'Nandha College of Pharmacy', color: 'pink', icon: '💊' },
+    { id: 'NASC', name: 'Nandha Arts & Science College', color: 'sky', icon: '🎨' },
+    { id: 'NCPT', name: 'Nandha College of Physiotherapy', color: 'cyan', icon: '🏃' },
+    { id: 'NCN', name: 'Nandha College of Nursing', color: 'rose', icon: '👩‍⚕️' },
+    { id: 'NCAHS', name: 'Nandha College of Allied Health Sciences', color: 'teal', icon: '🧪' },
+    { id: 'NNYMC', name: 'Nandha Naturopathy and Yoga Medical College', color: 'lime', icon: '🧘' }
+];
+
 export default function AdminDashboard() {
     const { user, logout } = useAuth();
     const router = useRouter();
@@ -63,6 +78,8 @@ export default function AdminDashboard() {
     const [registerSubTab, setRegisterSubTab] = useState<'main' | 'leave' | 'outing' | 'sick' | 'complaints'>('main');
     const [leaveCollegeFilter, setLeaveCollegeFilter] = useState<string | null>(null);
     const [outingCollegeFilter, setOutingCollegeFilter] = useState<string | null>(null);
+    const [sickCollegeFilter, setSickCollegeFilter] = useState<string | null>(null);
+    const [complaintCollegeFilter, setComplaintCollegeFilter] = useState<string | null>(null);
 
     // Selection State
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -225,6 +242,21 @@ export default function AdminDashboard() {
         outing: outpasses.filter(o => o.status === 'pending' && o.type === 'outing' && isNew(o.createdAt, 'register_outing')).length,
         sick: sickRegisters.filter(s => s.status === 'pending' && isNew(s.createdAt, 'register_sick')).length,
         complaints: complaints.filter(c => c.status === 'pending' && isNew(c.createdAt, 'register_complaints')).length
+    };
+
+    const getCollegePendingCount = (collegeId: string, type: 'leave' | 'outing' | 'sick' | 'complaints') => {
+        switch (type) {
+            case 'leave':
+                return outpasses.filter(o => o.status === 'pending' && o.type === 'leave' && o.collegeName === collegeId && isNew(o.createdAt, 'register_leave')).length;
+            case 'outing':
+                return outpasses.filter(o => o.status === 'pending' && o.type === 'outing' && o.collegeName === collegeId && isNew(o.createdAt, 'register_outing')).length;
+            case 'sick':
+                return sickRegisters.filter(s => s.status === 'pending' && s.collegeName === collegeId && isNew(s.createdAt, 'register_sick')).length;
+            case 'complaints':
+                return complaints.filter(c => c.status === 'pending' && c.collegeName === collegeId && isNew(c.createdAt, 'register_complaints')).length;
+            default:
+                return 0;
+        }
     };
 
     // Messages State
@@ -2183,20 +2215,7 @@ export default function AdminDashboard() {
                                                                 <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view consolidated leave records</p>
                                                             </div>
                                                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                                                {[
-                                                                    { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
-                                                                    { id: 'NPC', name: 'Nandha Polytechnic College', color: 'orange', icon: '⚙️' },
-                                                                    { id: 'NCT', name: 'Nandha College of Technology', color: 'green', icon: '💻' },
-                                                                    { id: 'BAMS', name: 'Nandha Ayurveda College', color: 'emerald', icon: '🌿' },
-                                                                    { id: 'NMC', name: 'Nandha Medical College', color: 'red', icon: '🏥' },
-                                                                    { id: 'NDC', name: 'Nandha Dental College', color: 'purple', icon: '🦷' },
-                                                                    { id: 'NCP', name: 'Nandha College of Pharmacy', color: 'pink', icon: '💊' },
-                                                                    { id: 'NASC', name: 'Nandha Arts & Science College', color: 'sky', icon: '🎨' },
-                                                                    { id: 'NCPT', name: 'Nandha College of Physiotherapy', color: 'cyan', icon: '🏃' },
-                                                                    { id: 'NCN', name: 'Nandha College of Nursing', color: 'rose', icon: '👩‍⚕️' },
-                                                                    { id: 'NCAHS', name: 'Nandha College of Allied Health Sciences', color: 'teal', icon: '🧪' },
-                                                                    { id: 'NNYMC', name: 'Nandha Naturopathy and Yoga Medical College', color: 'lime', icon: '🧘' }
-                                                                ].map((col) => (
+                                                                {COLLEGES.map((col) => (
                                                                     <button
                                                                         key={col.id}
                                                                         onClick={() => setLeaveCollegeFilter(col.id)}
@@ -2214,6 +2233,7 @@ export default function AdminDashboard() {
                                                                                                                     col.color === 'lime' ? 'border-lime-100 hover:border-lime-500 bg-lime-50/50 hover:bg-lime-50' :
                                                                                                                         'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
                                                                     >
+                                                                        <NotificationBadge count={getCollegePendingCount(col.id, 'leave')} />
                                                                         <div className={`text-4xl mb-1 group-hover:scale-110 transition-transform`}>{col.icon}</div>
                                                                         <div className="space-y-1">
                                                                             <span className={`text-lg font-black tracking-tighter
@@ -2465,20 +2485,7 @@ export default function AdminDashboard() {
                                                                 <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view active outings</p>
                                                             </div>
                                                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                                                {[
-                                                                    { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
-                                                                    { id: 'NPC', name: 'Nandha Polytechnic College', color: 'orange', icon: '⚙️' },
-                                                                    { id: 'NCT', name: 'Nandha College of Technology', color: 'green', icon: '💻' },
-                                                                    { id: 'BAMS', name: 'Nandha Ayurveda College', color: 'emerald', icon: '🌿' },
-                                                                    { id: 'NMC', name: 'Nandha Medical College', color: 'red', icon: '🏥' },
-                                                                    { id: 'NDC', name: 'Nandha Dental College', color: 'purple', icon: '🦷' },
-                                                                    { id: 'NCP', name: 'Nandha College of Pharmacy', color: 'pink', icon: '💊' },
-                                                                    { id: 'NASC', name: 'Nandha Arts & Science College', color: 'sky', icon: '🎨' },
-                                                                    { id: 'NCPT', name: 'Nandha College of Physiotherapy', color: 'cyan', icon: '🏃' },
-                                                                    { id: 'NCN', name: 'Nandha College of Nursing', color: 'rose', icon: '👩‍⚕️' },
-                                                                    { id: 'NCAHS', name: 'Nandha College of Allied Health Sciences', color: 'teal', icon: '🧪' },
-                                                                    { id: 'NNYMC', name: 'Nandha Naturopathy and Yoga Medical College', color: 'lime', icon: '🧘' }
-                                                                ].map((col) => (
+                                                                {COLLEGES.map((col) => (
                                                                     <button
                                                                         key={col.id}
                                                                         onClick={() => setOutingCollegeFilter(col.id)}
@@ -2496,6 +2503,7 @@ export default function AdminDashboard() {
                                                                                                                     col.color === 'lime' ? 'border-lime-100 hover:border-lime-500 bg-lime-50/50 hover:bg-lime-50' :
                                                                                                                         'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
                                                                     >
+                                                                        <NotificationBadge count={getCollegePendingCount(col.id, 'outing')} />
                                                                         <div className={`text-4xl mb-1 group-hover:scale-110 transition-transform`}>{col.icon}</div>
                                                                         <div className="space-y-1">
                                                                             <span className={`text-lg font-black tracking-tighter
@@ -2726,273 +2734,418 @@ export default function AdminDashboard() {
                                             )}
 
                                             {registerSubTab === 'sick' && (
-                                                <div className="space-y-4">
-                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold shadow-lg shrink-0">
-                                                                <Thermometer className="w-6 h-6" />
+                                                <div className="space-y-6">
+                                                    {!sickCollegeFilter ? (
+                                                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                            <div className="text-center space-y-2">
+                                                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Medical Emergency Support</h3>
+                                                                <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view medical reports</p>
                                                             </div>
-                                                            <div>
-                                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Module</p>
-                                                                <p className="text-base font-bold text-slate-900 dark:text-white leading-tight">Medical Emergency Log</p>
+                                                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                                                {COLLEGES.map((col) => (
+                                                                    <button
+                                                                        key={col.id}
+                                                                        onClick={() => setSickCollegeFilter(col.id)}
+                                                                        className={`group relative p-6 rounded-2xl border-2 transition-all hover:shadow-xl active:scale-95 flex flex-col items-center text-center gap-3
+                                                                    ${col.color === 'blue' ? 'border-blue-100 hover:border-blue-500 bg-blue-50/50 hover:bg-blue-50' :
+                                                                                col.color === 'orange' ? 'border-orange-100 hover:border-orange-500 bg-orange-50/50 hover:bg-orange-50' :
+                                                                                    col.color === 'green' ? 'border-green-100 hover:border-green-500 bg-green-50/50 hover:bg-green-50' :
+                                                                                        col.color === 'emerald' ? 'border-emerald-100 hover:border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50' :
+                                                                                            col.color === 'red' ? 'border-red-100 hover:border-red-500 bg-red-50/50 hover:bg-red-50' :
+                                                                                                col.color === 'pink' ? 'border-pink-100 hover:border-pink-500 bg-pink-50/50 hover:bg-pink-50' :
+                                                                                                    col.color === 'sky' ? 'border-sky-100 hover:border-sky-500 bg-sky-50/50 hover:bg-sky-50' :
+                                                                                                        col.color === 'cyan' ? 'border-cyan-100 hover:border-cyan-500 bg-cyan-50/50 hover:bg-cyan-50' :
+                                                                                                            col.color === 'rose' ? 'border-rose-100 hover:border-rose-500 bg-rose-50/50 hover:bg-rose-50' :
+                                                                                                                col.color === 'teal' ? 'border-teal-100 hover:border-teal-500 bg-teal-50/50 hover:bg-teal-50' :
+                                                                                                                    col.color === 'lime' ? 'border-lime-100 hover:border-lime-500 bg-lime-50/50 hover:bg-lime-50' :
+                                                                                                                        'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
+                                                                    >
+                                                                        <NotificationBadge count={getCollegePendingCount(col.id, 'sick')} />
+                                                                        <div className={`text-4xl mb-1 group-hover:scale-110 transition-transform`}>{col.icon}</div>
+                                                                        <div className="space-y-1">
+                                                                            <span className={`text-lg font-black tracking-tighter
+                                                                        ${col.color === 'blue' ? 'text-blue-700' :
+                                                                                    col.color === 'orange' ? 'text-orange-700' :
+                                                                                        col.color === 'green' ? 'text-green-700' :
+                                                                                            col.color === 'emerald' ? 'text-emerald-700' :
+                                                                                                col.color === 'red' ? 'text-red-700' :
+                                                                                                    col.color === 'pink' ? 'text-pink-700' :
+                                                                                                        col.color === 'sky' ? 'text-sky-700' :
+                                                                                                            col.color === 'cyan' ? 'text-cyan-700' :
+                                                                                                                col.color === 'rose' ? 'text-rose-700' :
+                                                                                                                    col.color === 'teal' ? 'text-teal-700' :
+                                                                                                                        col.color === 'lime' ? 'text-lime-700' :
+                                                                                                                            'text-purple-700'}`}>{col.id}</span>
+                                                                            <p className="text-[10px] leading-tight font-medium text-slate-500 dark:text-slate-400 line-clamp-1">{col.name}</p>
+                                                                        </div>
+                                                                    </button>
+                                                                ))}
                                                             </div>
-                                                        </div>
-                                                        <div className="flex flex-wrap items-center gap-3">
-                                                            <div className="flex items-center gap-2 pr-2 border-r dark:border-slate-800">
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    className="h-8 w-8 p-0 rounded-full"
-                                                                    onClick={() => {
-                                                                        toast.promise(fetchData(), {
-                                                                            loading: 'Refreshing...',
-                                                                            success: 'Refreshed',
-                                                                            error: 'Failed to refresh'
-                                                                        });
-                                                                    }}
-                                                                >
-                                                                    <RefreshCw className="w-4 h-4" />
-                                                                </Button>
-                                                            </div>
-                                                            <Button
-                                                                onClick={() => {
-                                                                    const GIRLS_SICK_SHEET = 'https://docs.google.com/spreadsheets/d/1LIVmp3dUkHUy-gMvuFatrRMgvPX4qBXj2EProRMGMZE/edit?usp=sharing';
-                                                                    const BOYS_SICK_SHEET = 'https://docs.google.com/spreadsheets/d/1juK0cw8OIMyFECYwOexkvkCBdn1NBQTrY-4YDWgS-nk/edit?usp=sharing';
-
-                                                                    const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
-                                                                    const isGirlsHostel = normalizedHostel.includes('akshaya');
-
-                                                                    window.open(isGirlsHostel ? GIRLS_SICK_SHEET : BOYS_SICK_SHEET, '_blank');
-                                                                }}
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
-                                                            >
-                                                                <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-
-                                                    {sickRegisters.length === 0 ? (
-                                                        <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
-                                                            No medical emergency entries found.
                                                         </div>
                                                     ) : (
-                                                        <div className="space-y-3">
-                                                            {[...sickRegisters].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(entry => (
-                                                                <div
-                                                                    key={entry.id}
-                                                                    className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
-                                                                ${entry.status === 'pending'
-                                                                            ? 'border-red-200 dark:border-red-900/30 bg-red-50/20 dark:bg-red-900/5 shadow-sm'
-                                                                            : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-200 shadow-sm'}`}
-                                                                >
-                                                                    <div className="flex items-center gap-4 flex-1">
-                                                                        {getStudentAvatar(entry.studentId)}
-                                                                        <div className="min-w-0">
-                                                                            <div className="flex items-center gap-2 mb-1">
-                                                                                <p className="font-bold text-slate-900 dark:text-white truncate">{entry.studentName}</p>
-                                                                                <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase shrink-0
-                                                                            ${entry.status === 'pushed' ? 'bg-emerald-100 text-emerald-700' :
-                                                                                        entry.status === 'cared' ? 'bg-blue-100 text-blue-700' :
-                                                                                            'bg-red-100 text-red-700 animate-pulse'}`}>
-                                                                                    {entry.status}
-                                                                                </span>
-                                                                            </div>
-                                                                            <p className="text-xs text-slate-500 font-medium truncate">
-                                                                                {entry.collegeName} • Room {entry.roomNumber}
-                                                                            </p>
-                                                                            <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 italic line-clamp-1">
-                                                                                "{entry.reason}"
-                                                                            </p>
-                                                                        </div>
+                                                        <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
+                                                                        ${sickCollegeFilter === 'NEC' ? 'bg-blue-600' :
+                                                                            sickCollegeFilter === 'NPC' ? 'bg-orange-600' :
+                                                                                sickCollegeFilter === 'NCT' ? 'bg-green-600' :
+                                                                                    sickCollegeFilter === 'BAMS' ? 'bg-emerald-600' :
+                                                                                        sickCollegeFilter === 'NMC' ? 'bg-red-600' :
+                                                                                            sickCollegeFilter === 'NCP' ? 'bg-pink-600' :
+                                                                                                sickCollegeFilter === 'NASC' ? 'bg-sky-600' :
+                                                                                                    sickCollegeFilter === 'NCPT' ? 'bg-cyan-600' :
+                                                                                                        sickCollegeFilter === 'NCN' ? 'bg-rose-600' :
+                                                                                                            sickCollegeFilter === 'NCAHS' ? 'bg-teal-600' :
+                                                                                                                sickCollegeFilter === 'NNYMC' ? 'bg-lime-600' :
+                                                                                                                    'bg-purple-600'}`}>
+                                                                        <Thermometer className="w-6 h-6" />
                                                                     </div>
-
-                                                                    <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
-                                                                        <div className="flex flex-col items-start sm:items-end">
-                                                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Reported At</p>
-                                                                            <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{formatDate(entry.date)}</p>
-                                                                        </div>
-
-                                                                        <div className="flex items-center gap-2">
-                                                                            {entry.status === 'pending' && (
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    className="bg-red-600 hover:bg-red-700 text-white h-8 text-[10px] font-bold uppercase"
-                                                                                    onClick={() => handleMarkAsCared(entry.id)}
-                                                                                >
-                                                                                    Mark Cared
-                                                                                </Button>
-                                                                            )}
-
-                                                                            {entry.status === 'cared' && (
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    variant="outline"
-                                                                                    className="h-8 text-[10px] font-bold uppercase border-emerald-200 text-emerald-600 hover:bg-emerald-50"
-                                                                                    onClick={() => handlePushSickRegisterToSheet(entry)}
-                                                                                >
-                                                                                    <Upload className="w-3 h-3 mr-1.5" />
-                                                                                    Push
-                                                                                </Button>
-                                                                            )}
-
-                                                                            {entry.status === 'pushed' && (
-                                                                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase whitespace-nowrap">
-                                                                                    <Check className="w-3.5 h-3.5" />
-                                                                                    Synced
-                                                                                </div>
-                                                                            )}
-
-                                                                            <Button
-                                                                                size="sm"
-                                                                                variant="ghost"
-                                                                                className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
-                                                                                onClick={() => {
-                                                                                    setReplyingTo(entry.studentId);
-                                                                                    setReplyMessage(`Hi ${entry.studentName}, regarding your medical emergency report: `);
-                                                                                }}
-                                                                            >
-                                                                                <MessageSquare className="w-4 h-4" />
-                                                                            </Button>
-                                                                        </div>
+                                                                    <div>
+                                                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Institution</p>
+                                                                        <p className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+                                                                            {COLLEGES.find(c => c.id === sickCollegeFilter)?.name}
+                                                                        </p>
                                                                     </div>
                                                                 </div>
-                                                            ))}
+                                                                <div className="flex flex-wrap items-center gap-3">
+                                                                    <div className="flex items-center gap-2 pr-2 border-r dark:border-slate-800">
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            className="h-8 w-8 p-0 rounded-full"
+                                                                            onClick={() => {
+                                                                                toast.promise(fetchData(), {
+                                                                                    loading: 'Refreshing...',
+                                                                                    success: 'Refreshed',
+                                                                                    error: 'Failed to refresh'
+                                                                                });
+                                                                            }}
+                                                                        >
+                                                                            <RefreshCw className="w-4 h-4" />
+                                                                        </Button>
+                                                                    </div>
+                                                                    <Button
+                                                                        onClick={() => {
+                                                                            const GIRLS_SICK_SHEET = 'https://docs.google.com/spreadsheets/d/1LIVmp3dUkHUy-gMvuFatrRMgvPX4qBXj2EProRMGMZE/edit?usp=sharing';
+                                                                            const BOYS_SICK_SHEET = 'https://docs.google.com/spreadsheets/d/1juK0cw8OIMyFECYwOexkvkCBdn1NBQTrY-4YDWgS-nk/edit?usp=sharing';
+
+                                                                            const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
+                                                                            const isGirlsHostel = normalizedHostel.includes('akshaya');
+
+                                                                            window.open(isGirlsHostel ? GIRLS_SICK_SHEET : BOYS_SICK_SHEET, '_blank');
+                                                                        }}
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                                                                    >
+                                                                        <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="sm" onClick={() => setSickCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+                                                                </div>
+                                                            </div>
+
+                                                            {sickRegisters.filter(s => s.collegeName === sickCollegeFilter).length === 0 ? (
+                                                                <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
+                                                                    No medical emergency entries found for {sickCollegeFilter}.
+                                                                </div>
+                                                            ) : (
+                                                                <div className="space-y-3">
+                                                                    {[...sickRegisters].filter(s => s.collegeName === sickCollegeFilter).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(entry => (
+                                                                        <div
+                                                                            key={entry.id}
+                                                                            className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
+                                                                        ${entry.status === 'pending'
+                                                                                    ? 'border-red-200 dark:border-red-900/30 bg-red-50/20 dark:bg-red-900/5 shadow-sm'
+                                                                                    : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-200 shadow-sm'}`}
+                                                                        >
+                                                                            <div className="flex items-center gap-4 flex-1">
+                                                                                {getStudentAvatar(entry.studentId)}
+                                                                                <div className="min-w-0">
+                                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                                        <p className="font-bold text-slate-900 dark:text-white truncate">{entry.studentName}</p>
+                                                                                        <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase shrink-0
+                                                                                    ${entry.status === 'pushed' ? 'bg-emerald-100 text-emerald-700' :
+                                                                                                entry.status === 'cared' ? 'bg-blue-100 text-blue-700' :
+                                                                                                    'bg-red-100 text-red-700 animate-pulse'}`}>
+                                                                                            {entry.status}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <p className="text-xs text-slate-500 font-medium truncate">
+                                                                                        Room {entry.roomNumber}
+                                                                                    </p>
+                                                                                    <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 italic line-clamp-1">
+                                                                                        "{entry.reason}"
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+                                                                                <div className="flex flex-col items-start sm:items-end">
+                                                                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Reported At</p>
+                                                                                    <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{formatDate(entry.date)}</p>
+                                                                                </div>
+
+                                                                                <div className="flex items-center gap-2">
+                                                                                    {entry.status === 'pending' && (
+                                                                                        <Button
+                                                                                            size="sm"
+                                                                                            className="bg-red-600 hover:bg-red-700 text-white h-8 text-[10px] font-bold uppercase"
+                                                                                            onClick={() => handleMarkAsCared(entry.id)}
+                                                                                        >
+                                                                                            Mark Cared
+                                                                                        </Button>
+                                                                                    )}
+
+                                                                                    {entry.status === 'cared' && (
+                                                                                        <Button
+                                                                                            size="sm"
+                                                                                            variant="outline"
+                                                                                            className="h-8 text-[10px] font-bold uppercase border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                                                                            onClick={() => handlePushSickRegisterToSheet(entry)}
+                                                                                        >
+                                                                                            <Upload className="w-3 h-3 mr-1.5" />
+                                                                                            Push
+                                                                                        </Button>
+                                                                                    )}
+
+                                                                                    {entry.status === 'pushed' && (
+                                                                                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase whitespace-nowrap">
+                                                                                            <Check className="w-3.5 h-3.5" />
+                                                                                            Synced
+                                                                                        </div>
+                                                                                    )}
+
+                                                                                    <Button
+                                                                                        size="sm"
+                                                                                        variant="ghost"
+                                                                                        className="h-8 w-8 p-0 rounded-full border-blue-200 text-blue-600 hover:bg-blue-50"
+                                                                                        onClick={() => {
+                                                                                            setReplyingTo(entry.studentId);
+                                                                                            setReplyMessage(`Hi ${entry.studentName}, regarding your medical emergency report: `);
+                                                                                        }}
+                                                                                    >
+                                                                                        <MessageSquare className="w-4 h-4" />
+                                                                                    </Button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
                                             )}
 
                                             {registerSubTab === 'complaints' && (
-                                                <div className="space-y-4">
-                                                    <div className="flex flex-wrap items-center justify-end gap-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => fetchData()}
-                                                            className="gap-2 h-8"
-                                                        >
-                                                            <RotateCw className="w-3.5 h-3.5" />
-                                                            Refresh
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => {
-                                                                const isBoys = user?.hostelName?.toLowerCase().includes('nri');
-                                                                const url = isBoys
-                                                                    ? 'https://docs.google.com/spreadsheets/d/1jNomFfmrPaYkzNnTj59Jz3qNBuk7Jc3rewqStczE6js/edit'
-                                                                    : 'https://docs.google.com/spreadsheets/d/1EH3gEaA7R7Zhq7rWSS3l4ZfSDLzR27DPIEujDyPGuLk/edit';
-                                                                window.open(url, '_blank');
-                                                            }}
-                                                            className="gap-2 h-8"
-                                                        >
-                                                            <ExternalLink className="w-3.5 h-3.5" />
-                                                            View Report
-                                                        </Button>
-                                                        <select
-                                                            className="border rounded-md px-3 py-1 text-sm bg-white dark:bg-black text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 h-8"
-                                                            value={filter}
-                                                            onChange={(e) => setFilter(e.target.value as any)}
-                                                        >
-                                                            <option value="all">All Types</option>
-                                                            <option value="food">Food</option>
-                                                            <option value="misc">Miscellaneous</option>
-                                                        </select>
-                                                        <Button
-                                                            variant="destructive"
-                                                            size="sm"
-                                                            className="h-8"
-                                                            onClick={async () => {
-                                                                if (confirm('Are you sure you want to clear all complaints history for your hostel? This cannot be undone.')) {
-                                                                    await fetch(`/api/complaints?hostelName=${user?.hostelName || ''}`, { method: 'DELETE' });
-                                                                    toast.success('Complaints history cleared');
-                                                                    fetchData();
-                                                                }
-                                                            }}
-                                                        >
-                                                            Clear History
-                                                        </Button>
-                                                    </div>
-                                                    <div className="grid gap-4">
-                                                        {filteredComplaints.length === 0 ? <p className="text-center text-slate-500">No complaints found.</p> :
-                                                            filteredComplaints.map(c => (
-                                                                <Card key={c.id}>
-                                                                    <CardHeader className="pb-2">
-                                                                        <div className="flex justify-between items-start">
-                                                                            <div>
-                                                                                <CardTitle className="text-lg">{c.title}</CardTitle>
-                                                                                <div className="flex items-start space-x-2 mt-1">
-                                                                                    <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
-                                                                                    <div className="flex flex-col gap-1">
-                                                                                        <CardDescription className="flex items-center gap-2 mt-1">
-                                                                                            {getStudentAvatar(c.studentId)}
-                                                                                            <span className="font-bold text-slate-900 dark:text-white">{c.studentName}</span>
-                                                                                        </CardDescription>
-                                                                                        <div className="text-[10px] text-slate-500 font-medium ml-8">
-                                                                                            {c.collegeName} • Room {c.roomNumber} • {new Date(c.createdAt).toLocaleDateString()}
+                                                <div className="space-y-6">
+                                                    {!complaintCollegeFilter ? (
+                                                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                            <div className="text-center space-y-2">
+                                                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Institution Support (Complaints)</h3>
+                                                                <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view student complaints</p>
+                                                            </div>
+                                                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                                                {COLLEGES.map((col) => (
+                                                                    <button
+                                                                        key={col.id}
+                                                                        onClick={() => setComplaintCollegeFilter(col.id)}
+                                                                        className={`group relative p-6 rounded-2xl border-2 transition-all hover:shadow-xl active:scale-95 flex flex-col items-center text-center gap-3
+                                                                    ${col.color === 'blue' ? 'border-blue-100 hover:border-blue-500 bg-blue-50/50 hover:bg-blue-50' :
+                                                                                col.color === 'orange' ? 'border-orange-100 hover:border-orange-500 bg-orange-50/50 hover:bg-orange-50' :
+                                                                                    col.color === 'green' ? 'border-green-100 hover:border-green-500 bg-green-50/50 hover:bg-green-50' :
+                                                                                        col.color === 'emerald' ? 'border-emerald-100 hover:border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50' :
+                                                                                            col.color === 'red' ? 'border-red-100 hover:border-red-500 bg-red-50/50 hover:bg-red-50' :
+                                                                                                col.color === 'pink' ? 'border-pink-100 hover:border-pink-500 bg-pink-50/50 hover:bg-pink-50' :
+                                                                                                    col.color === 'sky' ? 'border-sky-100 hover:border-sky-500 bg-sky-50/50 hover:bg-sky-50' :
+                                                                                                        col.color === 'cyan' ? 'border-cyan-100 hover:border-cyan-500 bg-cyan-50/50 hover:bg-cyan-50' :
+                                                                                                            col.color === 'rose' ? 'border-rose-100 hover:border-rose-500 bg-rose-50/50 hover:bg-rose-50' :
+                                                                                                                col.color === 'teal' ? 'border-teal-100 hover:border-teal-500 bg-teal-50/50 hover:bg-teal-50' :
+                                                                                                                    col.color === 'lime' ? 'border-lime-100 hover:border-lime-500 bg-lime-50/50 hover:bg-lime-50' :
+                                                                                                                        'border-purple-100 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50'}`}
+                                                                    >
+                                                                        <NotificationBadge count={getCollegePendingCount(col.id, 'complaints')} />
+                                                                        <div className={`text-4xl mb-1 group-hover:scale-110 transition-transform`}>{col.icon}</div>
+                                                                        <div className="space-y-1">
+                                                                            <span className={`text-lg font-black tracking-tighter
+                                                                        ${col.color === 'blue' ? 'text-blue-700' :
+                                                                                    col.color === 'orange' ? 'text-orange-700' :
+                                                                                        col.color === 'green' ? 'text-green-700' :
+                                                                                            col.color === 'emerald' ? 'text-emerald-700' :
+                                                                                                col.color === 'red' ? 'text-red-700' :
+                                                                                                    col.color === 'pink' ? 'text-pink-700' :
+                                                                                                        col.color === 'sky' ? 'text-sky-700' :
+                                                                                                            col.color === 'cyan' ? 'text-cyan-700' :
+                                                                                                                col.color === 'rose' ? 'text-rose-700' :
+                                                                                                                    col.color === 'teal' ? 'text-teal-700' :
+                                                                                                                        col.color === 'lime' ? 'text-lime-700' :
+                                                                                                                            'text-purple-700'}`}>{col.id}</span>
+                                                                            <p className="text-[10px] leading-tight font-medium text-slate-500 dark:text-slate-400 line-clamp-1">{col.name}</p>
+                                                                        </div>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                                            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
+                                                                        ${complaintCollegeFilter === 'NEC' ? 'bg-blue-600' :
+                                                                            complaintCollegeFilter === 'NPC' ? 'bg-orange-600' :
+                                                                                complaintCollegeFilter === 'NCT' ? 'bg-green-600' :
+                                                                                    complaintCollegeFilter === 'BAMS' ? 'bg-emerald-600' :
+                                                                                        complaintCollegeFilter === 'NMC' ? 'bg-red-600' :
+                                                                                            complaintCollegeFilter === 'NCP' ? 'bg-pink-600' :
+                                                                                                complaintCollegeFilter === 'NASC' ? 'bg-sky-600' :
+                                                                                                    complaintCollegeFilter === 'NCPT' ? 'bg-cyan-600' :
+                                                                                                        complaintCollegeFilter === 'NCN' ? 'bg-rose-600' :
+                                                                                                            complaintCollegeFilter === 'NCAHS' ? 'bg-teal-600' :
+                                                                                                                complaintCollegeFilter === 'NNYMC' ? 'bg-lime-600' :
+                                                                                                                    'bg-purple-600'}`}>
+                                                                        <ClipboardList className="w-6 h-6" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Institution</p>
+                                                                        <p className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+                                                                            {COLLEGES.find(c => c.id === complaintCollegeFilter)?.name}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex flex-wrap items-center gap-2">
+                                                                    <div className="flex items-center gap-2 pr-2 border-r dark:border-slate-800">
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            onClick={() => fetchData()}
+                                                                            className="gap-2 h-8 text-[10px] font-bold uppercase"
+                                                                        >
+                                                                            <RotateCw className="w-3.5 h-3.5" />
+                                                                            Refresh
+                                                                        </Button>
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            onClick={() => {
+                                                                                const isBoys = user?.hostelName?.toLowerCase().includes('nri');
+                                                                                const url = isBoys
+                                                                                    ? 'https://docs.google.com/spreadsheets/d/1jNomFfmrPaYkzNnTj59Jz3qNBuk7Jc3rewqStczE6js/edit'
+                                                                                    : 'https://docs.google.com/spreadsheets/d/1EH3gEaA7R7Zhq7rWSS3l4ZfSDLzR27DPIEujDyPGuLk/edit';
+                                                                                window.open(url, '_blank');
+                                                                            }}
+                                                                            className="gap-2 h-8 text-[10px] font-bold uppercase"
+                                                                        >
+                                                                            <ExternalLink className="w-3.5 h-3.5" />
+                                                                            Report
+                                                                        </Button>
+                                                                    </div>
+                                                                    <select
+                                                                        className="border rounded-md px-3 py-1 text-[10px] font-bold uppercase bg-white dark:bg-black text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 h-8"
+                                                                        value={filter}
+                                                                        onChange={(e) => setFilter(e.target.value as any)}
+                                                                    >
+                                                                        <option value="all">All Types</option>
+                                                                        <option value="food">Food</option>
+                                                                        <option value="misc">Misc</option>
+                                                                    </select>
+                                                                    <Button
+                                                                        variant="destructive"
+                                                                        size="sm"
+                                                                        className="h-8 text-[10px] font-bold uppercase"
+                                                                        onClick={async () => {
+                                                                            if (confirm('Are you sure you want to clear all complaints history for your hostel? This cannot be undone.')) {
+                                                                                await fetch(`/api/complaints?hostelName=${user?.hostelName || ''}`, { method: 'DELETE' });
+                                                                                toast.success('Complaints history cleared');
+                                                                                fetchData();
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        Clear
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="sm" onClick={() => setComplaintCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+                                                                </div>
+                                                            </div>
+                                                            <div className="grid gap-4">
+                                                                {complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).length === 0 ? <p className="text-center text-slate-500 py-12 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">No complaints found for {complaintCollegeFilter}.</p> :
+                                                                    complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).map(c => (
+                                                                        <Card key={c.id}>
+                                                                            <CardHeader className="pb-2">
+                                                                                <div className="flex justify-between items-start">
+                                                                                    <div>
+                                                                                        <CardTitle className="text-lg">{c.title}</CardTitle>
+                                                                                        <div className="flex items-start space-x-2 mt-1">
+                                                                                            <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${c.type === 'food' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}`}>{c.type}</span>
+                                                                                            <div className="flex flex-col gap-1">
+                                                                                                <CardDescription className="flex items-center gap-2 mt-1">
+                                                                                                    {getStudentAvatar(c.studentId)}
+                                                                                                    <span className="font-bold text-slate-900 dark:text-white">{c.studentName}</span>
+                                                                                                </CardDescription>
+                                                                                                <div className="text-[10px] text-slate-500 font-medium ml-8">
+                                                                                                    Room {c.roomNumber} • {new Date(c.createdAt).toLocaleDateString()}
+                                                                                                </div>
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="flex flex-col items-end gap-2">
-                                                                                <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
-                                                                                    {c.status}
-                                                                                </div>
+                                                                                    <div className="flex flex-col items-end gap-2">
+                                                                                        <div className={`text-xs px-2 py-1 rounded-full capitalize font-medium ${c.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : c.status === 'in-progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
+                                                                                            {c.status}
+                                                                                        </div>
 
-                                                                                {/* Button Logic based on pushedProgress */}
-                                                                                {!c.pushedProgress && c.status === 'in-progress' ? (
-                                                                                    <Button
-                                                                                        size="default"
-                                                                                        className="h-9 px-4 text-xs font-bold uppercase bg-red-600 hover:bg-red-700 text-white shadow-md transition-all active:scale-95"
-                                                                                        onClick={() => handlePushComplaintToSheet(c)}
-                                                                                    >
-                                                                                        PUSH IN-PROGRESS
-                                                                                    </Button>
-                                                                                ) : c.pushedProgress === 'In-Process' && c.status !== 'resolved' ? (
-                                                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase shadow-sm">
-                                                                                        <BadgeCheck className="w-3.5 h-3.5" /> Pushed (In-Process)
+                                                                                        {/* Button Logic based on pushedProgress */}
+                                                                                        {!c.pushedProgress && c.status === 'in-progress' ? (
+                                                                                            <Button
+                                                                                                size="default"
+                                                                                                className="h-9 px-4 text-xs font-bold uppercase bg-red-600 hover:bg-red-700 text-white shadow-md transition-all active:scale-95"
+                                                                                                onClick={() => handlePushComplaintToSheet(c)}
+                                                                                            >
+                                                                                                PUSH IN-PROGRESS
+                                                                                            </Button>
+                                                                                        ) : c.pushedProgress === 'In-Process' && c.status !== 'resolved' ? (
+                                                                                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase shadow-sm">
+                                                                                                <BadgeCheck className="w-3.5 h-3.5" /> Pushed (In-Process)
+                                                                                            </div>
+                                                                                        ) : c.pushedProgress === 'In-Process' && c.status === 'resolved' ? (
+                                                                                            <Button
+                                                                                                size="default"
+                                                                                                className="h-9 px-4 text-xs font-bold uppercase bg-amber-500 hover:bg-amber-600 text-white shadow-md transition-all active:scale-95"
+                                                                                                onClick={() => handlePushComplaintToSheet(c)}
+                                                                                            >
+                                                                                                PUSH AS RESOLVED
+                                                                                            </Button>
+                                                                                        ) : c.pushedProgress === 'Resolved' ? (
+                                                                                            <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase shadow-sm opacity-80">
+                                                                                                <BadgeCheck className="w-4 h-4" /> PUSHED AS RESOLVED
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            c.status === 'resolved' && (
+                                                                                                <Button
+                                                                                                    size="default"
+                                                                                                    className="h-9 px-4 text-xs font-bold uppercase bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all active:scale-95"
+                                                                                                    onClick={() => handlePushComplaintToSheet(c)}
+                                                                                                >
+                                                                                                    PUSH AS RESOLVED
+                                                                                                </Button>
+                                                                                            )
+                                                                                        )}
                                                                                     </div>
-                                                                                ) : c.pushedProgress === 'In-Process' && c.status === 'resolved' ? (
-                                                                                    <Button
-                                                                                        size="default"
-                                                                                        className="h-9 px-4 text-xs font-bold uppercase bg-amber-500 hover:bg-amber-600 text-white shadow-md transition-all active:scale-95"
-                                                                                        onClick={() => handlePushComplaintToSheet(c)}
-                                                                                    >
-                                                                                        PUSH AS RESOLVED
-                                                                                    </Button>
-                                                                                ) : c.pushedProgress === 'Resolved' ? (
-                                                                                    <div className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase shadow-sm opacity-80">
-                                                                                        <BadgeCheck className="w-4 h-4" /> PUSHED AS RESOLVED
+                                                                                </div>
+                                                                            </CardHeader>
+                                                                            <CardContent>
+                                                                                <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">{c.description}</p>
+                                                                                {c.status !== 'resolved' && (
+                                                                                    <div className="flex space-x-2">
+                                                                                        {c.status === 'pending' && <Button size="sm" variant="outline" onClick={() => updateComplaintStatus(c.id, 'in-progress')}>Mark In Progress</Button>}
+                                                                                        <Button size="sm" onClick={() => updateComplaintStatus(c.id, 'resolved')}>Mark Resolved</Button>
                                                                                     </div>
-                                                                                ) : (
-                                                                                    c.status === 'resolved' && (
-                                                                                        <Button
-                                                                                            size="default"
-                                                                                            className="h-9 px-4 text-xs font-bold uppercase bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all active:scale-95"
-                                                                                            onClick={() => handlePushComplaintToSheet(c)}
-                                                                                        >
-                                                                                            PUSH AS RESOLVED
-                                                                                        </Button>
-                                                                                    )
                                                                                 )}
-                                                                            </div>
-                                                                        </div>
-                                                                    </CardHeader>
-                                                                    <CardContent>
-                                                                        <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">{c.description}</p>
-                                                                        {c.status !== 'resolved' && (
-                                                                            <div className="flex space-x-2">
-                                                                                {c.status === 'pending' && <Button size="sm" variant="outline" onClick={() => updateComplaintStatus(c.id, 'in-progress')}>Mark In Progress</Button>}
-                                                                                <Button size="sm" onClick={() => updateComplaintStatus(c.id, 'resolved')}>Mark Resolved</Button>
-                                                                            </div>
-                                                                        )}
-                                                                    </CardContent>
-                                                                </Card>
-                                                            ))
-                                                        }
-                                                    </div>
+                                                                            </CardContent>
+                                                                        </Card>
+                                                                    ))
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </CardContent>
