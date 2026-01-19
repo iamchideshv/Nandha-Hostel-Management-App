@@ -1413,27 +1413,20 @@ input:checked+.theme-slider:before {
   pointer-events: none;
   transform: translateZ(0);
   will-change: transform, background;
-  background: radial-gradient(125% 125% at 50% 10%, #fff 40%, #6366f1 100%) no-repeat center center;
+  background: url('/background.avif') no-repeat center center;
   background-size: cover;
 }
 
 @media (max-width: 768px) {
   .dynamic-bg {
-    background:
-      radial-gradient(ellipse 80% 60% at 5% 40%, rgba(175, 109, 255, 0.48), transparent 67%),
-      radial-gradient(ellipse 70% 60% at 45% 45%, rgba(255, 100, 180, 0.41), transparent 67%),
-      radial-gradient(ellipse 62% 52% at 83% 76%, rgba(255, 235, 170, 0.44), transparent 63%),
-      radial-gradient(ellipse 60% 48% at 75% 20%, rgba(120, 190, 255, 0.36), transparent 66%),
-      linear-gradient(45deg, #f7eaff 0%, #fde2ea 100%);
+    background: url('/mob-bac.webp') no-repeat center center;
     background-size: cover;
   }
 }
 
 .dark .dynamic-bg {
-  background-image:
-    radial-gradient(circle at 50% 100%, rgba(70, 85, 110, 0.5) 0%, transparent 60%),
-    radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.4) 0%, transparent 70%),
-    radial-gradient(circle at 50% 100%, rgba(181, 184, 208, 0.3) 0%, transparent 80%);
+  background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%) no-repeat center center;
+  background-size: cover;
   background-color: black;
 }
 
