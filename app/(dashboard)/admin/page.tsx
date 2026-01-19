@@ -850,7 +850,7 @@ export default function AdminDashboard() {
                             <span className="md:hidden">About</span>
                         </Button>
                     </div>
-                </motion.header>
+                </motion.div>
 
                 {/* Tabs */}
                 {!activeTab ? (
