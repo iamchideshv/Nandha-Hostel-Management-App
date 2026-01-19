@@ -3008,8 +3008,8 @@ export default function AdminDashboard() {
                                                                     </div>
                                                                 </div>
                                                                 <div className="grid gap-4">
-                                                                    {complaints.filter(c => c.collegeName === complaintCollegeFilter && (complaintFilter === 'all' || c.type === complaintFilter)).length === 0 ? <p className="text-center text-slate-500 py-12 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">No complaints found for {complaintCollegeFilter}.</p> :
-                                                                        complaints.filter(c => c.collegeName === complaintCollegeFilter && (complaintFilter === 'all' || c.type === complaintFilter)).map(c => (
+                                                                    {complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).length === 0 ? <p className="text-center text-slate-500 py-12 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">No complaints found for {complaintCollegeFilter}.</p> :
+                                                                        complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).map(c => (
                                                                             <Card key={c.id}>
                                                                                 <CardHeader className="pb-2">
                                                                                     <div className="flex justify-between items-start">
