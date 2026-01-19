@@ -213,7 +213,7 @@ export default function Home() {
             <span className="font-bold text-slate-900 dark:text-white text-sm">NEI Smart Hostel</span>
           </div>
           <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest leading-loose">
-            © 2024 NANDHA EDUCATIONAL INSTITUTIONS. ALL RIGHTS RESERVED.
+            Copyright © 2026 NANDHA EDUCATIONAL INSTITUTIONS. All Rights Reserved.
           </p>
         </div>
       </footer>
