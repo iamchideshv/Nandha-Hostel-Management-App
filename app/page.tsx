@@ -30,7 +30,7 @@ export default function Home() {
   }, [user, isLoading, router]);
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-white dark:bg-black overflow-x-hidden font-montserrat relative">
+    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-white dark:bg-black overflow-x-hidden font-montserrat relative selection:bg-blue-100 selection:text-blue-900 gpu-accelerated" style={{ transform: 'translateZ(0)' }}>
       <div className="dynamic-bg" />
 
       <header className="fixed top-0 left-0 right-0 z-50 p-3 md:p-5 backdrop-blur-xl bg-white/80 dark:bg-slate-950/80 border-b border-slate-200/50 dark:border-slate-800/50">

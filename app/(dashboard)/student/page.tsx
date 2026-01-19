@@ -1073,7 +1073,7 @@ export default function StudentDashboard() {
                         </motion.button>
                     </motion.div>
                 ) : (
-                    <div className="mb-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div className="mb-6 animate-in fade-in slide-in-from-right-4 duration-300 gpu-accelerated">
                         <Button
                             variant="ghost"
                             size="sm"
@@ -2179,7 +2179,7 @@ export default function StudentDashboard() {
                             )}
 
                             {registerSubTab !== 'main' && (
-                                <Card className="animate-in fade-in slide-in-from-right-4 duration-300">
+                                <Card className="animate-in fade-in slide-in-from-right-4 duration-300 gpu-accelerated">
                                     <CardHeader className="flex flex-row items-center gap-4 border-b dark:border-slate-800 pb-4 mb-4">
                                         <Button
                                             variant="ghost"
@@ -2271,7 +2271,7 @@ export default function StudentDashboard() {
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div className="animate-in fade-in zoom-in-95 duration-300">
+                                                    <div className="animate-in fade-in zoom-in-95 duration-300 gpu-accelerated">
                                                         <div className="flex items-center justify-between mb-6 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                                                             <div className="flex items-center gap-3">
                                                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow-lg
@@ -2450,7 +2450,7 @@ export default function StudentDashboard() {
                                         {registerSubTab === 'outing' && (
                                             <div className="space-y-6">
                                                 {!outingCollegeFilter ? (
-                                                    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+                                                    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300 gpu-accelerated">
                                                         <div className="text-center space-y-1">
                                                             <h3 className="text-xl font-bold text-slate-900 dark:text-white">Select Your College</h3>
                                                             <p className="text-sm text-slate-500 dark:text-slate-400">Choose your institution to view outing registers</p>
@@ -2515,7 +2515,7 @@ export default function StudentDashboard() {
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div className="animate-in fade-in zoom-in-95 duration-300">
+                                                    <div className="animate-in fade-in zoom-in-95 duration-300 gpu-accelerated">
                                                         <div className="flex items-center justify-between mb-6 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                                                             <div className="flex items-center gap-3">
                                                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow-lg

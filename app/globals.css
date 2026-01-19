@@ -23,11 +23,11 @@
 @variant dark (&:where(.dark, .dark *));
 
 body {
-  background: url('/background.avif') no-repeat center center fixed;
-  background-size: cover;
+  background-color: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
 }
 
 @media (max-width: 768px) {
@@ -38,8 +38,7 @@ body {
 }
 
 .dark body {
-  background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%) no-repeat center center fixed;
-  background-size: cover;
+  background-color: black;
 }
 
 /* Theme Toggle Styles */
@@ -1406,47 +1405,56 @@ input:checked+.theme-slider:before {
   animation: slide-up 0.4s ease-out;
 }
 
-/* Dynamic Portal Background */
+/* Dynamic Portal Background - Hardware Accelerated */
 .dynamic-bg {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
-  /* Light Mode - Desktop (Default) */
-  background: radial-gradient(125% 125% at 50% 10%, #fff 40%, #6366f1 100%) no-repeat center center fixed;
+  transform: translateZ(0);
+  will-change: transform, background;
+  background: radial-gradient(125% 125% at 50% 10%, #fff 40%, #6366f1 100%) no-repeat center center;
   background-size: cover;
 }
 
 @media (max-width: 768px) {
   .dynamic-bg {
-    /* Light Mode - Mobile */
     background:
       radial-gradient(ellipse 80% 60% at 5% 40%, rgba(175, 109, 255, 0.48), transparent 67%),
       radial-gradient(ellipse 70% 60% at 45% 45%, rgba(255, 100, 180, 0.41), transparent 67%),
       radial-gradient(ellipse 62% 52% at 83% 76%, rgba(255, 235, 170, 0.44), transparent 63%),
       radial-gradient(ellipse 60% 48% at 75% 20%, rgba(120, 190, 255, 0.36), transparent 66%),
-      linear-gradient(45deg, #f7eaff 0%, #fde2ea 100%) no-repeat center center fixed;
+      linear-gradient(45deg, #f7eaff 0%, #fde2ea 100%);
     background-size: cover;
   }
 }
 
 .dark .dynamic-bg {
-  /* Dark Mode - Desktop */
   background-image:
     radial-gradient(circle at 50% 100%, rgba(70, 85, 110, 0.5) 0%, transparent 60%),
     radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.4) 0%, transparent 70%),
     radial-gradient(circle at 50% 100%, rgba(181, 184, 208, 0.3) 0%, transparent 80%);
   background-color: black;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-size: cover;
 }
 
 @media (max-width: 768px) {
   .dark .dynamic-bg {
-    /* Dark Mode - Mobile */
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139, 92, 246, 0.25), transparent 70%), #000000 no-repeat center center fixed;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139, 92, 246, 0.25), transparent 70%), #000000;
     background-size: cover;
   }
+}
+
+/* Global Transition Smoothness */
+* {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+.smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

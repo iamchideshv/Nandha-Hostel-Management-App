@@ -801,11 +801,12 @@ export default function AdminDashboard() {
             )}
 
             <div className="space-y-6 max-w-6xl mx-auto">
-                <motion.header
+                <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="mb-6 flex justify-between items-start"
+                    className="mb-6 flex justify-between items-start gpu-accelerated"
+                    style={{ transform: "translateZ(0)" }}
                 >
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsMobileNavOpen(true)}>
@@ -2120,7 +2121,7 @@ export default function AdminDashboard() {
                                     )}
 
                                     {registerSubTab !== 'main' && (
-                                        <Card className="animate-in fade-in slide-in-from-right-4 duration-300">
+                                        <Card className="animate-in fade-in slide-in-from-right-4 duration-300 gpu-accelerated">
                                             <CardHeader className="flex flex-row items-center gap-4 border-b dark:border-slate-800 pb-4 mb-4">
                                                 <Button
                                                     variant="ghost"
@@ -2150,7 +2151,7 @@ export default function AdminDashboard() {
                                                 {registerSubTab === 'leave' && (
                                                     <div className="space-y-6">
                                                         {!leaveCollegeFilter ? (
-                                                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 gpu-accelerated">
                                                                 <div className="text-center space-y-2">
                                                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Institution Support</h3>
                                                                     <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view consolidated leave records</p>
@@ -2197,7 +2198,7 @@ export default function AdminDashboard() {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300 gpu-accelerated">
                                                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                                                                     <div className="flex items-center gap-3">
                                                                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
@@ -2420,7 +2421,7 @@ export default function AdminDashboard() {
                                                 {registerSubTab === 'outing' && (
                                                     <div className="space-y-6">
                                                         {!outingCollegeFilter ? (
-                                                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 gpu-accelerated">
                                                                 <div className="text-center space-y-2">
                                                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Outing Management</h3>
                                                                     <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view active outings</p>
@@ -2467,7 +2468,7 @@ export default function AdminDashboard() {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300 gpu-accelerated">
                                                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                                                                     <div className="flex items-center gap-3">
                                                                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
@@ -2677,7 +2678,7 @@ export default function AdminDashboard() {
                                                 {registerSubTab === 'sick' && (
                                                     <div className="space-y-6">
                                                         {!sickCollegeFilter ? (
-                                                            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 gpu-accelerated">
                                                                 <div className="text-center space-y-2">
                                                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Medical Emergency Support</h3>
                                                                     <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view medical reports</p>
@@ -2724,7 +2725,7 @@ export default function AdminDashboard() {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300 gpu-accelerated">
                                                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                                                                     <div className="flex items-center gap-3">
                                                                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
@@ -2882,7 +2883,7 @@ export default function AdminDashboard() {
                                                 {registerSubTab === 'complaints' && (
                                                     <div className="space-y-6">
                                                         {!complaintCollegeFilter ? (
-                                                            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 gpu-accelerated">
                                                                 <div className="text-center space-y-2">
                                                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Institution Support (Complaints)</h3>
                                                                     <p className="text-sm text-slate-500 dark:text-slate-400">Select a college to view student complaints</p>
@@ -2929,7 +2930,7 @@ export default function AdminDashboard() {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                                                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300 gpu-accelerated">
                                                                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-2 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                                                                     <div className="flex items-center gap-3">
                                                                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shrink-0
