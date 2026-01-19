@@ -206,15 +206,32 @@ export default function Home() {
         <InstallPrompt />
       </main>
 
-      <footer className="bg-white dark:bg-slate-950 p-6 border-t border-slate-200 dark:border-slate-800 mt-auto transition-colors">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-          <div className="flex items-center space-x-2">
-            <img src="/logo-main.png" alt="Logo" className="h-5 w-5 object-contain" />
-            <span className="font-bold text-slate-900 dark:text-white text-sm">NEI Smart Hostel</span>
+      <footer className="bg-white dark:bg-slate-950 py-12 border-t border-slate-200 dark:border-slate-800 mt-auto relative z-20">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex flex-col items-center md:items-start gap-4">
+              <div className="flex items-center space-x-3">
+                <img src="/logo-main.png" alt="Logo" className="h-8 w-8 object-contain" />
+                <span className="font-black text-xl text-slate-900 dark:text-white tracking-tight font-cinzel">
+                  NEI <span className="text-blue-600">SMART</span> HOSTEL
+                </span>
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs text-center md:text-left">
+                Revolutionizing institutional living with cutting-edge digital infrastructure and seamless management.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end gap-4">
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] text-center md:text-right">
+                Copyright © 2026 NANDHA EDUCATIONAL INSTITUTIONS. <br className="md:hidden" /> All Rights Reserved.
+              </p>
+              <div className="flex items-center gap-6">
+                <a href="#" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Privacy Policy</a>
+                <a href="#" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Terms</a>
+                <a href="#" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Support</a>
+              </div>
+            </div>
           </div>
-          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest leading-loose">
-            Copyright © 2026 NANDHA EDUCATIONAL INSTITUTIONS. All Rights Reserved.
-          </p>
         </div>
       </footer>
     </div>
