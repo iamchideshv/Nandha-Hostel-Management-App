@@ -2122,7 +2122,18 @@ export default function AdminDashboard() {
                                     {registerSubTab !== 'main' && (
                                         <Card className="animate-in fade-in slide-in-from-right-4 duration-300">
                                             <CardHeader className="flex flex-row items-center gap-4 border-b dark:border-slate-800 pb-4 mb-4">
-                                                <Button variant="ghost" size="sm" onClick={() => setRegisterSubTab('main')} className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        if (leaveCollegeFilter) setLeaveCollegeFilter(null);
+                                                        else if (outingCollegeFilter) setOutingCollegeFilter(null);
+                                                        else if (sickCollegeFilter) setSickCollegeFilter(null);
+                                                        else if (complaintTypeFilter) setComplaintTypeFilter(null);
+                                                        else setRegisterSubTab('main');
+                                                    }}
+                                                    className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center"
+                                                >
                                                     <ChevronLeft className="w-6 h-6" />
                                                 </Button>
                                                 <div>
@@ -2278,7 +2289,7 @@ export default function AdminDashboard() {
                                                                             >
                                                                                 <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                             </Button>
-                                                                            <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2552,7 +2563,7 @@ export default function AdminDashboard() {
                                                                             >
                                                                                 <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                             </Button>
-                                                                            <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2771,7 +2782,7 @@ export default function AdminDashboard() {
                                                                         >
                                                                             <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                         </Button>
-                                                                        <Button variant="ghost" size="sm" onClick={() => setSickCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+
                                                                     </div>
                                                                 </div>
 

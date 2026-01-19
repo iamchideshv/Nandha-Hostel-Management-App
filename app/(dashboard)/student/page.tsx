@@ -2181,7 +2181,17 @@ export default function StudentDashboard() {
                             {registerSubTab !== 'main' && (
                                 <Card className="animate-in fade-in slide-in-from-right-4 duration-300">
                                     <CardHeader className="flex flex-row items-center gap-4 border-b dark:border-slate-800 pb-4 mb-4">
-                                        <Button variant="ghost" size="sm" onClick={() => setRegisterSubTab('main')} className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => {
+                                                if (leaveCollegeFilter) setLeaveCollegeFilter(null);
+                                                else if (outingCollegeFilter) setOutingCollegeFilter(null);
+                                                else if (sickCollegeFilter) setSickCollegeFilter(null);
+                                                else setRegisterSubTab('main');
+                                            }}
+                                            className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center"
+                                        >
                                             <ChevronLeft className="w-6 h-6" />
                                         </Button>
                                         <div>
@@ -2298,7 +2308,7 @@ export default function StudentDashboard() {
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            <Button variant="ghost" size="sm" onClick={() => setLeaveCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Change</Button>
+
                                                         </div>
                                                         <div className="p-6 bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2542,7 +2552,7 @@ export default function StudentDashboard() {
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            <Button variant="ghost" size="sm" onClick={() => setOutingCollegeFilter(null)} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">Change</Button>
+
                                                         </div>
                                                         <div className="p-6 bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 mb-8">
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
