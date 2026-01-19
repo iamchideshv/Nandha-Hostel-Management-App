@@ -74,10 +74,20 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
                         </div>
                         <div className="text-sm text-slate-600 dark:text-slate-300 space-y-2 text-center">
                             <p>Version 1.4.3</p>
-                            <p className="font-semibold text-slate-900 dark:text-white">Developer: CHIDESH V</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">732224AI014 • DEPT. AI & DS</p>
-                            <p className="font-medium text-slate-800 dark:text-slate-200 mt-2">FOR NANDHA ENGINEERING COLLEGE</p>
-                            <p className="text-xs text-slate-400 mt-4">© 2026 All Rights Reserved</p>
+                            <p className="font-semibold text-slate-900 dark:text-white uppercase tracking-tight">Developers: CHIDESH V & HARISH BR</p>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400 space-y-1 font-medium italic">
+                                <p>732224AI014 • 732224AI041</p>
+                                <p>DEPT. AI & DS</p>
+                            </div>
+                            <div className="pt-2">
+                                <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em] mb-1">Official Contact</p>
+                                <div className="flex flex-col gap-1">
+                                    <a href="mailto:contact-chideshv@gmail.com" className="text-[11px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-colors">contact-chideshv@gmail.com</a>
+                                    <a href="mailto:harishsrhr@gmail.com" className="text-[11px] text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-colors">harishsrhr@gmail.com</a>
+                                </div>
+                            </div>
+                            <p className="font-bold text-slate-800 dark:text-slate-200 mt-2 text-xs uppercase tracking-wider">FOR NANDHA ENGINEERING COLLEGE</p>
+                            <p className="text-[10px] text-slate-400 mt-4 font-bold uppercase tracking-widest leading-loose">© 2026 All Rights Reserved</p>
                         </div>
                         <div className="space-y-3 pt-2">
                             <Button
