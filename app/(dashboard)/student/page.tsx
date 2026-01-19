@@ -2187,7 +2187,6 @@ export default function StudentDashboard() {
                                             onClick={() => {
                                                 if (leaveCollegeFilter) setLeaveCollegeFilter(null);
                                                 else if (outingCollegeFilter) setOutingCollegeFilter(null);
-                                                else if (sickCollegeFilter) setSickCollegeFilter(null);
                                                 else setRegisterSubTab('main');
                                             }}
                                             className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center"

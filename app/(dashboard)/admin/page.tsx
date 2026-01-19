@@ -2129,7 +2129,7 @@ export default function AdminDashboard() {
                                                         if (leaveCollegeFilter) setLeaveCollegeFilter(null);
                                                         else if (outingCollegeFilter) setOutingCollegeFilter(null);
                                                         else if (sickCollegeFilter) setSickCollegeFilter(null);
-                                                        else if (complaintTypeFilter) setComplaintTypeFilter(null);
+                                                        else if (complaintCollegeFilter) setComplaintCollegeFilter(null);
                                                         else setRegisterSubTab('main');
                                                     }}
                                                     className="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full h-10 w-10 p-0 flex items-center justify-center"
@@ -3004,12 +3004,12 @@ export default function AdminDashboard() {
                                                                         >
                                                                             Clear
                                                                         </Button>
-                                                                        <Button variant="ghost" size="sm" onClick={() => setComplaintCollegeFilter(null)} className="h-8 text-[10px] font-bold uppercase text-blue-600 hover:text-blue-700 hover:bg-blue-50">Back</Button>
+
                                                                     </div>
                                                                 </div>
                                                                 <div className="grid gap-4">
-                                                                    {complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).length === 0 ? <p className="text-center text-slate-500 py-12 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">No complaints found for {complaintCollegeFilter}.</p> :
-                                                                        complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).map(c => (
+                                                                    {complaints.filter(c => c.collegeName === complaintCollegeFilter && (complaintFilter === 'all' || c.type === complaintFilter)).length === 0 ? <p className="text-center text-slate-500 py-12 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">No complaints found for {complaintCollegeFilter}.</p> :
+                                                                        complaints.filter(c => c.collegeName === complaintCollegeFilter && (complaintFilter === 'all' || c.type === complaintFilter)).map(c => (
                                                                             <Card key={c.id}>
                                                                                 <CardHeader className="pb-2">
                                                                                     <div className="flex justify-between items-start">
