@@ -90,13 +90,12 @@ export function InstallPrompt() {
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    initial={{ y: 100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: 100, opacity: 0 }}
-                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                    className="fixed bottom-6 left-0 right-0 z-[99999] flex justify-center px-4"
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    className="w-full flex justify-center py-8 px-4"
                 >
-                    <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-slate-100 dark:border-white/10 overflow-hidden group">
+                    <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-white/10 overflow-hidden group">
                         {/* Background Accent */}
                         <div className="absolute top-0 right-0 p-6 opacity-5">
                             <Zap className="h-16 w-16 text-blue-600" />
@@ -120,13 +119,6 @@ export function InstallPrompt() {
                                         </div>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={handleDismiss}
-                                    className="p-2 text-slate-400 hover:text-red-500 transition-all bg-slate-50 dark:bg-slate-800 rounded-lg"
-                                    aria-label="Dismiss"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
                             </div>
 
                             <p className="text-sm font-medium text-slate-600 dark:text-slate-300">

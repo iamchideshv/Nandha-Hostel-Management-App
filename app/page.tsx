@@ -139,6 +139,8 @@ export default function Home() {
           )}
         </AnimatePresence>
 
+        <InstallPrompt />
+
         {/* Gallery Section */}
         <section className="bg-white/50 dark:bg-slate-900/30 py-10">
           <div className="text-center mb-6 px-4">
@@ -235,7 +237,7 @@ export default function Home() {
         </div>
       </footer>
       <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
-      <InstallPrompt />
+
     </div>
   );
 }
