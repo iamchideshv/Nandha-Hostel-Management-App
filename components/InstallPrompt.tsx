@@ -90,75 +90,74 @@ export function InstallPrompt() {
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    initial={{ y: -50, scale: 0.9, opacity: 0 }}
-                    animate={{ y: 0, scale: 1, opacity: 1 }}
-                    exit={{ y: -50, scale: 0.9, opacity: 0 }}
-                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                    className="fixed top-[25%] left-0 right-0 z-[99999] flex justify-center px-4"
+                    initial={{ y: 100, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 100, opacity: 0 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                    className="fixed bottom-6 left-0 right-0 z-[99999] flex justify-center px-4"
                 >
-                    <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-[0_40px_120px_rgba(0,0,0,0.5)] border border-slate-100 dark:border-white/10 overflow-hidden group">
+                    <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-slate-100 dark:border-white/10 overflow-hidden group">
                         {/* Background Accent */}
-                        <div className="absolute top-0 right-0 p-8 opacity-5">
-                            <Zap className="h-24 w-24 text-blue-600" />
+                        <div className="absolute top-0 right-0 p-6 opacity-5">
+                            <Zap className="h-16 w-16 text-blue-600" />
                         </div>
 
-                        <div className="p-5 flex flex-col gap-4">
+                        <div className="p-6 flex flex-col gap-4">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 dark:border-white/5 transform transition-transform group-hover:scale-110 overflow-hidden p-1.5">
+                                    <div className="h-12 w-12 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 dark:border-white/5 overflow-hidden p-1.5">
                                         <img src="/logo-main.png" alt="App Icon" className="h-full w-full object-contain" />
                                     </div>
                                     <div>
-                                        <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight leading-none group-hover:text-blue-600 transition-colors">
+                                        <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight leading-none">
                                             NEI Smart Hostel
                                         </h3>
                                         <div className="flex items-center gap-2 mt-1.5">
                                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                Official PWA v2.0
+                                                OFFICIAL PWA V2.0
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                                 <button
                                     onClick={handleDismiss}
-                                    className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-all bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700"
+                                    className="p-2 text-slate-400 hover:text-red-500 transition-all bg-slate-50 dark:bg-slate-800 rounded-lg"
                                     aria-label="Dismiss"
                                 >
                                     <X className="h-4 w-4" />
                                 </button>
                             </div>
 
-                            <p className="text-xs font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
+                            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
                                 {isIOS
-                                    ? "Experience the future of hostel management on your device."
+                                    ? "Install our app for a faster and smoother experience."
                                     : "Get the best experience with our lightning-fast mobile application."}
                             </p>
 
-                            {isIOS ? (
-                                <div className="bg-blue-50/50 dark:bg-blue-500/5 rounded-2xl p-4 border border-blue-100/50 dark:border-blue-500/10">
-                                    <p className="text-[11px] font-bold text-blue-600 dark:text-blue-300 flex items-center flex-wrap gap-2 leading-tight">
-                                        Tap <Share className="h-4 w-4 text-blue-500" /> then <span className="underline decoration-blue-500/30">"Add to Home Screen"</span> to install.
-                                    </p>
-                                </div>
-                            ) : (
+                            <div className="flex flex-col gap-2">
+                                {isIOS ? (
+                                    <div className="bg-blue-50/50 dark:bg-blue-500/5 rounded-2xl p-4 border border-blue-100/50 dark:border-blue-500/10">
+                                        <p className="text-[11px] font-bold text-blue-600 dark:text-blue-300 flex items-center flex-wrap gap-2 leading-tight">
+                                            Tap <Share className="h-4 w-4 text-blue-500" /> then <span className="underline">"Add to Home Screen"</span> to install.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={handleInstallClick}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                                    >
+                                        <Download className="h-4 w-4" />
+                                        <span>INSTALL OFFICIAL APP</span>
+                                    </button>
+                                )}
                                 <button
-                                    onClick={handleInstallClick}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-black py-4 rounded-2xl shadow-xl shadow-blue-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
+                                    onClick={handleDismiss}
+                                    className="w-full py-3 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
                                 >
-                                    <Download className="h-4 w-4" />
-                                    <span>INSTALL OFFICIAL APP</span>
+                                    Not Now, Maybe Later
                                 </button>
-                            )}
-                        </div>
-
-                        <div className="h-1 w-full bg-slate-100 dark:bg-white/5 overflow-hidden">
-                            <motion.div
-                                initial={{ x: "-100%" }}
-                                animate={{ x: "0%" }}
-                                transition={{ duration: 1.5, ease: "easeOut" }}
-                                className="h-full bg-blue-600"
-                            />
+                            </div>
                         </div>
                     </div>
                 </motion.div>
@@ -166,3 +165,4 @@ export function InstallPrompt() {
         </AnimatePresence>
     );
 }
+
