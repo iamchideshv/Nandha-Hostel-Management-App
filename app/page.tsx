@@ -202,8 +202,6 @@ export default function Home() {
           </motion.div>
         </section>
 
-        <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
-        <InstallPrompt />
       </main>
 
       <footer className="bg-white dark:bg-slate-950 py-12 border-t border-slate-200 dark:border-slate-800 mt-auto relative z-20">
@@ -234,6 +232,8 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+      <InstallPrompt />
     </div>
   );
 }
