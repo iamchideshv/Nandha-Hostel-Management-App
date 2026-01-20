@@ -789,6 +789,13 @@ export default function StudentDashboard() {
             return;
         }
 
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (profileForm.email && !emailRegex.test(profileForm.email)) {
+            toast.error('Please enter a valid email address');
+            return;
+        }
+
         setSubmitting(true);
         try {
             const res = await fetch('/api/user/profile', {
