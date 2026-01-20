@@ -32,6 +32,7 @@ export default function DevOpsDashboard() {
     const [profileRequests, setProfileRequests] = useState<any[]>([]);
     const [selectedProfileRequest, setSelectedProfileRequest] = useState<any>(null);
     const [isManualProfileEdit, setIsManualProfileEdit] = useState(false);
+    const [profileLoading, setProfileLoading] = useState(false);
     const [profileEditForm, setProfileEditForm] = useState({
         id: '',
         name: '',
