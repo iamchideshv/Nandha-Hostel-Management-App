@@ -29,8 +29,8 @@ export function InstallPrompt() {
         if (dismissalTime) {
             const lastDismissed = parseInt(dismissalTime, 10);
             const now = Date.now();
-            // Show again after 3 days if dismissed
-            if (now - lastDismissed < 3 * 24 * 60 * 60 * 1000) {
+            // Show again after 1 year if dismissed
+            if (now - lastDismissed < 365 * 24 * 60 * 60 * 1000) {
                 return;
             }
         }
