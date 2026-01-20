@@ -46,7 +46,11 @@ export async function POST(req: NextRequest) {
             } else if (type === 'urgent') {
                 await sendPushToRole('admin', `URGENT: ${senderName}`, message);
                 await sendPushToRole('authority', `URGENT: ${senderName}`, message);
+            } else if (senderRole === 'student') {
+                // For regular messages from students, notify admins
+                await sendPushToRole('admin', `Message from ${senderName}`, message, { type: 'message' }, hostelName);
             }
+
         } catch (pushError) {
             console.error('Failed to send push notification:', pushError);
         }

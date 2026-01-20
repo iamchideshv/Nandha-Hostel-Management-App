@@ -45,7 +45,23 @@ export async function POST(req: Request) {
 
 
         await db.addComplaint(newComplaint);
+
+        // Notify Admin of New Complaint
+        try {
+            const { sendPushToRole } = await import('@/lib/push-notifications');
+            await sendPushToRole(
+                'admin',
+                'New Complaint 📝',
+                `${studentName} reported: ${title}`,
+                { type: 'complaint', id: newComplaint.id },
+                hostelName
+            );
+        } catch (pushError) {
+            console.error('Failed to send push notification:', pushError);
+        }
+
         return NextResponse.json(newComplaint);
+
     } catch (error) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }

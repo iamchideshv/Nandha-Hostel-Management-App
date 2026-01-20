@@ -23,12 +23,20 @@ export async function sendPushToRole(role: string, title: string, body: string, 
     let targetUsers = users.filter(u => u.role === role);
 
     if (hostelName) {
-        targetUsers = targetUsers.filter(u => u.hostelName === hostelName);
+        // Target users who have the role AND (either match the hostel OR have no hostel assigned/marked 'all')
+        targetUsers = targetUsers.filter(u =>
+            !u.hostelName ||
+            u.hostelName === 'all' ||
+            u.hostelName === hostelName
+        );
     }
 
     const allTokens = targetUsers.flatMap(u => u.fcmTokens || []);
 
-    if (allTokens.length === 0) return;
+    if (allTokens.length === 0) {
+        console.log(`No tokens found for role: ${role}${hostelName ? ` in hostel: ${hostelName}` : ''}`);
+        return;
+    }
 
     // Include target info in data for client-side filtering
     const notificationData = {
@@ -88,24 +96,29 @@ async function sendToTokens(tokens: string[], title: string, body: string, data?
 
     try {
         const response = await firebaseAdmin.messaging().sendEachForMulticast(message);
-        console.log('FCM Send result:', response);
+        console.log('FCM Send result summary:', {
+            successCount: response.successCount,
+            failureCount: response.failureCount
+        });
 
         if (response.failureCount > 0) {
-            const firstError = response.responses.find(r => !r.success)?.error;
-            if (firstError) {
-                // Log all errors for debugging
-                response.responses.forEach((resp, idx) => {
-                    if (!resp.success) {
-                        console.error(`Error sending to token ${tokens[idx]}:`, resp.error);
-                    }
-                });
-                throw new Error(`FCM_ERROR: ${firstError.message}`);
+            // Log errors but don't necessarily throw if at least one succeeded
+            response.responses.forEach((resp, idx) => {
+                if (!resp.success) {
+                    console.error(`Error sending to token ${tokens[idx].substring(0, 10)}... :`, resp.error);
+                }
+            });
+
+            // Only throw if ALL failed and we expected to send something
+            if (response.successCount === 0 && tokens.length > 0) {
+                const firstError = response.responses.find(r => !r.success)?.error;
+                throw new Error(`FCM_ALL_FAILED: ${firstError?.message || 'Unknown error'}`);
             }
         }
 
         return response;
     } catch (error) {
-        console.error('Error sending FCM message:', error);
+        console.error('Error in sendToTokens:', error);
         throw error;
     }
 }
