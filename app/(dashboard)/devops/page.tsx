@@ -32,7 +32,6 @@ export default function DevOpsDashboard() {
     const [profileRequests, setProfileRequests] = useState<any[]>([]);
     const [selectedProfileRequest, setSelectedProfileRequest] = useState<any>(null);
     const [isManualProfileEdit, setIsManualProfileEdit] = useState(false);
-    const [profileLoading, setProfileLoading] = useState(false);
     const [profileEditForm, setProfileEditForm] = useState({
         id: '',
         name: '',
@@ -43,6 +42,8 @@ export default function DevOpsDashboard() {
         profileImage: ''
     });
     const [mounted, setMounted] = useState(false);
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
+    const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
 
     const fetchRequests = async () => {
         setLoading(true);
@@ -216,6 +217,52 @@ export default function DevOpsDashboard() {
             toast.error('Error deleting account');
         } finally {
             setDeletingId(null);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedUserIds.size === 0) return;
+        if (!confirm(`Are you sure you want to delete ${selectedUserIds.size} selected accounts? This action cannot be undone.`)) return;
+
+        setUsersLoading(true);
+        try {
+            const idsToDelete = Array.from(selectedUserIds);
+            const res = await fetch('/api/users/bulk-delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: idsToDelete })
+            });
+
+            if (res.ok) {
+                toast.success(`${selectedUserIds.size} accounts deleted successfully`);
+                setSelectedUserIds(new Set());
+                setIsSelectionMode(false);
+                fetchUsers();
+            } else {
+                toast.error('Failed to delete some accounts');
+            }
+        } catch (error) {
+            toast.error('Error in bulk deletion');
+        } finally {
+            setUsersLoading(false);
+        }
+    };
+
+    const toggleUserSelection = (id: string) => {
+        const newSelection = new Set(selectedUserIds);
+        if (newSelection.has(id)) {
+            newSelection.delete(id);
+        } else {
+            newSelection.add(id);
+        }
+        setSelectedUserIds(newSelection);
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedUserIds.size === filteredUsers.length) {
+            setSelectedUserIds(new Set());
+        } else {
+            setSelectedUserIds(new Set(filteredUsers.map(u => u.id)));
         }
     };
 
@@ -396,10 +443,34 @@ export default function DevOpsDashboard() {
                                     <CardTitle className="text-red-900 dark:text-red-400">All User Logins (Master Access)</CardTitle>
                                     <CardDescription className="text-red-700 dark:text-red-500">View all registered users and their plain-text passwords</CardDescription>
                                 </div>
-                                <Button onClick={fetchUsers} variant="outline" size="sm" className="border-red-200 hover:bg-red-100 text-red-700" disabled={usersLoading}>
-                                    <RefreshCw className={`w-4 h-4 mr-2 ${usersLoading ? 'animate-spin' : ''}`} />
-                                    Refresh Users
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={() => {
+                                            setIsSelectionMode(!isSelectionMode);
+                                            setSelectedUserIds(new Set());
+                                        }}
+                                        variant={isSelectionMode ? "default" : "outline"}
+                                        size="sm"
+                                        className={isSelectionMode ? "bg-slate-700 hover:bg-slate-800" : "border-red-200 text-red-700"}
+                                    >
+                                        {isSelectionMode ? 'Cancel Selection' : 'Select Users'}
+                                    </Button>
+                                    {isSelectionMode && selectedUserIds.size > 0 && (
+                                        <Button
+                                            onClick={handleBulkDelete}
+                                            variant="destructive"
+                                            size="sm"
+                                            className="bg-red-600 hover:bg-red-700 animate-in fade-in zoom-in duration-200"
+                                        >
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                            Delete Selected ({selectedUserIds.size})
+                                        </Button>
+                                    )}
+                                    <Button onClick={fetchUsers} variant="outline" size="sm" className="border-red-200 hover:bg-red-100 text-red-700" disabled={usersLoading}>
+                                        <RefreshCw className={`w-4 h-4 mr-2 ${usersLoading ? 'animate-spin' : ''}`} />
+                                        Refresh Users
+                                    </Button>
+                                </div>
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-4 pt-6">
@@ -453,6 +524,16 @@ export default function DevOpsDashboard() {
                                     <table className="w-full text-sm">
                                         <thead className="border-b">
                                             <tr className="text-left">
+                                                {isSelectionMode && (
+                                                    <th className="pb-3 w-10">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                            checked={selectedUserIds.size === filteredUsers.length && filteredUsers.length > 0}
+                                                            onChange={toggleSelectAll}
+                                                        />
+                                                    </th>
+                                                )}
                                                 <th className="pb-3 font-semibold">Login ID</th>
                                                 <th className="pb-3 font-semibold">Name</th>
                                                 <th className="pb-3 font-semibold">Role</th>
@@ -463,7 +544,24 @@ export default function DevOpsDashboard() {
                                         </thead>
                                         <tbody>
                                             {filteredUsers.map((u) => (
-                                                <tr key={u.id} className="border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                                <tr
+                                                    key={u.id}
+                                                    onClick={() => isSelectionMode && toggleUserSelection(u.id)}
+                                                    className={`border-b last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isSelectionMode ? 'cursor-pointer' : ''} ${selectedUserIds.has(u.id) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}
+                                                >
+                                                    {isSelectionMode && (
+                                                        <td className="py-3">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                                checked={selectedUserIds.has(u.id)}
+                                                                onChange={(e) => {
+                                                                    e.stopPropagation();
+                                                                    toggleUserSelection(u.id);
+                                                                }}
+                                                            />
+                                                        </td>
+                                                    )}
                                                     <td className="py-3 font-medium">{u.id}</td>
                                                     <td className="py-3">{u.name}</td>
                                                     <td className="py-3">
@@ -482,50 +580,57 @@ export default function DevOpsDashboard() {
                                                         </code>
                                                     </td>
                                                     <td className="py-3 text-right">
-                                                        <div className="flex justify-end gap-1">
-                                                            <Button
-                                                                size="sm"
-                                                                variant="ghost"
-                                                                onClick={() => {
-                                                                    setSelectedUser(u);
-                                                                    setEditData({ id: u.id, name: u.name, password: u.password || '', role: u.role });
-                                                                }}
-                                                                className="h-8 w-8 p-0"
-                                                            >
-                                                                <UserCog className="w-4 h-4" />
-                                                            </Button>
-                                                            {u.role === 'student' && (
+                                                        {!isSelectionMode && (
+                                                            <div className="flex justify-end gap-1">
                                                                 <Button
                                                                     size="sm"
                                                                     variant="ghost"
-                                                                    onClick={() => {
-                                                                        setIsManualProfileEdit(true);
-                                                                        setProfileEditForm({
-                                                                            id: u.id,
-                                                                            name: u.name,
-                                                                            department: u.department || '',
-                                                                            roomNumber: u.roomNumber || '',
-                                                                            phoneNumber: u.phoneNumber || '',
-                                                                            email: u.email || '',
-                                                                            profileImage: u.profileImage || ''
-                                                                        });
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setSelectedUser(u);
+                                                                        setEditData({ id: u.id, name: u.name, password: u.password || '', role: u.role });
                                                                     }}
-                                                                    className="h-8 w-8 p-0 text-blue-500"
-                                                                    title="Update Profile"
+                                                                    className="h-8 w-8 p-0"
                                                                 >
-                                                                    <User className="w-4 h-4" />
+                                                                    <UserCog className="w-4 h-4" />
                                                                 </Button>
-                                                            )}
-                                                            <Button
-                                                                size="sm"
-                                                                variant="ghost"
-                                                                disabled={deletingId === u.id}
-                                                                onClick={() => handleDeleteUser(u.id)}
-                                                                className="h-8 w-8 p-0 text-red-500"
-                                                            >
-                                                                {deletingId === u.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                                                            </Button>
-                                                        </div>
+                                                                {u.role === 'student' && (
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="ghost"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setIsManualProfileEdit(true);
+                                                                            setProfileEditForm({
+                                                                                id: u.id,
+                                                                                name: u.name,
+                                                                                department: u.department || '',
+                                                                                roomNumber: u.roomNumber || '',
+                                                                                phoneNumber: u.phoneNumber || '',
+                                                                                email: u.email || '',
+                                                                                profileImage: u.profileImage || ''
+                                                                            });
+                                                                        }}
+                                                                        className="h-8 w-8 p-0 text-blue-500"
+                                                                        title="Update Profile"
+                                                                    >
+                                                                        <User className="w-4 h-4" />
+                                                                    </Button>
+                                                                )}
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    disabled={deletingId === u.id}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDeleteUser(u.id);
+                                                                    }}
+                                                                    className="h-8 w-8 p-0 text-red-500"
+                                                                >
+                                                                    {deletingId === u.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                                                                </Button>
+                                                            </div>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             ))}
