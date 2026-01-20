@@ -19,15 +19,7 @@ export default function Home() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [showInstitutions, setShowInstitutions] = useState(false);
 
-  useEffect(() => {
-    if (!isLoading && user) {
-      if (user.role === 'admin') router.push('/admin');
-      else if (user.role === 'authority') router.push('/authority');
-      else if (user.role === 'send-off') router.push('/send-off');
-      else if (user.role === 'devops') router.push('/devops');
-      else router.push('/student');
-    }
-  }, [user, isLoading, router]);
+
 
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-500 bg-white dark:bg-black overflow-x-hidden font-montserrat relative selection:bg-blue-100 selection:text-blue-900 gpu-accelerated" style={{ transform: 'translateZ(0)' }}>
@@ -48,14 +40,24 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
             <ThemeToggle />
-            <Link href="/login" className="hidden sm:block">
-              <Button variant="ghost" className="font-bold text-slate-700 dark:text-slate-200">SignIn</Button>
-            </Link>
-            <Link href="/login?mode=register">
-              <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black px-4 md:px-8 text-xs md:text-sm shadow-lg shadow-blue-500/20">
-                Get Started
-              </Button>
-            </Link>
+            {user ? (
+              <Link href="/login">
+                <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black px-4 md:px-8 text-xs md:text-sm shadow-lg shadow-blue-500/20">
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="hidden sm:block">
+                  <Button variant="ghost" className="font-bold text-slate-700 dark:text-slate-200">SignIn</Button>
+                </Link>
+                <Link href="/login?mode=register">
+                  <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black px-4 md:px-8 text-xs md:text-sm shadow-lg shadow-blue-500/20">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
