@@ -321,7 +321,7 @@ export default function LoginPage() {
                         readOnly
                     />
                     {/* Front Side: Login */}
-                    <div className="flip-card__front">
+                    <div className={`flip-card__front ${isRegisterPage ? 'pointer-events-none invisible opacity-0' : 'z-10'}`}>
                         <div className="flex justify-center mb-2">
                             <img
                                 src="/logo-main.png"
@@ -390,7 +390,7 @@ export default function LoginPage() {
                     </div>
 
                     {/* Back Side: Sign up */}
-                    <div className="flip-card__back">
+                    <div className={`flip-card__back ${!isRegisterPage ? 'pointer-events-none invisible opacity-0' : 'z-10'}`}>
                         <div className="flip-card__title">Sign up</div>
 
                         <div className="flex flex-wrap justify-center gap-2 mb-2">
