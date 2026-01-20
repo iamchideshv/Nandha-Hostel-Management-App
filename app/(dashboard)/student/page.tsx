@@ -914,11 +914,11 @@ export default function StudentDashboard() {
                             </button>
                         </nav>
                         <div className="p-4 border-t dark:border-slate-800 space-y-2">
-                            <button onClick={() => { if (confirm('Go to home page?')) window.location.href = '/'; setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
+                            <button onClick={() => { if (confirm('Go home yes or no?')) window.location.href = '/'; setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
                                 <Home className="w-5 h-5" />
                                 <span>Go to Home</span>
                             </button>
-                            <button onClick={() => { if (confirm('Sign out?')) { logout(); router.push('/'); } setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950">
+                            <button onClick={() => { if (confirm('Sign out yes or no?')) { logout(); window.location.href = '/login'; } setIsMobileNavOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950">
                                 <LogOut className="w-5 h-5" />
                                 <span>Sign Out</span>
                             </button>

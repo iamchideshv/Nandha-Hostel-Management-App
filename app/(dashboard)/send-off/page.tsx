@@ -16,7 +16,8 @@ const formatDate = (dateStr: string) => {
     return `${d}-${m}-${y}`;
 };
 
-import { ScanLine, CheckCircle, XCircle, LogOut, Info } from 'lucide-react';
+import { ScanLine, CheckCircle, XCircle, LogOut, Info, Home } from 'lucide-react';
+
 import { useRouter } from 'next/navigation';
 import { AboutModal } from '@/components/about-modal';
 
@@ -228,9 +229,18 @@ export default function SendOffDashboard() {
     };
 
     const handleLogout = () => {
-        logout();
-        router.push('/login');
+        if (confirm('Sign out yes or no?')) {
+            logout();
+            window.location.href = '/login';
+        }
     }
+
+    const handleGoHome = () => {
+        if (confirm('Go home yes or no?')) {
+            window.location.href = '/';
+        }
+    }
+
 
     return (
         <div className="max-w-4xl mx-auto p-4 space-y-6">
@@ -245,8 +255,15 @@ export default function SendOffDashboard() {
                         <span className="hidden md:inline">About App</span>
                         <span className="md:hidden">About</span>
                     </Button>
+                    <Button variant="outline" size="sm" onClick={handleGoHome} className="text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-bold">
+                        <Home className="w-4 h-4 mr-2" />
+                        <span className="hidden md:inline">Go to Home</span>
+                        <span className="md:hidden">Home</span>
+                    </Button>
                     <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold">
-                        <LogOut className="w-4 h-4 mr-2" /> Logout
+                        <LogOut className="w-4 h-4 mr-2" />
+                        <span className="hidden md:inline">Sign Out</span>
+                        <span className="md:hidden">Sign Out</span>
                     </Button>
                 </div>
             </header>

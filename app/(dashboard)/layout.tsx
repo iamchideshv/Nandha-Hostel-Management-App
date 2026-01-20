@@ -19,6 +19,8 @@ export default function DashboardLayout({
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showHomeConfirm, setShowHomeConfirm] = useState(false);
+    const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+
 
     useEffect(() => {
         if (!isLoading && !user) {
@@ -61,10 +63,15 @@ export default function DashboardLayout({
 
     if (!user) return null;
 
-    const handleLogout = () => {
+    const handleSignOut = () => {
         logout();
+        window.location.href = '/login';
+    };
+
+    const handleGoHome = () => {
         window.location.href = '/';
     };
+
 
     return (
         <div className="min-h-screen flex flex-col md:flex-row transition-colors duration-300 font-montserrat relative overflow-hidden">
@@ -147,7 +154,7 @@ export default function DashboardLayout({
                         <Home className="mr-2 h-4 w-4" />
                         Go to Home
                     </Button>
-                    <Button variant="outline" className="w-full justify-start text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold" onClick={handleLogout}>
+                    <Button variant="outline" className="w-full justify-start text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold" onClick={() => setShowSignOutConfirm(true)}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Sign Out
                     </Button>
@@ -165,14 +172,28 @@ export default function DashboardLayout({
             {showHomeConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowHomeConfirm(false)}>
                     <div className="bg-white dark:bg-black p-6 rounded-xl max-w-sm w-full space-y-4 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white text-center">Like to signout?</h3>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white text-center italic">Go home yes or no?</h3>
                         <div className="flex gap-3">
-                            <Button className="flex-1" variant="outline" onClick={() => setShowHomeConfirm(false)}>Cancel</Button>
-                            <Button className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600" onClick={handleLogout}>Yes</Button>
+                            <Button className="flex-1" variant="outline" onClick={() => setShowHomeConfirm(false)}>No</Button>
+                            <Button className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 font-bold" onClick={handleGoHome}>Yes</Button>
                         </div>
                     </div>
                 </div>
             )}
+
+            {/* Sign Out Confirmation Modal */}
+            {showSignOutConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowSignOutConfirm(false)}>
+                    <div className="bg-white dark:bg-black p-6 rounded-xl max-w-sm w-full space-y-4 animate-in fade-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white text-center italic">Sign out yes or no?</h3>
+                        <div className="flex gap-3">
+                            <Button className="flex-1" variant="outline" onClick={() => setShowSignOutConfirm(false)}>No</Button>
+                            <Button className="flex-1 bg-red-600 hover:bg-red-700 font-bold" onClick={handleSignOut}>Yes</Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <UpdateChecker />
         </div>
     );
