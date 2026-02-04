@@ -17,6 +17,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EmptyStateAnimation from '@/components/EmptyStateAnimation';
 import travelerAnimation from '@/Traveler.json';
 import moneyAnimation from '@/money.json';
+import notFoundAnimation from '@/Not Found.json';
+
 
 const COLLEGES = [
     { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
@@ -1706,10 +1708,15 @@ export default function AdminDashboard() {
                                 <CardContent>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {lostItems.length === 0 ? (
-                                            <div className="col-span-full py-12 text-center text-slate-500">
-                                                No items reported yet.
+                                            <div className="col-span-full py-8">
+                                                <EmptyStateAnimation
+                                                    animationData={notFoundAnimation}
+                                                    text="No items reported yet."
+                                                    subtext="Lost or found items reported by students will appear here."
+                                                />
                                             </div>
                                         ) : (
+
                                             lostItems.map((item) => (
                                                 <div key={item.id} className="group relative border rounded-xl overflow-hidden bg-white dark:bg-black shadow-sm hover:shadow-md transition-all">
                                                     <div className="relative aspect-video w-full overflow-hidden bg-slate-100 group/image">

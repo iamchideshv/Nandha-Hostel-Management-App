@@ -23,6 +23,8 @@ import { useNotifications } from '@/hooks/use-notifications';
 import EmptyStateAnimation from '@/components/EmptyStateAnimation';
 import travelerAnimation from '@/Traveler.json';
 import moneyAnimation from '@/money.json';
+import notFoundAnimation from '@/Not Found.json';
+
 
 interface ComplaintData {
     id: string;
@@ -2057,8 +2059,13 @@ export default function StudentDashboard() {
                                 <CardContent>
                                     <div className="space-y-3">
                                         {lostItems.length === 0 ? (
-                                            <p className="text-sm text-slate-500 text-center py-4">No reports found.</p>
+                                            <EmptyStateAnimation
+                                                animationData={notFoundAnimation}
+                                                text="No reports found."
+                                                subtext="Your lost or found item reports will appear here."
+                                            />
                                         ) : (
+
                                             lostItems.map((item) => (
                                                 <div key={item.id} className="p-4 rounded-xl border bg-white dark:bg-black/50 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
                                                     <div className="flex items-center gap-4">
