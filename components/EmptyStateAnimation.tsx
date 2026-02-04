@@ -2,15 +2,16 @@
 
 import React from 'react';
 import Lottie from 'lottie-react';
-import travelerAnimation from '../Traveler.json';
 
 interface EmptyStateAnimationProps {
+    animationData: any;
     text: string;
     subtext?: string;
     className?: string;
 }
 
 const EmptyStateAnimation: React.FC<EmptyStateAnimationProps> = ({
+    animationData,
     text,
     subtext,
     className = ""
@@ -19,7 +20,7 @@ const EmptyStateAnimation: React.FC<EmptyStateAnimationProps> = ({
         <div className={`flex flex-col items-center justify-center py-8 px-4 text-center ${className}`}>
             <div className="w-64 h-64 md:w-80 md:h-80">
                 <Lottie
-                    animationData={travelerAnimation}
+                    animationData={animationData}
                     loop={true}
                     className="w-full h-full"
                 />

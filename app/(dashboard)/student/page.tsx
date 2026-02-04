@@ -21,6 +21,8 @@ import { Mail, UserCircle, Upload, Camera, Crop } from 'lucide-react';
 import Cropper from 'react-easy-crop';
 import { useNotifications } from '@/hooks/use-notifications';
 import EmptyStateAnimation from '@/components/EmptyStateAnimation';
+import travelerAnimation from '@/Traveler.json';
+import moneyAnimation from '@/money.json';
 
 interface ComplaintData {
     id: string;
@@ -1745,6 +1747,7 @@ export default function StudentDashboard() {
                                     <div className="space-y-3">
                                         {!outpasses.filter(o => !o.type || o.type === 'outpass').length ? (
                                             <EmptyStateAnimation
+                                                animationData={travelerAnimation}
                                                 text="No outpass history."
                                                 subtext="Your previous outpass requests will appear here."
                                             />
@@ -1810,11 +1813,11 @@ export default function StudentDashboard() {
                             <CardContent className="space-y-6">
                                 {!feeStatus ? (
                                     <div className="text-center py-8 space-y-4">
-                                        <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto text-slate-400">
-                                            <BadgeCheck className="w-8 h-8" />
-                                        </div>
-                                        <h3 className="text-lg font-medium">Status Unknown</h3>
-                                        <p className="text-slate-500 max-w-sm mx-auto">You haven't requested your fee status yet. Click below to notify the admin.</p>
+                                        <EmptyStateAnimation
+                                            animationData={moneyAnimation}
+                                            text="Status Unknown"
+                                            subtext="You haven't requested your fee status yet. Click below to notify the admin."
+                                        />
                                         {!isProfileComplete ? (
                                             <ProfileLockedState feature="Fee Details" />
                                         ) : (

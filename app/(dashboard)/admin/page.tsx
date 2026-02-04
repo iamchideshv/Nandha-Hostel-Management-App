@@ -15,6 +15,8 @@ import { formatDate, formatTime } from '@/lib/formatters';
 import { useNotifications } from '@/hooks/use-notifications';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmptyStateAnimation from '@/components/EmptyStateAnimation';
+import travelerAnimation from '@/Traveler.json';
+import moneyAnimation from '@/money.json';
 
 const COLLEGES = [
     { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
@@ -1020,6 +1022,7 @@ export default function AdminDashboard() {
                                 </div>
                                 {outpasses.filter(o => !o.type || o.type === 'outpass').length === 0 ? (
                                     <EmptyStateAnimation
+                                        animationData={travelerAnimation}
                                         text="No outpass requests found."
                                         subtext="When students request an outpass, they will appear here."
                                     />
@@ -1128,7 +1131,13 @@ export default function AdminDashboard() {
                                     </Button>
                                 </div>
                                 <div className="grid gap-4">
-                                    {fees.length === 0 ? <p className="text-center text-slate-500">No fee requests found.</p> :
+                                    {fees.length === 0 ? (
+                                        <EmptyStateAnimation
+                                            animationData={moneyAnimation}
+                                            text="No fee requests found."
+                                            subtext="Student fee status requests will appear here."
+                                        />
+                                    ) :
                                         fees.map(f => (
                                             <Card key={f.studentId}>
                                                 <CardContent className="flex justify-between items-center p-6">
