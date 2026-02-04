@@ -20,6 +20,7 @@ import { toPng } from 'html-to-image';
 import { Mail, UserCircle, Upload, Camera, Crop } from 'lucide-react';
 import Cropper from 'react-easy-crop';
 import { useNotifications } from '@/hooks/use-notifications';
+import EmptyStateAnimation from '@/components/EmptyStateAnimation';
 
 interface ComplaintData {
     id: string;
@@ -1742,7 +1743,12 @@ export default function StudentDashboard() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
-                                        {!outpasses.filter(o => !o.type || o.type === 'outpass').length ? <p className="text-sm text-slate-500">No outpass history.</p> :
+                                        {!outpasses.filter(o => !o.type || o.type === 'outpass').length ? (
+                                            <EmptyStateAnimation
+                                                text="No outpass history."
+                                                subtext="Your previous outpass requests will appear here."
+                                            />
+                                        ) :
                                             outpasses.filter(o => !o.type || o.type === 'outpass').map((o) => (
                                                 <div key={o.id} className="p-3 border rounded-lg flex flex-col bg-white dark:bg-black">
                                                     <div className="flex justify-between items-center w-full">

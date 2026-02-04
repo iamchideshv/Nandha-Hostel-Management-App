@@ -14,6 +14,7 @@ import { AboutModal } from '@/components/about-modal';
 import { formatDate, formatTime } from '@/lib/formatters';
 import { useNotifications } from '@/hooks/use-notifications';
 import { motion, AnimatePresence } from 'framer-motion';
+import EmptyStateAnimation from '@/components/EmptyStateAnimation';
 
 const COLLEGES = [
     { id: 'NEC', name: 'Nandha Engineering College', color: 'blue', icon: '🎓' },
@@ -1017,7 +1018,12 @@ export default function AdminDashboard() {
                                         <FileText className="w-4 h-4 mr-2" /> View Report
                                     </Button>
                                 </div>
-                                {outpasses.filter(o => !o.type || o.type === 'outpass').length === 0 ? <p className="text-center text-slate-500">No outpass requests found.</p> :
+                                {outpasses.filter(o => !o.type || o.type === 'outpass').length === 0 ? (
+                                    <EmptyStateAnimation
+                                        text="No outpass requests found."
+                                        subtext="When students request an outpass, they will appear here."
+                                    />
+                                ) :
                                     outpasses.filter(o => !o.type || o.type === 'outpass').map(o => (
                                         <Card key={o.id} className={o.status === 'pending' ? 'border-l-4 border-l-yellow-400' : ''}>
                                             <CardHeader className="pb-2">
