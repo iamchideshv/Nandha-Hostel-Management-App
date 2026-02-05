@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { LogOut, Menu, UserCircle, Home } from 'lucide-react';
 import { UpdateChecker } from '@/components/update-checker';
 import { ThemeToggle } from '@/components/theme-toggle';
+import Lottie from 'lottie-react';
+import walkingManAnimation from '@/walking office man.json';
 
 export default function DashboardLayout({
     children,
@@ -159,6 +161,18 @@ export default function DashboardLayout({
                         Sign Out
                     </Button>
                 </div>
+
+                {user.role === 'admin' && (
+                    <div className="hidden md:block px-4 pb-4 mt-auto">
+                        <div className="bg-slate-50/50 dark:bg-slate-900/30 rounded-xl p-2 border border-slate-100 dark:border-slate-800/50">
+                            <Lottie
+                                animationData={walkingManAnimation}
+                                loop={true}
+                                className="w-full h-auto opacity-50 hover:opacity-100 transition-opacity duration-500"
+                            />
+                        </div>
+                    </div>
+                )}
             </aside>
 
             {/* Main Content */}
