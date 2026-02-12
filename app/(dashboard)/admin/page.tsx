@@ -850,19 +850,6 @@ export default function AdminDashboard() {
                             <UserIcon className="w-4 h-4" />
                             <span className="text-sm font-medium">{user?.name}</span>
                         </div>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                Haptics.success();
-                                toast.success('Haptic Trigger Fired! Success Pattern Sent.');
-                            }}
-                            className="text-blue-500 border-blue-200 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400"
-                        >
-                            <RefreshCw className="w-4 h-4 mr-2" />
-                            <span className="hidden md:inline">Test Haptics</span>
-                            <span className="md:hidden">Haptics</span>
-                        </Button>
                         <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
                             <Info className="w-4 h-4 mr-2" />
                             <span className="hidden md:inline">About App</span>
