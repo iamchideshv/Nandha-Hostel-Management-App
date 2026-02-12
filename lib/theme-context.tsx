@@ -36,6 +36,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    useEffect(() => {
+        if (mounted) {
+            // Update the meta theme-color tag when theme changes
+            const color = theme === 'dark' ? '#0f172a' : '#ffffff';
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.setAttribute('content', color);
+            }
+        }
+    }, [theme, mounted]);
+
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
             <div className={cn(

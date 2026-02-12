@@ -15,7 +15,10 @@ const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat
 const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' });
 
 export const viewport: Viewport = {
-  themeColor: '#8b5cf6',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' }, // Matching slate-900 for dark mode
+  ],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -45,7 +48,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#8b5cf6" />
       </head>
       <body className={`${inter.className} ${montserrat.variable} ${cinzel.variable} font-sans`}>
         <ThemeProvider>
