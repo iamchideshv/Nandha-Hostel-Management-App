@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { auth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import confetti from 'canvas-confetti';
+import { Haptics } from '@/lib/haptics';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -80,9 +81,11 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (!res.ok) {
+                Haptics.error();
                 throw new Error(data.error || 'Login failed');
             }
 
+            Haptics.success();
             login(data);
 
             // Redirect based on role
@@ -116,9 +119,11 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (!res.ok) {
+                Haptics.error();
                 throw new Error(data.error || 'Registration failed');
             }
 
+            Haptics.success();
             // Celebration!
             confetti({
                 particleCount: 150,
@@ -297,6 +302,7 @@ export default function LoginPage() {
                     className="auth-toggle"
                     checked={isRegisterPage}
                     onChange={(e) => {
+                        Haptics.medium();
                         setIsRegisterPage(e.target.checked);
                         setError('');
                     }}
@@ -379,6 +385,7 @@ export default function LoginPage() {
                         <div className="mt-4 text-center">
                             <button
                                 onClick={() => {
+                                    Haptics.light();
                                     setIsRegisterPage(true);
                                     setError('');
                                 }}
@@ -548,6 +555,7 @@ export default function LoginPage() {
                         <div className="mt-4 text-center">
                             <button
                                 onClick={() => {
+                                    Haptics.light();
                                     setIsRegisterPage(false);
                                     setError('');
                                 }}

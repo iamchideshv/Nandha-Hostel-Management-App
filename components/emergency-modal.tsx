@@ -3,7 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { Phone, AlertTriangle, Siren, Car, ShieldAlert, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Haptics } from '@/lib/haptics';
 
 interface EmergencyModalProps {
     isOpen: boolean;
@@ -14,9 +15,16 @@ interface EmergencyModalProps {
 export function EmergencyModal({ isOpen, onClose, user }: EmergencyModalProps) {
     const [alerting, setAlerting] = useState(false);
 
+    useEffect(() => {
+        if (isOpen) {
+            Haptics.warning();
+        }
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const handleAlertWarden = async () => {
+        Haptics.heavy();
         setAlerting(true);
         try {
             const res = await fetch('/api/messages', {
@@ -34,12 +42,15 @@ export function EmergencyModal({ isOpen, onClose, user }: EmergencyModalProps) {
             });
 
             if (res.ok) {
+                Haptics.success();
                 toast.success('Warden alerted successfully!');
                 onClose();
             } else {
+                Haptics.error();
                 toast.error('Failed to alert warden');
             }
         } catch (error) {
+            Haptics.error();
             toast.error('Error sending alert');
         } finally {
             setAlerting(false);

@@ -1,6 +1,7 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { Haptics } from '@/lib/haptics';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -9,13 +10,26 @@ function cn(...inputs: ClassValue[]) {
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost' | 'destructive';
     size?: 'default' | 'sm' | 'lg';
+    haptic?: 'light' | 'medium' | 'heavy' | 'success' | 'error' | 'warning' | boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = 'default', size = 'default', ...props }, ref) => {
+    ({ className, variant = 'default', size = 'default', haptic, onClick, ...props }, ref) => {
+        const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+            if (haptic) {
+                if (typeof haptic === 'string') {
+                    Haptics[haptic]();
+                } else {
+                    Haptics.medium();
+                }
+            }
+            if (onClick) onClick(e);
+        };
+
         return (
             <button
                 ref={ref}
+                onClick={handleClick}
                 className={cn(
                     'inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
                     {
