@@ -286,8 +286,8 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center p-4 transition-colors duration-500 bg-white dark:bg-black overflow-hidden font-montserrat relative selection:bg-blue-100 selection:text-blue-900 gpu-accelerated">
-            <div className="dynamic-bg" />
+        <div className="flex min-h-screen items-center justify-center p-4 transition-colors duration-500 md:duration-300 bg-white md:bg-transparent dark:bg-black md:dark:bg-transparent overflow-hidden md:overflow-visible font-montserrat md:font-sans relative selection:bg-blue-100 selection:text-blue-900 gpu-accelerated">
+            <div className="dynamic-bg md:hidden" />
             {/* Back to Home Button */}
             <Link href="/" className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
                 <Button variant="ghost" size="sm" className="gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
