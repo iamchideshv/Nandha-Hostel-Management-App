@@ -79,6 +79,8 @@ export const db = {
 
   // --- COMPLAINTS ---
   getComplaints: async (studentId?: string, hostelName?: string): Promise<Complaint[]> => {
+    if (!studentId && !hostelName) return [];
+
     let q = query(collection(firestore, COMPLAINTS_COL));
     const constraints: QueryConstraint[] = [];
     if (studentId) constraints.push(where("studentId", "==", studentId));
@@ -145,6 +147,8 @@ export const db = {
 
   // --- OUTPASSES ---
   getOutpasses: async (studentId?: string, hostelName?: string): Promise<Outpass[]> => {
+    if (!studentId && !hostelName) return [];
+
     let q = query(collection(firestore, OUTPASS_COL));
     const constraints: QueryConstraint[] = [];
     if (studentId) constraints.push(where("studentId", "==", studentId));
@@ -398,6 +402,8 @@ export const db = {
 
   // --- LOST & FOUND ---
   getLostFoundItems: async (studentId?: string, hostelName?: string): Promise<any[]> => {
+    if (!studentId && !hostelName) return [];
+
     let q = query(collection(firestore, LOST_FOUND_COL));
     const constraints: QueryConstraint[] = [];
     if (studentId) constraints.push(where("studentId", "==", studentId));
@@ -464,6 +470,8 @@ export const db = {
 
   // --- SICK REGISTER ---
   getSickRegisters: async (studentId?: string, hostelName?: string): Promise<any[]> => {
+    if (!studentId && !hostelName) return [];
+
     let q = query(collection(firestore, SICK_REGISTER_COL));
     const constraints: QueryConstraint[] = [];
     if (studentId) constraints.push(where("studentId", "==", studentId));
