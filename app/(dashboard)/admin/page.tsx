@@ -2569,17 +2569,15 @@ export default function AdminDashboard() {
                                                                             )}
                                                                             <Button
                                                                                 onClick={() => {
-                                                                                    const GIRLS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/1_T0P1WqI-gY_I7u9mFmFjP9pX_v1S8vV1X_v1S8vV1X/edit?usp=sharing'; // Placeholder if needed
-                                                                                    const BOYS_OUTING_SHEET = 'https://docs.google.com/spreadsheets/d/1vA5W3z25-4K6-8C8yP7S5R-H-S-v1S8vV1X_v1S8vV1X/edit?usp=sharing'; // Placeholder if needed
+                                                                                    const GIRLS_OUTING_SHEET_ID = '15VxATYHLpnJiJL9L8lmkmMLS2RUc4IXxodbOc7v_XIo';
+                                                                                    const BOYS_OUTING_SHEET_ID = '1gZJ_MKdbDpHtJQhNSi2RL4AFtAlbLamxd8L_cnw2T1I';
 
                                                                                     const normalizedHostel = user?.hostelName?.toLowerCase().replace(/\s+/g, '') || '';
                                                                                     const isGirlsHostel = normalizedHostel.includes('akshaya');
 
-                                                                                    // Assuming same leave sheet IDs for now or until provided specific outing ones
-                                                                                    const GIRLS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1ibukV7nGbO8B6WBxVVdOzB5Cv9bfqKQhRDDzPsWYUa0/edit?usp=sharing';
-                                                                                    const BOYS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/14T2A_oGScAAbDR08P8GFjnFxZOZgisFebK3UproeaqE/edit?usp=sharing';
+                                                                                    const url = `https://docs.google.com/spreadsheets/d/${isGirlsHostel ? GIRLS_OUTING_SHEET_ID : BOYS_OUTING_SHEET_ID}/edit?usp=sharing`;
 
-                                                                                    window.open(isGirlsHostel ? GIRLS_SHEET_URL : BOYS_SHEET_URL, '_blank');
+                                                                                    window.open(url, '_blank');
                                                                                 }}
                                                                                 variant="outline"
                                                                                 size="sm"
