@@ -2286,7 +2286,7 @@ export default function AdminDashboard() {
                                                                                     Delete ({selectedIds.size})
                                                                                 </Button>
                                                                             )}
-                                                                            {outpasses.filter(o => (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) && (o.collegeName === leaveCollegeFilter)).length > 0 && (
+                                                                            {outpasses.filter(o => (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) && (o.collegeName === leaveCollegeFilter || o.collegeName === COLLEGES.find(c => c.id === leaveCollegeFilter)?.name)).length > 0 && (
                                                                                 <Button
                                                                                     variant="ghost"
                                                                                     size="sm"
@@ -2309,7 +2309,7 @@ export default function AdminDashboard() {
                                                                                 }}
                                                                                 variant="outline"
                                                                                 size="sm"
-                                                                                className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                                                                                className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900"
                                                                             >
                                                                                 <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                             </Button>
@@ -2320,7 +2320,7 @@ export default function AdminDashboard() {
 
                                                                 {outpasses.filter(o =>
                                                                     (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) &&
-                                                                    (o.collegeName === leaveCollegeFilter)
+                                                                    (o.collegeName === leaveCollegeFilter || o.collegeName === COLLEGES.find(c => c.id === leaveCollegeFilter)?.name) && !o.inTimeConfirmed
                                                                 ).length === 0 ? (
                                                                     <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
                                                                         No leave records found for {leaveCollegeFilter}.
@@ -2329,7 +2329,7 @@ export default function AdminDashboard() {
                                                                     <div className="space-y-3">
                                                                         {outpasses.filter(o =>
                                                                             (o.type === 'leave' || o.reason.toLowerCase().includes('leave') || o.reason.toLowerCase().includes('vacation')) &&
-                                                                            (o.collegeName === leaveCollegeFilter)
+                                                                            (o.collegeName === leaveCollegeFilter || o.collegeName === COLLEGES.find(c => c.id === leaveCollegeFilter)?.name) && !o.inTimeConfirmed
                                                                         ).map(o => (
                                                                             <div
                                                                                 key={o.id}
@@ -2556,7 +2556,7 @@ export default function AdminDashboard() {
                                                                                     Delete ({selectedIds.size})
                                                                                 </Button>
                                                                             )}
-                                                                            {outpasses.filter(o => (o.type === 'outing' || (!o.reason.toLowerCase().includes('leave') && !o.reason.toLowerCase().includes('vacation'))) && (o.collegeName === outingCollegeFilter)).length > 0 && (
+                                                                            {outpasses.filter(o => (o.type === 'outing' || (!o.reason.toLowerCase().includes('leave') && !o.reason.toLowerCase().includes('vacation'))) && (o.collegeName === outingCollegeFilter || o.collegeName === COLLEGES.find(c => c.id === outingCollegeFilter)?.name)).length > 0 && (
                                                                                 <Button
                                                                                     variant="ghost"
                                                                                     size="sm"
@@ -2581,7 +2581,7 @@ export default function AdminDashboard() {
                                                                                 }}
                                                                                 variant="outline"
                                                                                 size="sm"
-                                                                                className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                                                                                className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900"
                                                                             >
                                                                                 <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                             </Button>
@@ -2594,13 +2594,13 @@ export default function AdminDashboard() {
                                                                     <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Active Outpasses - {outingCollegeFilter}</h4>
                                                                     <Button size="sm" variant="outline" onClick={() => setActiveTab('outpass')}>Manage All</Button>
                                                                 </div>
-                                                                {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).length === 0 ? (
+                                                                {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && (o.collegeName === outingCollegeFilter || o.collegeName === COLLEGES.find(c => c.id === outingCollegeFilter)?.name)).length === 0 ? (
                                                                     <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
                                                                         No students from {outingCollegeFilter} currently outside.
                                                                     </div>
                                                                 ) : (
                                                                     <div className="grid gap-3">
-                                                                        {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && o.collegeName === outingCollegeFilter).map((o) => (
+                                                                        {outpasses.filter(o => (o.status === 'exited' || o.type === 'outing') && (o.collegeName === outingCollegeFilter || o.collegeName === COLLEGES.find(c => c.id === outingCollegeFilter)?.name)).map((o) => (
                                                                             <div
                                                                                 key={o.id}
                                                                                 className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
@@ -2800,7 +2800,7 @@ export default function AdminDashboard() {
                                                                             }}
                                                                             variant="outline"
                                                                             size="sm"
-                                                                            className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100"
+                                                                            className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900"
                                                                         >
                                                                             <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                         </Button>
@@ -2808,13 +2808,13 @@ export default function AdminDashboard() {
                                                                     </div>
                                                                 </div>
 
-                                                                {sickRegisters.filter(s => s.collegeName === sickCollegeFilter).length === 0 ? (
+                                                                {sickRegisters.filter(s => (s.collegeName === sickCollegeFilter || s.collegeName === COLLEGES.find(c => c.id === sickCollegeFilter)?.name)).length === 0 ? (
                                                                     <div className="p-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">
                                                                         No medical emergency entries found for {sickCollegeFilter}.
                                                                     </div>
                                                                 ) : (
                                                                     <div className="space-y-3">
-                                                                        {[...sickRegisters].filter(s => s.collegeName === sickCollegeFilter).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(entry => (
+                                                                        {[...sickRegisters].filter(s => (s.collegeName === sickCollegeFilter || s.collegeName === COLLEGES.find(c => c.id === sickCollegeFilter)?.name)).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(entry => (
                                                                             <div
                                                                                 key={entry.id}
                                                                                 className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all
@@ -2997,10 +2997,9 @@ export default function AdminDashboard() {
                                                                                         : 'https://docs.google.com/spreadsheets/d/1EH3gEaA7R7Zhq7rWSS3l4ZfSDLzR27DPIEujDyPGuLk/edit';
                                                                                     window.open(url, '_blank');
                                                                                 }}
-                                                                                className="gap-2 h-8 text-[10px] font-bold uppercase"
+                                                                                className="h-8 text-[10px] font-bold uppercase text-green-600 border-green-200 bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900"
                                                                             >
-                                                                                <ExternalLink className="w-3.5 h-3.5" />
-                                                                                Report
+                                                                                <FileText className="w-3.5 h-3.5 mr-1.5" /> View Report
                                                                             </Button>
                                                                         </div>
                                                                         <select
@@ -3030,8 +3029,8 @@ export default function AdminDashboard() {
                                                                     </div>
                                                                 </div>
                                                                 <div className="grid gap-4">
-                                                                    {complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).length === 0 ? <p className="text-center text-slate-500 py-12 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">No complaints found for {complaintCollegeFilter}.</p> :
-                                                                        complaints.filter(c => c.collegeName === complaintCollegeFilter && (filter === 'all' || c.type === filter)).map(c => (
+                                                                    {complaints.filter(c => (c.collegeName === complaintCollegeFilter || c.collegeName === COLLEGES.find(col => col.id === complaintCollegeFilter)?.name) && (filter === 'all' || c.type === filter)).length === 0 ? <p className="text-center text-slate-500 py-12 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed">No complaints found for {complaintCollegeFilter}.</p> :
+                                                                        complaints.filter(c => (c.collegeName === complaintCollegeFilter || c.collegeName === COLLEGES.find(col => col.id === complaintCollegeFilter)?.name) && (filter === 'all' || c.type === filter)).map(c => (
                                                                             <Card key={c.id}>
                                                                                 <CardHeader className="pb-2">
                                                                                     <div className="flex justify-between items-start">
