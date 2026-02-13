@@ -228,9 +228,9 @@ export default function Home() {
                 Copyright © 2026 NANDHA EDUCATIONAL INSTITUTIONS. <br className="md:hidden" /> All Rights Reserved.
               </p>
               <div className="flex items-center gap-6">
-                <a href="#" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Privacy Policy</a>
-                <a href="#" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Terms</a>
-                <a href="#" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Support</a>
+                <Link href="/privacy" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Privacy Policy</Link>
+                <Link href="/terms" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Terms</Link>
+                <Link href="/support" className="text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold uppercase tracking-widest">Support</Link>
               </div>
             </div>
           </div>
