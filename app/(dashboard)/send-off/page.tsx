@@ -244,26 +244,23 @@ export default function SendOffDashboard() {
 
     return (
         <div className="max-w-4xl mx-auto p-4 space-y-6">
-            <header className="flex justify-between items-center mb-8 p-4 rounded-xl border dark:border-slate-800 bg-white/40 dark:bg-black/40 backdrop-blur-md shadow-sm">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 p-4 rounded-xl border dark:border-slate-800 bg-white/40 dark:bg-black/40 backdrop-blur-md shadow-sm gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white font-cinzel tracking-tight">Security Command</h1>
-                    <p className="text-slate-500 text-xs md:text-sm font-bold uppercase tracking-widest opacity-70 mt-1">Verification Agent • {user?.id} • {user?.name}</p>
+                    <h1 className="text-xl md:text-4xl font-black text-slate-900 dark:text-white font-cinzel tracking-tight leading-tight">Security Command</h1>
+                    <p className="text-slate-500 text-[10px] md:text-sm font-bold uppercase tracking-widest opacity-70 mt-1">Agent • {user?.id} • {user?.name}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
-                        <Info className="w-4 h-4 mr-2" />
-                        <span className="hidden md:inline">About App</span>
-                        <span className="md:hidden">About</span>
+                <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                    <Button variant="ghost" size="sm" onClick={() => setShowAbout(true)} className="flex-1 md:flex-none text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white h-8 text-[10px] md:text-xs">
+                        <Info className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                        <span>About</span>
                     </Button>
-                    <Button variant="outline" size="sm" onClick={handleGoHome} className="text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-bold">
-                        <Home className="w-4 h-4 mr-2" />
-                        <span className="hidden md:inline">Go to Home</span>
-                        <span className="md:hidden">Home</span>
+                    <Button variant="outline" size="sm" onClick={handleGoHome} className="flex-1 md:flex-none text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-bold h-8 text-[10px] md:text-xs px-2">
+                        <Home className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                        <span>Home</span>
                     </Button>
-                    <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold">
-                        <LogOut className="w-4 h-4 mr-2" />
-                        <span className="hidden md:inline">Sign Out</span>
-                        <span className="md:hidden">Sign Out</span>
+                    <Button variant="outline" size="sm" onClick={handleLogout} className="flex-1 md:flex-none text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold h-8 text-[10px] md:text-xs px-2">
+                        <LogOut className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                        <span>Sign Out</span>
                     </Button>
                 </div>
             </header>
