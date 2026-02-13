@@ -198,6 +198,12 @@ export const db = {
     return snap.exists() ? (snap.data() as Outpass) : null;
   },
 
+  getOutpassById: async (id: string): Promise<Outpass | null> => {
+    const ref = doc(firestore, OUTPASS_COL, id);
+    const snap = await getDoc(ref);
+    return snap.exists() ? (snap.data() as Outpass) : null;
+  },
+
   clearOutpasses: async (hostelName?: string, studentId?: string, type?: string, collegeName?: string): Promise<void> => {
     let q = query(collection(firestore, OUTPASS_COL));
     const constraints: QueryConstraint[] = [];

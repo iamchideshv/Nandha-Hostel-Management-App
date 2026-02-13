@@ -13,8 +13,7 @@ export async function GET(req: Request) {
 
   // If requesting specific outpass by ID, return just that one
   if (outpassId) {
-    const all = await db.getOutpasses();
-    const outpass = all.find(o => o.id === outpassId);
+    const outpass = await db.getOutpassById(outpassId);
     if (!outpass) {
       return NextResponse.json({ error: 'Outpass not found' }, { status: 404 });
     }
