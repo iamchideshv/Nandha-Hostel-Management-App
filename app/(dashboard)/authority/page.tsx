@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Check, X } from 'lucide-react';
+import { ConfirmationModal } from '@/components/ConfirmationModal';
+
 
 interface OutpassData {
     id: string;
@@ -21,6 +23,22 @@ interface OutpassData {
 export default function AuthorityDashboard() {
     const { user } = useAuth();
     const [outpasses, setOutpasses] = useState<OutpassData[]>([]);
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        confirmText: string;
+        variant: 'success' | 'destructive';
+        onConfirm: () => Promise<void>;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        confirmText: '',
+        variant: 'success',
+        onConfirm: async () => { }
+    });
+
 
     const fetchOutpasses = async () => {
         try {
@@ -92,16 +110,30 @@ export default function AuthorityDashboard() {
                                 {o.status === 'pending' && (
                                     <div className="flex gap-2 justify-end">
                                         <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => {
-                                            if (confirm('Confirm reject for ' + o.studentName + '?')) {
-                                                updateStatus(o.id, 'rejected');
-                                            }
+                                            setConfirmModal({
+                                                isOpen: true,
+                                                title: 'Reject Outpass',
+                                                message: `Are you sure you want to reject the outpass for ${o.studentName}?`,
+                                                confirmText: 'Reject',
+                                                variant: 'destructive',
+                                                onConfirm: async () => {
+                                                    await updateStatus(o.id, 'rejected');
+                                                }
+                                            });
                                         }}>
                                             <X className="w-4 h-4 mr-2" /> Reject
                                         </Button>
                                         <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => {
-                                            if (confirm('Confirm approve for ' + o.studentName + '?')) {
-                                                updateStatus(o.id, 'approved');
-                                            }
+                                            setConfirmModal({
+                                                isOpen: true,
+                                                title: 'Approve Outpass',
+                                                message: `Are you sure you want to approve the outpass for ${o.studentName}?`,
+                                                confirmText: 'Approve',
+                                                variant: 'success',
+                                                onConfirm: async () => {
+                                                    await updateStatus(o.id, 'approved');
+                                                }
+                                            });
                                         }}>
                                             <Check className="w-4 h-4 mr-2" /> Approve
                                         </Button>
@@ -112,6 +144,16 @@ export default function AuthorityDashboard() {
                     ))
                 }
             </div>
+            <ConfirmationModal
+                isOpen={confirmModal.isOpen}
+                onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={confirmModal.onConfirm}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                confirmText={confirmModal.confirmText}
+                variant={confirmModal.variant}
+            />
         </div>
     );
 }
+

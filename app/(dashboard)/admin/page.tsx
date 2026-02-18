@@ -19,6 +19,8 @@ import travelerAnimation from '@/Traveler.json';
 import moneyAnimation from '@/money.json';
 import notFoundAnimation from '@/Not Found.json';
 import { Haptics } from '@/lib/haptics';
+import { ConfirmationModal } from '@/components/ConfirmationModal';
+
 
 
 const COLLEGES = [
@@ -144,6 +146,22 @@ export default function AdminDashboard() {
     const [lostItems, setLostItems] = useState<LostFound[]>([]);
     const [sickRegisters, setSickRegisters] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        confirmText: string;
+        variant: 'success' | 'destructive';
+        onConfirm: () => Promise<void>;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        confirmText: '',
+        variant: 'success',
+        onConfirm: async () => { }
+    });
+
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [viewingStudent, setViewingStudent] = useState<User | null>(null);
@@ -1102,16 +1120,30 @@ export default function AdminDashboard() {
                                                 {o.status === 'pending' && (
                                                     <div className="flex space-x-3">
                                                         <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => {
-                                                            if (confirm('Confirm approve for ' + o.studentName + '?')) {
-                                                                updateOutpassStatus(o.id, 'approved');
-                                                            }
+                                                            setConfirmModal({
+                                                                isOpen: true,
+                                                                title: 'Approve Outpass',
+                                                                message: `Are you sure you want to approve the outpass for ${o.studentName}?`,
+                                                                confirmText: 'Approve',
+                                                                variant: 'success',
+                                                                onConfirm: async () => {
+                                                                    await updateOutpassStatus(o.id, 'approved');
+                                                                }
+                                                            });
                                                         }}>
                                                             <CheckCircle className="w-4 h-4 mr-2" /> Approve
                                                         </Button>
                                                         <Button size="sm" variant="destructive" onClick={() => {
-                                                            if (confirm('Confirm reject for ' + o.studentName + '?')) {
-                                                                updateOutpassStatus(o.id, 'rejected');
-                                                            }
+                                                            setConfirmModal({
+                                                                isOpen: true,
+                                                                title: 'Reject Outpass',
+                                                                message: `Are you sure you want to reject the outpass for ${o.studentName}?`,
+                                                                confirmText: 'Reject',
+                                                                variant: 'destructive',
+                                                                onConfirm: async () => {
+                                                                    await updateOutpassStatus(o.id, 'rejected');
+                                                                }
+                                                            });
                                                         }}>
                                                             <XCircle className="w-4 h-4 mr-2" /> Reject
                                                         </Button>
@@ -3240,6 +3272,16 @@ export default function AdminDashboard() {
                     </div>
                 )
             }
+            <ConfirmationModal
+                isOpen={confirmModal.isOpen}
+                onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={confirmModal.onConfirm}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                confirmText={confirmModal.confirmText}
+                variant={confirmModal.variant}
+            />
         </>
     );
 }
+
