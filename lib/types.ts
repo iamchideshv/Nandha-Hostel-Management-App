@@ -132,6 +132,9 @@ export interface Message {
     targetStudentId?: string; // Private message to specific student
     hostelName?: string; // If sent by student
     timestamp: string;
+    replyToId?: string;
+    replyToMessage?: string;
+    replyToSenderName?: string;
 }
 
 export interface LostFound {

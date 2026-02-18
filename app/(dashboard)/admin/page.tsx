@@ -1449,6 +1449,12 @@ export default function AdminDashboard() {
                                                                         </Button>
                                                                     </div>
                                                                 </div>
+                                                                {msg.replyToId && (
+                                                                    <div className="mb-3 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-md border-l-4 border-blue-500 text-xs">
+                                                                        <p className="font-bold text-blue-600 mb-1">REPLIED TO A MESSAGE</p>
+                                                                        <p className="text-slate-500 italic">"{msg.replyToMessage}"</p>
+                                                                    </div>
+                                                                )}
                                                                 <p className="text-slate-700 dark:text-slate-300">{msg.message}</p>
 
                                                                 {replyingTo === msg.senderId && (

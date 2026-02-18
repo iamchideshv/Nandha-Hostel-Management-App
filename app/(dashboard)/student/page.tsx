@@ -166,6 +166,8 @@ export default function StudentDashboard() {
         );
     };
 
+    const [replyingTo, setReplyingTo] = useState<string | null>(null);
+    const [replyMessage, setReplyMessage] = useState('');
     const [lastViewed, setLastViewed] = useState<{ [key: string]: number }>(() => {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('student_lastViewed');
@@ -556,30 +558,44 @@ export default function StudentDashboard() {
     const [messageForm, setMessageForm] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const handleSendMessage = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSendMessage = async (e?: React.FormEvent, replyingToMsg?: Message) => {
+        if (e) e.preventDefault();
+
+        const messageToSend = replyingToMsg ? replyMessage : messageForm;
+        if (!messageToSend.trim()) return;
+
         setSubmitting(true);
         try {
             const res = await fetch('/api/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: messageForm,
+                    message: messageToSend,
                     type: 'info',
                     senderId: user?.id,
                     senderName: user?.name,
                     senderRole: 'student',
-                    hostelName: user?.hostelName
+                    hostelName: user?.hostelName,
+                    replyToId: replyingToMsg?.id,
+                    replyToMessage: replyingToMsg?.message,
+                    replyToSenderName: replyingToMsg?.senderName
                 })
             });
             if (res.ok) {
-                toast.success('Message Sent');
-                setMessageForm('');
+                toast.success(replyingToMsg ? 'Reply Sent' : 'Message Sent');
+                if (replyingToMsg) {
+                    setReplyMessage('');
+                    setReplyingTo(null);
+                } else {
+                    setMessageForm('');
+                }
                 fetchData();
 
                 // Show submitted feedback
-                setIsSubmitted(true);
-                setTimeout(() => setIsSubmitted(false), 3000);
+                if (!replyingToMsg) {
+                    setIsSubmitted(true);
+                    setTimeout(() => setIsSubmitted(false), 3000);
+                }
             } else {
                 toast.error('Failed to send');
             }
@@ -1537,6 +1553,52 @@ export default function StudentDashboard() {
                                                                 </span>
                                                             </div>
                                                             <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{m.message}</p>
+                                                            <div className="mt-2 flex justify-end">
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="h-7 text-[10px] text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                                    onClick={() => {
+                                                                        if (replyingTo === m.id) {
+                                                                            setReplyingTo(null);
+                                                                        } else {
+                                                                            setReplyingTo(m.id);
+                                                                            setReplyMessage('');
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <Send className="w-3 h-3 mr-1" />
+                                                                    Reply
+                                                                </Button>
+                                                            </div>
+
+                                                            {replyingTo === m.id && (
+                                                                <div className="mt-2 pt-2 border-t border-blue-100 dark:border-blue-900/30 animate-in slide-in-from-top-1 duration-200">
+                                                                    <div className="flex gap-2">
+                                                                        <Input
+                                                                            autoFocus
+                                                                            placeholder="Type your reply..."
+                                                                            value={replyMessage}
+                                                                            onChange={(e) => setReplyMessage(e.target.value)}
+                                                                            className="h-8 text-xs bg-white dark:bg-slate-900"
+                                                                            onKeyDown={(e) => {
+                                                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                                                    e.preventDefault();
+                                                                                    handleSendMessage(undefined, m);
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <Button
+                                                                            size="sm"
+                                                                            className="h-8 text-xs"
+                                                                            onClick={() => handleSendMessage(undefined, m)}
+                                                                            disabled={submitting}
+                                                                        >
+                                                                            Send
+                                                                        </Button>
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))
                                             )}
