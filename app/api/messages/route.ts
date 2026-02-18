@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { message, type, targetHostels, targetStudentId, senderId, senderName, senderRole, hostelName } = body;
+        const { message, type, targetHostels, targetStudentId, senderId, senderName, senderRole, hostelName, replyToId, replyToMessage, replyToSenderName } = body;
 
         if (!message) {
             return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -32,7 +32,10 @@ export async function POST(req: NextRequest) {
             senderName: senderName || 'Unknown',
             senderRole: senderRole || 'student',
             targetStudentId: targetStudentId || null,
-            hostelName: hostelName || null // Ensure null if undefined, Firestore crashes on undefined
+            hostelName: hostelName || null, // Ensure null if undefined, Firestore crashes on undefined
+            replyToId: replyToId || null,
+            replyToMessage: replyToMessage || null,
+            replyToSenderName: replyToSenderName || null
         });
 
         // Send Push Notification if urgent or private

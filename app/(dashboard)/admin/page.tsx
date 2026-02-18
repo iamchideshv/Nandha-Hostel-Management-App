@@ -1490,19 +1490,19 @@ export default function AdminDashboard() {
                                             <div className="space-y-4 border-t pt-6">
                                                 <div className="flex justify-between items-center">
                                                     <h3 className="text-lg font-medium">Sent History</h3>
-                                                    {messages.filter(m => m.senderRole === 'admin').length > 0 && (
+                                                    {messages.filter(m => m.senderRole !== 'student').length > 0 && (
                                                         <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={handleDeleteHistory}>
                                                             <XCircle className="w-3 h-3 mr-1" /> Delete History
                                                         </Button>
                                                     )}
                                                 </div>
-                                                {messages.filter(m => m.senderRole === 'admin').length === 0 ? (
+                                                {messages.filter(m => m.senderRole !== 'student').length === 0 ? (
                                                     <div className="text-center py-4 text-slate-500 text-sm">
                                                         No messages sent yet
                                                     </div>
                                                 ) : (
                                                     <div className="space-y-3">
-                                                        {messages.filter(m => m.senderRole === 'admin').map((msg) => (
+                                                        {messages.filter(m => m.senderRole !== 'student').map((msg) => (
                                                             <div key={msg.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50 dark:bg-slate-800/50 dark:border-slate-800">
                                                                 <div className="flex justify-between items-start mb-1">
                                                                     <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
