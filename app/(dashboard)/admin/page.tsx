@@ -1101,10 +1101,18 @@ export default function AdminDashboard() {
 
                                                 {o.status === 'pending' && (
                                                     <div className="flex space-x-3">
-                                                        <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => updateOutpassStatus(o.id, 'approved')}>
+                                                        <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => {
+                                                            if (confirm('Confirm approve for ' + o.studentName + '?')) {
+                                                                updateOutpassStatus(o.id, 'approved');
+                                                            }
+                                                        }}>
                                                             <CheckCircle className="w-4 h-4 mr-2" /> Approve
                                                         </Button>
-                                                        <Button size="sm" variant="destructive" onClick={() => updateOutpassStatus(o.id, 'rejected')}>
+                                                        <Button size="sm" variant="destructive" onClick={() => {
+                                                            if (confirm('Confirm reject for ' + o.studentName + '?')) {
+                                                                updateOutpassStatus(o.id, 'rejected');
+                                                            }
+                                                        }}>
                                                             <XCircle className="w-4 h-4 mr-2" /> Reject
                                                         </Button>
                                                     </div>

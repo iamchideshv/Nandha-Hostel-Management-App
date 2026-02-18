@@ -91,10 +91,18 @@ export default function AuthorityDashboard() {
 
                                 {o.status === 'pending' && (
                                     <div className="flex gap-2 justify-end">
-                                        <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => updateStatus(o.id, 'rejected')}>
+                                        <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => {
+                                            if (confirm('Confirm reject for ' + o.studentName + '?')) {
+                                                updateStatus(o.id, 'rejected');
+                                            }
+                                        }}>
                                             <X className="w-4 h-4 mr-2" /> Reject
                                         </Button>
-                                        <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => updateStatus(o.id, 'approved')}>
+                                        <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => {
+                                            if (confirm('Confirm approve for ' + o.studentName + '?')) {
+                                                updateStatus(o.id, 'approved');
+                                            }
+                                        }}>
                                             <Check className="w-4 h-4 mr-2" /> Approve
                                         </Button>
                                     </div>
