@@ -1419,19 +1419,61 @@ export default function AdminDashboard() {
                                                         {messages.filter(m => m.senderRole === 'student').map((msg) => (
                                                             <div key={msg.id} className="p-4 rounded-lg bg-white border shadow-sm dark:bg-black dark:border-slate-800">
                                                                 <div className="flex justify-between items-start mb-2">
-                                                                    <div>
-                                                                        <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                                                                            {msg.senderName}
-                                                                            <span className="text-xs font-normal text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                                                                                {msg.hostelName}
-                                                                            </span>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div>
+                                                                            <div className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                                                                {msg.senderName}
+                                                                                <span className="text-xs font-normal text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                                                                                    {msg.hostelName}
+                                                                                </span>
+                                                                            </div>
+                                                                            <p className="text-sm text-slate-500">
+                                                                                {new Date(msg.timestamp).toLocaleString()}
+                                                                            </p>
                                                                         </div>
-                                                                        <p className="text-sm text-slate-500">
-                                                                            {new Date(msg.timestamp).toLocaleString()}
-                                                                        </p>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 ml-auto"
+                                                                            onClick={() => {
+                                                                                if (replyingTo === msg.senderId) {
+                                                                                    setReplyingTo(null);
+                                                                                } else {
+                                                                                    setReplyingTo(msg.senderId);
+                                                                                    setReplyMessage('');
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
+                                                                            Reply
+                                                                        </Button>
                                                                     </div>
                                                                 </div>
                                                                 <p className="text-slate-700 dark:text-slate-300">{msg.message}</p>
+
+                                                                {replyingTo === msg.senderId && (
+                                                                    <div className="mt-4 pt-4 border-t dark:border-slate-800 animate-in slide-in-from-top-2 duration-200">
+                                                                        <div className="flex gap-2">
+                                                                            <Input
+                                                                                autoFocus
+                                                                                placeholder={`Reply to ${msg.senderName}...`}
+                                                                                value={replyMessage}
+                                                                                onChange={(e) => setReplyMessage(e.target.value)}
+                                                                                className="h-10"
+                                                                                onKeyDown={(e) => {
+                                                                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                                                                        e.preventDefault();
+                                                                                        handleSendPrivateMessage(msg.senderId);
+                                                                                    }
+                                                                                }}
+                                                                            />
+                                                                            <Button onClick={() => handleSendPrivateMessage(msg.senderId)}>
+                                                                                <Send className="w-4 h-4 mr-2" />
+                                                                                Send
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         ))}
                                                     </div>
